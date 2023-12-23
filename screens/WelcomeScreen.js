@@ -22,8 +22,8 @@ function WelcomeScreen(props) {
           <Image
             style={{
               resizeMode: "contain",
-              height: 100,
-              width: 100,
+              height: 50,
+              width: 50,
             }}
             source={require("../assets/logo.png")}
           />
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   baseText: {
-    fontFamily: "Gotham",
     color: "white",
+    fontSize: 20,
   },
   titleText: {
     fontSize: 20,
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
   logoText: {
     color: "#3490de",
     fontSize: 50,
-    fontWeight: "bold",
   },
 });
 
