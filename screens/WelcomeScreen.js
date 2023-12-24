@@ -10,11 +10,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
-function WelcomeScreen(props) {
+function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={["#2a2a2a", "#111111", "#000000"]}
+        colors={["#2a2a2a", "#111111"]}
         style={styles.background}
         start={{ x: 1, y: 0 }}
       >
@@ -29,7 +29,10 @@ function WelcomeScreen(props) {
           />
           <Text style={styles.logoText}>FitAI</Text>
           <Text style={styles.baseText}>Your Personal Trainer</Text>
-          <Button title="Sign In" onPress={() => Alert.alert("Sign In")} />
+          <Button
+            title="Sign In"
+            onPress={() => navigation.navigate("SignIn")}
+          />
           <Button title="Sign Up" onPress={() => Alert.alert("Sign Up")} />
         </SafeAreaView>
       </LinearGradient>

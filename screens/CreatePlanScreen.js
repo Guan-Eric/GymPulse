@@ -1,7 +1,12 @@
 import React from "react";
+import { Text, View } from "react-native";
 
 function CreatePlanScreen(props) {
-  return <div></div>;
+  return (
+    <View>
+      <Text>hi</Text>
+    </View>
+  );
 }
 
 export default CreatePlanScreen;
