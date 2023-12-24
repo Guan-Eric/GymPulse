@@ -16,7 +16,7 @@ function WelcomeScreen({ navigation }) {
       <LinearGradient
         colors={["#2a2a2a", "#111111"]}
         style={styles.background}
-        start={{ x: 1, y: 0 }}
+        start={{ x: 1, y: -0.5 }}
       >
         <SafeAreaView style={styles.container}>
           <Image
