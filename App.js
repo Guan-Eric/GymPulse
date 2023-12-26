@@ -25,11 +25,7 @@ function HomeScreen() {
         options={{
           title: "Plan",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="view-list-outline"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="dumbbell" size={size} color={color} />
           ),
         }}
       />
@@ -39,11 +35,7 @@ function HomeScreen() {
         options={{
           title: "AI",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="view-list-outline"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="robot" size={size} color={color} />
           ),
         }}
       />
@@ -53,11 +45,7 @@ function HomeScreen() {
         options={{
           title: "Settings",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="view-list-outline"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="cog" size={size} color={color} />
           ),
         }}
       />
