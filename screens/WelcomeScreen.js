@@ -33,7 +33,10 @@ function WelcomeScreen({ navigation }) {
             title="Sign In"
             onPress={() => navigation.navigate("SignIn")}
           />
-          <Button title="Sign Up" onPress={() => Alert.alert("Sign Up")} />
+          <Button
+            title="Sign Up"
+            onPress={() => navigation.navigate("SignUp")}
+          />
         </SafeAreaView>
       </LinearGradient>
     </View>

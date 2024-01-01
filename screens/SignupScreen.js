@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -8,10 +8,32 @@ import {
   Text,
   Button,
 } from "react-native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from "../firebaseConfig";
+import { ActivityIndicator } from "react-native-paper";
 
 function SignUpScreen({ navigation }) {
-  const [username, onChangeUsername] = React.useState("");
-  const [password, onChangePassword] = React.useState("");
+  const [email, onChangeEmail] = useState("");
+  const [password, onChangePassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const auth = FIREBASE_AUTH;
+
+  const signUp = async () => {
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      alert("Sign up failed: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -21,11 +43,12 @@ function SignUpScreen({ navigation }) {
       >
         <SafeAreaView style={styles.content}>
           <Text style={styles.titleText}>Sign Up</Text>
-          <Text style={styles.baseText}>Username</Text>
+          <Text style={styles.baseText}>Email</Text>
           <TextInput
             style={styles.input}
-            onChangeText={(username) => onChangeUsername(username)}
-            value={username}
+            onChangeText={(email) => onChangeEmail(email)}
+            value={email}
+            autoCapitalize="none"
           />
           <Text style={styles.baseText}>Password</Text>
           <TextInput
@@ -33,8 +56,13 @@ function SignUpScreen({ navigation }) {
             onChangeText={(password) => onChangePassword(password)}
             value={password}
             secureTextEntry={true}
+            autoCapitalize="none"
           />
-          <Button title="Sign In" onPress={() => navigation.navigate("Home")} />
+          {loading ? (
+            <ActivityIndicator size="large" color="white" />
+          ) : (
+            <Button title="Sign Up" onPress={signUp} />
+          )}
         </SafeAreaView>
       </LinearGradient>
     </View>
