@@ -4,7 +4,7 @@ import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
-function CreatePlanScreen(props) {
+function CreatePlanScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient

@@ -1,6 +1,7 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Button } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { FIREBASE_AUTH } from "../firebaseConfig";
 
 function SettingScreen(props) {
   return (
@@ -11,6 +12,7 @@ function SettingScreen(props) {
         start={{ x: 1, y: -0.5 }}
       >
         <Text>SettingScreen</Text>
+        <Button onPress={() => FIREBASE_AUTH.signOut()} title="Log Out" />
       </LinearGradient>
     </View>
   );

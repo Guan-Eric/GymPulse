@@ -12,7 +12,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 
-function SignInScreen({ navigation }) {
+function SignInScreen() {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);

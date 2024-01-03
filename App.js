@@ -3,13 +3,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { onAuthStateChanged } from "firebase/auth";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import CreatePlanScreen from "./screens/CreatePlanScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import SettingScreen from "./screens/SettingScreen";
 import AIScreen from "./screens/AIScreen";
-import { onAuthStateChanged } from "firebase/auth";
 import { FIREBASE_AUTH } from "./firebaseConfig";
 
 const Stack = createNativeStackNavigator();
@@ -55,37 +55,44 @@ function HomeScreen() {
   );
 }
 function Navigator() {
-  const [user, setUser] = (useState < User) | (null > null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log("user", user);
       setUser(user);
     });
   });
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="WelcomeScreen">
-        <Stack.Screen
-          name="Welcome"
-          component={WelcomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignIn"
-          component={SignInScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ headerShown: false, gestureEnabled: false }}
-        />
+        {user ? (
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false, gestureEnabled: false }}
+          />
+        ) : (
+          <Stack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{ headerShown: false }}
+          />
+        )}
+        {user == null ? (
+          <Stack.Screen
+            name="SignIn"
+            component={SignInScreen}
+            options={{ headerShown: false }}
+          />
+        ) : null}
+        {user == null ? (
+          <Stack.Screen
+            name="SignUp"
+            component={SignUpScreen}
+            options={{ headerShown: false }}
+          />
+        ) : null}
       </Stack.Navigator>
     </NavigationContainer>
   );

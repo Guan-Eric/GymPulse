@@ -2,7 +2,7 @@ import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, View, StyleSheet, SafeAreaView, Pressable } from "react-native";
 
-function AIScreen(props) {
+function AIScreen() {
   return (
     <View style={styles.container}>
       <LinearGradient
