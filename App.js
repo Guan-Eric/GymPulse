@@ -6,11 +6,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import SignInScreen from "./screens/SignInScreen";
-import CreatePlanScreen from "./screens/CreatePlanScreen";
+import PlanScreen from "./screens/PlanScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import SettingScreen from "./screens/SettingScreen";
 import AIScreen from "./screens/AIScreen";
 import { FIREBASE_AUTH } from "./firebaseConfig";
+import ExerciseScreen from "./screens/ExerciseScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -23,9 +24,19 @@ function HomeScreen() {
     >
       <Tab.Screen
         name="Plan"
-        component={CreatePlanScreen}
+        component={PlanScreen}
         options={{
           title: "Plan",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons name="notebook" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Exercises"
+        component={ExerciseScreen}
+        options={{
+          title: "Exercises",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="dumbbell" size={size} color={color} />
           ),

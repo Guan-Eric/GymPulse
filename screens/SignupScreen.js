@@ -1,18 +1,22 @@
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
   TextInput,
-  StyleSheet,
   Text,
   Button,
+  Appearance,
 } from "react-native";
+import { darkMode } from "../styles/darkMode";
+import { lightMode } from "../styles/lightMode";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 
 function SignUpScreen() {
+  Appearance.getColorScheme() == "light"
+    ? (styles = lightMode)
+    : (styles = darkMode);
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -36,72 +40,31 @@ function SignUpScreen() {
   };
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={["#2a2a2a", "#111111"]}
-        style={styles.background}
-        start={{ x: 1, y: 0 }}
-      >
-        <SafeAreaView style={styles.content}>
-          <Text style={styles.titleText}>Sign Up</Text>
-          <Text style={styles.baseText}>Email</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={(email) => onChangeEmail(email)}
-            value={email}
-            autoCapitalize="none"
-          />
-          <Text style={styles.baseText}>Password</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={(password) => onChangePassword(password)}
-            value={password}
-            secureTextEntry={true}
-            autoCapitalize="none"
-          />
-          {loading ? (
-            <ActivityIndicator size="large" color="white" />
-          ) : (
-            <Button title="Sign Up" onPress={signUp} />
-          )}
-        </SafeAreaView>
-      </LinearGradient>
+      <SafeAreaView style={styles.content}>
+        <Text style={styles.titleText}>Sign Up</Text>
+        <Text style={styles.baseText}>Email</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(email) => onChangeEmail(email)}
+          value={email}
+          autoCapitalize="none"
+        />
+        <Text style={styles.baseText}>Password</Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={(password) => onChangePassword(password)}
+          value={password}
+          secureTextEntry={true}
+          autoCapitalize="none"
+        />
+        {loading ? (
+          <ActivityIndicator size="large" color="white" />
+        ) : (
+          <Button title="Sign Up" onPress={signUp} />
+        )}
+      </SafeAreaView>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  content: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-  },
-  background: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    height: "100%",
-  },
-  titleText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  baseText: {
-    color: "white",
-  },
-  input: {
-    color: "white",
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    borderColor: "white",
-    padding: 10,
-  },
-});
 
 export default SignUpScreen;
