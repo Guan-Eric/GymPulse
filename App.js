@@ -65,6 +65,7 @@ function HomeScreen() {
     </Tab.Navigator>
   );
 }
+
 function Navigator() {
   const [user, setUser] = useState(null);
 

@@ -3,13 +3,10 @@ export const lightMode = StyleSheet.create({
   container: {
     backgroundColor: "white",
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   content: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "center",
   },
   baseText: {
     fontSize: 20,

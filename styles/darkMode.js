@@ -3,17 +3,14 @@ export const darkMode = StyleSheet.create({
   container: {
     backgroundColor: "#181818",
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   content: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "center",
   },
   baseText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 14,
   },
   titleText: {
     color: "white",
