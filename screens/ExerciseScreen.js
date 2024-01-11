@@ -1,66 +1,47 @@
 import React, { useEffect, useState } from "react";
 import {
-  Text,
   View,
-  Pressable,
+  Text,
   Appearance,
-  ScrollView,
   FlatList,
+  Pressable,
   Image,
+  ScrollView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { darkMode } from "../styles/darkMode";
 import { lightMode } from "../styles/lightMode";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchExerciseByBodyPart } from "../apis/exerciseDB";
 
-function ExerciseScreen() {
+function ExerciseScreen({ route }) {
   Appearance.getColorScheme() == "light"
     ? (styles = lightMode)
     : (styles = darkMode);
-  const [bodyPart, setBodyPart] = useState([
-    { name: "Chest", key: "1", image: require("../assets/chest.png") },
-    { name: "Back", key: "2", image: require("../assets/back.png") },
-    { name: "Lower Arms", key: "3", image: require("../assets/arms.png") },
-    { name: "Upper Arms", key: "4", image: require("../assets/arms.png") },
-    { name: "Shoulders", key: "5", image: require("../assets/arms.png") },
-    { name: "Waist", key: "6", image: require("../assets/waist.png") },
-    { name: "Upper Legs", key: "7", image: require("../assets/upperlegs.png") },
-    { name: "Lower Legs", key: "8", image: require("../assets/lowerlegs.png") },
-    { name: "Cardio", key: "9", image: require("../assets/cardio.png") },
-    { name: "Neck", key: "10", image: require("../assets/neck.png") },
-  ]);
+  const exercise = route.params.item;
+
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.titleText}>Exercise</Text>
-        <View>
-          <FlatList
-            data={bodyPart}
-            numColumns={2}
-            contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
-            columnWrapperStyle={{
-              justifyContent: "space-around",
-            }}
-            renderItem={({ item }) => (
-              <Pressable key={item.key}>
-                <Image
-                  style={{
-                    resizeMode: "cover",
-                    height: 100,
-                    width: 100,
-                    tintColor:
-                      Appearance.getColorScheme() == "light"
-                        ? "black"
-                        : "white",
-                  }}
-                  source={item.image}
-                />
-                <Text style={styles.baseText}>{item.name}</Text>
-              </Pressable>
-            )}
-          />
-        </View>
-      </SafeAreaView>
+    <View>
+      <Image
+        source={{ uri: exercise.gifUrl }}
+        style={{
+          resizeMode: "cover",
+          height: 150,
+          width: 150,
+        }}
+      />
+      <ScrollView>
+        <Text>{exercise.name}</Text>
+        <Text>Equipment</Text>
+        <Text>{exercise?.equipment}</Text>
+        <Text>Secondary Muscles</Text>
+        <Text>{exercise?.secondaryMuscles}</Text>
+        <Text>Target</Text>
+        <Text>{exercise.target}</Text>
+        <Text>Instructions</Text>
+        {
+          //exercise.instructions?.split(",").map((instruction) => {
+          //return <Text>{instruction}</Text>;
+        }
+      </ScrollView>
     </View>
   );
 }

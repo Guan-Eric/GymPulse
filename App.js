@@ -10,7 +10,9 @@ import PlanScreen from "./screens/PlanScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import SettingScreen from "./screens/SettingScreen";
 import AIScreen from "./screens/AIScreen";
+import BodyPartScreen from "./screens/BodyPartScreen";
 import { FIREBASE_AUTH } from "./firebaseConfig";
+import ExerciseListScreen from "./screens/ExerciseListScreen";
 import ExerciseScreen from "./screens/ExerciseScreen";
 
 const Stack = createNativeStackNavigator();
@@ -34,7 +36,7 @@ function HomeScreen() {
       />
       <Tab.Screen
         name="Exercises"
-        component={ExerciseScreen}
+        component={ExerciseListScreen}
         options={{
           title: "Exercises",
           tabBarIcon: ({ size, color }) => (
@@ -105,6 +107,16 @@ function Navigator() {
             options={{ headerShown: false }}
           />
         ) : null}
+        <Stack.Screen
+          name="BodyPart"
+          component={BodyPartScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Exercise"
+          component={ExerciseScreen}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

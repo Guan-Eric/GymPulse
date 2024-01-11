@@ -30,7 +30,6 @@ function SignUpScreen() {
         email,
         password
       );
-      console.log(response);
     } catch (error) {
       console.log(error);
       alert("Sign up failed: " + error.message);
