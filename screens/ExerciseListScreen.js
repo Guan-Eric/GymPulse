@@ -42,9 +42,6 @@ function ExerciseListScreen({ navigation }) {
           <FlatList
             data={bodyPart}
             contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
-            columnWrapperStyle={{
-              justifyContent: "space-around",
-            }}
             renderItem={({ item }) => (
               <Pressable
                 key={item.key}

@@ -21,7 +21,7 @@ function ExerciseScreen({ route }) {
   return (
     <View>
       <Image
-        source={{ uri: exercise.gifUrl }}
+        source={require("../assets/" + exercise.id + "0.jpg")}
         style={{
           resizeMode: "cover",
           height: 150,
@@ -31,16 +31,13 @@ function ExerciseScreen({ route }) {
       <ScrollView>
         <Text>{exercise.name}</Text>
         <Text>Equipment</Text>
-        <Text>{exercise?.equipment}</Text>
+        <Text>{exercise.equipment}</Text>
         <Text>Secondary Muscles</Text>
         <Text>{exercise?.secondaryMuscles}</Text>
-        <Text>Target</Text>
-        <Text>{exercise.target}</Text>
+        <Text>Level</Text>
+        <Text>{exercise.level}</Text>
         <Text>Instructions</Text>
-        {
-          //exercise.instructions?.split(",").map((instruction) => {
-          //return <Text>{instruction}</Text>;
-        }
+        <Text>{exercise.instructions}</Text>
       </ScrollView>
     </View>
   );
