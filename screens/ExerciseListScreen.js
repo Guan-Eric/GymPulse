@@ -26,7 +26,7 @@ function ExerciseListScreen({ navigation }) {
     { name: "Hamstrings", key: "8" },
     { name: "Glutes", key: "9" },
     { name: "Neck", key: "10" },
-    { name: "Abdonimals", key: "11" },
+    { name: "Abdominals", key: "11" },
     { name: "Lats", key: "12" },
     { name: "Calves", key: "13" },
     { name: "Forearms", key: "14" },

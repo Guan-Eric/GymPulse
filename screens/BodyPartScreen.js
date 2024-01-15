@@ -11,7 +11,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { darkMode } from "../styles/darkMode";
 import { lightMode } from "../styles/lightMode";
 import { FIRESTORE_DB } from "../firebaseConfig";
-import { collection, query, getDocs, where } from "firebase/firestore";
+import {
+  collection,
+  query,
+  getDocs,
+  where,
+  writeBatch,
+  doc,
+} from "firebase/firestore";
 
 function BodyPartScreen({ route, navigation }) {
   Appearance.getColorScheme() == "light"
@@ -47,7 +54,7 @@ function BodyPartScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <SafeAreaView>
-        <Text style={styles.baseText}>{bodyPart}</Text>
+        <Text style={styles.baseText}>{route.params.item.name}</Text>
         <View>
           <FlatList
             data={exercises}
@@ -57,6 +64,14 @@ function BodyPartScreen({ route, navigation }) {
                 key={item.key}
                 onPress={() => navigation.navigate("Exercise", { item })}
               >
+                <Image
+                  source={{ uri: item.images[0] }}
+                  style={{
+                    resizeMode: "cover",
+                    height: 150,
+                    width: 150,
+                  }}
+                />
                 <Text style={styles.baseText}>{item.name}</Text>
               </Pressable>
             )}

@@ -20,25 +20,27 @@ function ExerciseScreen({ route }) {
 
   return (
     <View>
-      <Image
-        source={require("../assets/" + exercise.id + "0.jpg")}
-        style={{
-          resizeMode: "cover",
-          height: 150,
-          width: 150,
-        }}
-      />
-      <ScrollView>
-        <Text>{exercise.name}</Text>
-        <Text>Equipment</Text>
-        <Text>{exercise.equipment}</Text>
-        <Text>Secondary Muscles</Text>
-        <Text>{exercise?.secondaryMuscles}</Text>
-        <Text>Level</Text>
-        <Text>{exercise.level}</Text>
-        <Text>Instructions</Text>
-        <Text>{exercise.instructions}</Text>
-      </ScrollView>
+      <SafeAreaView>
+        <Image
+          source={{ uri: exercise.images[0] }}
+          style={{
+            resizeMode: "cover",
+            height: 150,
+            width: 150,
+          }}
+        />
+        <ScrollView>
+          <Text>{exercise.name}</Text>
+          <Text>Equipment</Text>
+          <Text>{exercise.equipment}</Text>
+          <Text>Secondary Muscles</Text>
+          <Text>{exercise?.secondaryMuscles}</Text>
+          <Text>Level</Text>
+          <Text>{exercise.level}</Text>
+          <Text>Instructions</Text>
+          <Text>{exercise.instructions}</Text>
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
