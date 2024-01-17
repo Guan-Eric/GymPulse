@@ -11,14 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { darkMode } from "../styles/darkMode";
 import { lightMode } from "../styles/lightMode";
 import { FIRESTORE_DB } from "../firebaseConfig";
-import {
-  collection,
-  query,
-  getDocs,
-  where,
-  writeBatch,
-  doc,
-} from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 
 function BodyPartScreen({ route, navigation }) {
   Appearance.getColorScheme() == "light"

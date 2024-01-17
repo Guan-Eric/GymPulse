@@ -6,6 +6,7 @@ import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "react-native-paper";
 import { FIREBASE_AUTH } from "../firebaseConfig";
+import { collection, query, getDocs, where } from "firebase/firestore";
 
 function PlanScreen() {
   Appearance.getColorScheme() == "light"
