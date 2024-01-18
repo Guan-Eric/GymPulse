@@ -4,7 +4,7 @@ import {
   View,
   Pressable,
   Appearance,
-  FlatList,
+  ScrollView,
   Image,
 } from "react-native";
 import { darkMode } from "../styles/darkMode";
@@ -39,18 +39,18 @@ function ExerciseListScreen({ navigation }) {
       <SafeAreaView style={styles.container}>
         <Text style={styles.titleText}>Exercise</Text>
         <View>
-          <FlatList
-            data={bodyPart}
+          <ScrollView
             contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
-            renderItem={({ item }) => (
+          >
+            {bodyPart.map((item) => (
               <Pressable
                 key={item.key}
                 onPress={() => navigation.navigate("BodyPart", { item })}
               >
                 <Text style={styles.baseText}>{item.name}</Text>
               </Pressable>
-            )}
-          />
+            ))}
+          </ScrollView>
         </View>
       </SafeAreaView>
     </View>

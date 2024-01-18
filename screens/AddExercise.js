@@ -1,10 +1,17 @@
 import React from "react";
-import { View, Text, Appearance, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Appearance,
+  Image,
+  ScrollView,
+  Button,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { darkMode } from "../styles/darkMode";
 import { lightMode } from "../styles/lightMode";
 
-function ExerciseScreen({ route }) {
+function AddExerciseScreen({ route }) {
   Appearance.getColorScheme() == "light"
     ? (styles = lightMode)
     : (styles = darkMode);
@@ -28,6 +35,7 @@ function ExerciseScreen({ route }) {
         />
         <ScrollView>
           <Text>{exercise.name}</Text>
+          <Button title="Add Exercise" />
           <Text>Equipment</Text>
           <Text>{exercise.equipment}</Text>
           <Text>Secondary Muscles</Text>
@@ -42,4 +50,4 @@ function ExerciseScreen({ route }) {
   );
 }
 
-export default ExerciseScreen;
+export default AddExerciseScreen;

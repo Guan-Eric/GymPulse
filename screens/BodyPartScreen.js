@@ -3,7 +3,7 @@ import {
   View,
   Text,
   Appearance,
-  FlatList,
+  ScrollView,
   Pressable,
   Image,
 } from "react-native";
@@ -29,7 +29,6 @@ function BodyPartScreen({ route, navigation }) {
       );
 
       const querySnapshot = await getDocs(queryRef);
-
       const data = [];
       querySnapshot.forEach((doc) => {
         data.push(doc.data());
@@ -49,10 +48,10 @@ function BodyPartScreen({ route, navigation }) {
       <SafeAreaView>
         <Text style={styles.baseText}>{route.params.item.name}</Text>
         <View>
-          <FlatList
-            data={exercises}
+          <ScrollView
             contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
-            renderItem={({ item }) => (
+          >
+            {exercises.map((item) => (
               <Pressable
                 key={item.key}
                 onPress={() => navigation.navigate("Exercise", { item })}
@@ -67,8 +66,8 @@ function BodyPartScreen({ route, navigation }) {
                 />
                 <Text style={styles.baseText}>{item.name}</Text>
               </Pressable>
-            )}
-          />
+            ))}
+          </ScrollView>
         </View>
       </SafeAreaView>
     </View>

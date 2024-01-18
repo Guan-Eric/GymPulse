@@ -14,6 +14,9 @@ import BodyPartScreen from "./screens/BodyPartScreen";
 import { FIREBASE_AUTH } from "./firebaseConfig";
 import ExerciseListScreen from "./screens/ExerciseListScreen";
 import ExerciseScreen from "./screens/ExerciseScreen";
+import SearchExerciseScreen from "./screens/SearchExerciseScreen";
+import ViewPlanScreen from "./screens/ViewPlanScreen";
+import AddExerciseScreen from "./screens/AddExercise";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -115,6 +118,21 @@ function Navigator() {
         <Stack.Screen
           name="Exercise"
           component={ExerciseScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreatePlan"
+          component={SearchExerciseScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ViewPlan"
+          component={ViewPlanScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AddExercise"
+          component={AddExerciseScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
