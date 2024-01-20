@@ -12,7 +12,15 @@ import { lightMode } from "../styles/lightMode";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { FIRESTORE_DB } from "../firebaseConfig";
-import { collection, query, getDocs, where } from "firebase/firestore";
+import {
+  collection,
+  query,
+  onSnapshot,
+  where,
+  addDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 function PlanScreen({ navigation }) {
   Appearance.getColorScheme() == "light"
@@ -21,29 +29,38 @@ function PlanScreen({ navigation }) {
   const [plans, setPlans] = useState([]);
 
   useEffect(() => {
-    const fetchExerciseFromFirestore = async () => {
-      try {
-        const collectionRef = collection(FIRESTORE_DB, "Plans");
-        const queryRef = query(
-          collectionRef,
-          where("email", "==", FIREBASE_AUTH.currentUser.email)
-        );
+    const fetchExerciseFromFirestore = () => {
+      const collectionRef = collection(FIRESTORE_DB, "Plans");
+      const queryRef = query(
+        collectionRef,
+        where("email", "==", FIREBASE_AUTH.currentUser.email)
+      );
 
-        const querySnapshot = await getDocs(queryRef);
+      const unsubscribe = onSnapshot(queryRef, (snapshot) => {
         const data = [];
-        querySnapshot.forEach((doc) => {
+        snapshot.forEach((doc) => {
           data.push(doc.data());
         });
         setPlans(data);
         console.log("plans");
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+      });
+
+      return () => unsubscribe();
     };
     fetchExerciseFromFirestore();
   }, []);
-  const handleCreatePlan = () => {
-    navigation.navigate("ViewPlan");
+  const handleCreatePlan = async () => {
+    try {
+      const docRef = await addDoc(collection(FIRESTORE_DB, "Plans"), {
+        name: "New Plan",
+        email: FIREBASE_AUTH.currentUser.email,
+        exercises: [],
+      });
+      const planDoc = doc(FIRESTORE_DB, `Plans/${docRef.id}`);
+      await updateDoc(planDoc, { id: docRef.id });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
   return (
     <View style={styles.container}>
