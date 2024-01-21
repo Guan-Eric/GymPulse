@@ -73,7 +73,7 @@ function PlanScreen({ navigation }) {
             plans.map((item) => (
               <Pressable
                 key={item.name}
-                onPress={() => navigation.navigate("ViewPlan", { item })}
+                onPress={() => navigation.navigate("ViewPlan", { id: item.id })}
               >
                 <Text style={styles.titleText}>{item.name}</Text>
               </Pressable>

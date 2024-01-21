@@ -121,7 +121,7 @@ function Navigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="CreatePlan"
+          name="SearchExercise"
           component={SearchExerciseScreen}
           options={{ headerShown: false }}
         />

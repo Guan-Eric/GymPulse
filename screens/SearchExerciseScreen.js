@@ -61,7 +61,13 @@ function SearchExerciseScreen({ navigation, route }) {
           renderItem={({ item }) => (
             <Pressable
               key={item.key}
-              onPress={() => navigation.navigate("AddExercise", { item })}
+              onPress={() =>
+                navigation.navigate("AddExercise", {
+                  exercise: item,
+                  dayId: route.params.dayId,
+                  planId: route.params.planId,
+                })
+              }
             >
               <Text style={styles.baseText}>{item.name}</Text>
             </Pressable>

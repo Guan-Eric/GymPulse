@@ -10,18 +10,45 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { darkMode } from "../styles/darkMode";
 import { lightMode } from "../styles/lightMode";
+import { FIRESTORE_DB } from "../firebaseConfig";
+import {
+  updateDoc,
+  getDoc,
+  doc,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 
-function AddExerciseScreen({ route }) {
+function AddExerciseScreen({ route, navigation }) {
   Appearance.getColorScheme() == "light"
     ? (styles = lightMode)
     : (styles = darkMode);
-  const exercise = route.params.item;
+  const exercise = route.params.exercise;
   const instructions = exercise.instructions.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
   const secondaryMuscles = exercise.secondaryMuscles.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
+  const handleAddExercise = async () => {
+    const dayDoc = doc(
+      FIRESTORE_DB,
+      `Plans/${route.params.planId}/Days/${route.params.dayId}`
+    );
+    const exerciseCollection = collection(dayDoc, "Exercise");
+    const exerciseDocRef = await addDoc(exerciseCollection, {
+      name: exercise.name,
+      dayId: route.params.dayId,
+      sets: [],
+      weight_duration: 0,
+    });
+    const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
+    await updateDoc(exerciseDoc, { id: exerciseDoc.id });
+    navigation.navigate("Home");
+    navigation.navigate("ViewPlan", { id: route.params.planId });
+  };
   return (
     <View>
       <SafeAreaView>
@@ -35,7 +62,7 @@ function AddExerciseScreen({ route }) {
         />
         <ScrollView>
           <Text>{exercise.name}</Text>
-          <Button title="Add Exercise" />
+          <Button title="Add Exercise" onPress={handleAddExercise} />
           <Text>Equipment</Text>
           <Text>{exercise.equipment}</Text>
           <Text>Secondary Muscles</Text>

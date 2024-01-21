@@ -21,29 +21,38 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-function ViewPlanScreen({ route }) {
+function ViewPlanScreen({ route, navigation }) {
   Appearance.getColorScheme() == "light"
     ? (styles = lightMode)
     : (styles = darkMode);
   const [name, setName] = useState("");
   const [plan, setPlan] = useState({});
   const [days, setDays] = useState([]);
-  const [exercises, setExercises] = useState();
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
       try {
         const planDoc = await getDoc(
-          doc(FIRESTORE_DB, `Plans/${route.params.item.id}`)
+          doc(FIRESTORE_DB, `Plans/${route.params.id}`)
         );
         const planData = planDoc.data();
         setPlan(planData);
 
         const daysCollection = collection(planDoc.ref, "Days");
         const daysSnapshot = await getDocs(daysCollection);
-        const daysData = daysSnapshot.docs.map((doc) => doc.data());
-        setDays(daysData);
+        const daysData = [];
 
-        console.log("plan");
+        for (const dayDoc of daysSnapshot.docs) {
+          const dayData = dayDoc.data();
+
+          const exercisesCollection = collection(dayDoc.ref, "Exercise");
+          const exercisesSnapshot = await getDocs(exercisesCollection);
+          const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
+            exerciseDoc.data()
+          );
+          dayData.exercises = exercisesData;
+          daysData.push(dayData);
+        }
+        setDays(daysData);
       } catch (error) {
         console.error("Error fetching plan data:", error);
       }
@@ -52,16 +61,15 @@ function ViewPlanScreen({ route }) {
     fetchPlanFromFirestore();
   }, []);
   const handleSavePlan = async () => {
-    const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.item.id}`);
+    const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.id}`);
     updateDoc(planDoc, { name: name });
-    //update for all days and all exercises
   };
   const handleAddDay = async () => {
-    const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.item.id}`);
+    const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.id}`);
     const daysCollection = collection(planDoc, "Days");
     const daysDocRef = await addDoc(daysCollection, {
       name: "New Day",
-      planId: route.params.item.id,
+      planId: route.params.id,
     });
     const dayDoc = doc(daysCollection, daysDocRef.id);
     await updateDoc(dayDoc, { id: daysDocRef.id });
@@ -70,11 +78,21 @@ function ViewPlanScreen({ route }) {
     setDays(daysData);
   };
 
+  const handleAddSet = async (dayId, exerciseId) => {
+    const exerciseDoc = doc(
+      FIRESTORE_DB,
+      `Plans/${route.params.id}/Days/${dayId}/Exercise/${exerciseId}`
+    );
+    const currentSets = exerciseDoc.data().sets || [];
+    const newSets = [...currentSets, 1];
+    await updateDoc(exerciseDoc, { sets: newSets });
+  };
+
   const handleDeleteDay = async (dayId) => {
     try {
       const dayDocRef = doc(
         FIRESTORE_DB,
-        `Plans/${route.params.item.id}/Days/${dayId}`
+        `Plans/${route.params.id}/Days/${dayId}`
       );
       await deleteDoc(dayDocRef);
       setDays((prevDays) => prevDays.filter((day) => day.id !== dayId));
@@ -90,12 +108,35 @@ function ViewPlanScreen({ route }) {
         <TextInput
           style={styles.input}
           onChangeText={(name) => setName(name)}
-          value={name}
+          value={plan.name}
         />
         <ScrollView>
           {days.map((day) => (
-            <View key={day.id} style={styles.dayContainer}>
+            <View key={day.id}>
               <Text style={styles.titleText}>{day.name}</Text>
+              {day.exercises.map((exercise) => (
+                <View key={exercise.id}>
+                  <Text>{exercise.name}</Text>
+                  {exercise.sets.map((reps, index) => (
+                    <View>
+                      <Text>{`Set ${index + 1} Reps: ${reps}`}</Text>
+                      <Buttom
+                        title={"Add Set"}
+                        onPress={() => handleAddSet(day.id, exercise.id)}
+                      />
+                    </View>
+                  ))}
+                </View>
+              ))}
+              <Button
+                title="Add Exercise"
+                onPress={() =>
+                  navigation.navigate("SearchExercise", {
+                    dayId: day.id,
+                    planId: route.params.id,
+                  })
+                }
+              />
               <Button title="Delete" onPress={() => handleDeleteDay(day.id)} />
             </View>
           ))}
