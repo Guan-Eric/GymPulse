@@ -54,8 +54,6 @@ function PlanScreen({ navigation }) {
       const docRef = await addDoc(collection(FIRESTORE_DB, "Plans"), {
         name: "New Plan",
         email: FIREBASE_AUTH.currentUser.email,
-        exercises: [],
-        days: 1,
       });
       const planDoc = doc(FIRESTORE_DB, `Plans/${docRef.id}`);
       await updateDoc(planDoc, { id: docRef.id });

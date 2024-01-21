@@ -11,13 +11,14 @@ import { darkMode } from "../styles/darkMode";
 import { lightMode } from "../styles/lightMode";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../firebaseConfig";
-import { updateDoc, getDoc, doc } from "firebase/firestore";
+import { updateDoc, getDoc, doc, collection, addDoc } from "firebase/firestore";
 
 function ViewPlanScreen({ route }) {
   Appearance.getColorScheme() == "light"
     ? (styles = lightMode)
     : (styles = darkMode);
   const [name, setName] = useState();
+  const [plan, setPlan] = useState();
   const [exercises, setExercises] = useState();
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
@@ -37,11 +38,18 @@ function ViewPlanScreen({ route }) {
   }, []);
   const handleSavePlan = async () => {
     const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.item.id}`);
-    updateDoc(planDoc, { name: name, exercises: exercises });
+    updateDoc(planDoc, { name: name });
+    //update for all days and all exercises
   };
   const handleAddDay = async () => {
     const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.item.id}`);
-    updateDoc(planDoc, { days: this + 1 });
+    const daysCollection = collection(planDoc, "Days");
+    const daysDocRef = await addDoc(daysCollection, {
+      name: "New Day",
+      planId: route.params.item.id,
+    });
+    const dayDoc = doc(FIRESTORE_DB, `Days/${daysDocRef.id}`);
+    await updateDoc(dayDoc, { id: daysDocRef.id });
   };
   return (
     <View style={styles.container}>
