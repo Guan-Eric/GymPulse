@@ -41,8 +41,8 @@ function AddExerciseScreen({ route, navigation }) {
     const exerciseDocRef = await addDoc(exerciseCollection, {
       name: exercise.name,
       dayId: route.params.dayId,
-      sets: [],
-      weight_duration: 0,
+      sets: [{ reps: 0, weight_duration: 0 }],
+      cardio: exercise.category == "cardio",
     });
     const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });

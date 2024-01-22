@@ -36,6 +36,7 @@ function ViewPlanScreen({ route, navigation }) {
         );
         const planData = planDoc.data();
         setPlan(planData);
+        setName(planData.name);
 
         const daysCollection = collection(planDoc.ref, "Days");
         const daysSnapshot = await getDocs(daysCollection);
@@ -53,6 +54,7 @@ function ViewPlanScreen({ route, navigation }) {
           daysData.push(dayData);
         }
         setDays(daysData);
+        console.log("plan");
       } catch (error) {
         console.error("Error fetching plan data:", error);
       }
@@ -78,14 +80,29 @@ function ViewPlanScreen({ route, navigation }) {
     setDays(daysData);
   };
 
-  const handleAddSet = async (dayId, exerciseId) => {
+  const handleAddSet = async (dayId, exerciseId, exercise, days) => {
     const exerciseDoc = doc(
       FIRESTORE_DB,
       `Plans/${route.params.id}/Days/${dayId}/Exercise/${exerciseId}`
     );
-    const currentSets = exerciseDoc.data().sets || [];
-    const newSets = [...currentSets, 1];
-    await updateDoc(exerciseDoc, { sets: newSets });
+    const exerciseDocSnap = await getDoc(exerciseDoc);
+
+    if (exerciseDocSnap.exists()) {
+      const currentSets = exerciseDocSnap.data().sets || [];
+      const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
+      await updateDoc(exerciseDoc, { sets: newSets });
+      const updatedDays = days.map((day) =>
+        day.id === dayId
+          ? {
+              ...day,
+              exercises: day.exercises.map((ex) =>
+                ex.id === exerciseId ? { ...ex, sets: newSets } : ex
+              ),
+            }
+          : day
+      );
+      setDays(updatedDays);
+    }
   };
 
   const handleDeleteDay = async (dayId) => {
@@ -102,32 +119,37 @@ function ViewPlanScreen({ route, navigation }) {
   };
   return (
     <View style={styles.container}>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <Button title="Save" onPress={handleSavePlan} />
         <Text style={styles.baseText}>Name</Text>
         <TextInput
           style={styles.input}
           onChangeText={(name) => setName(name)}
-          value={plan.name}
+          value={name}
         />
         <ScrollView>
           {days.map((day) => (
             <View key={day.id}>
               <Text style={styles.titleText}>{day.name}</Text>
-              {day.exercises.map((exercise) => (
-                <View key={exercise.id}>
-                  <Text>{exercise.name}</Text>
-                  {exercise.sets.map((reps, index) => (
-                    <View>
-                      <Text>{`Set ${index + 1} Reps: ${reps}`}</Text>
-                      <Buttom
-                        title={"Add Set"}
-                        onPress={() => handleAddSet(day.id, exercise.id)}
-                      />
-                    </View>
-                  ))}
-                </View>
-              ))}
+              {day.exercises &&
+                day.exercises.map((exercise) => (
+                  <View key={exercise.id}>
+                    <Text style={styles.baseText}>{exercise.name}</Text>
+                    {exercise.sets.map((sets, index) => (
+                      <Text style={styles.baseText}>{`Set ${index + 1} Reps: ${
+                        sets.reps
+                      } ${exercise.cardio ? `Duration: ` : `Weight: `} ${
+                        sets.weight_duration
+                      } `}</Text>
+                    ))}
+                    <Button
+                      title={"Add Set"}
+                      onPress={() =>
+                        handleAddSet(day.id, exercise.id, exercise, days)
+                      }
+                    />
+                  </View>
+                ))}
               <Button
                 title="Add Exercise"
                 onPress={() =>
