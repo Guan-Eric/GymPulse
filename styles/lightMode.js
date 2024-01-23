@@ -25,4 +25,9 @@ export const lightMode = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
 });

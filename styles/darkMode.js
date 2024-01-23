@@ -29,4 +29,9 @@ export const darkMode = StyleSheet.create({
     borderColor: "white",
     padding: 10,
   },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
 });

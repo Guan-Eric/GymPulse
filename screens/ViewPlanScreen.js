@@ -65,6 +65,21 @@ function ViewPlanScreen({ route, navigation }) {
   const handleSavePlan = async () => {
     const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.id}`);
     updateDoc(planDoc, { name: name });
+    for (const day of days) {
+      const dayDocRef = doc(
+        FIRESTORE_DB,
+        `Plans/${route.params.id}/Days/${day.id}`
+      );
+      await updateDoc(dayDocRef, { name: day.name });
+
+      for (const exercise of day.exercises) {
+        const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
+        await updateDoc(exerciseDocRef, {
+          name: exercise.name,
+          sets: exercise.sets,
+        });
+      }
+    }
   };
   const handleAddDay = async () => {
     const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.id}`);
@@ -117,6 +132,95 @@ function ViewPlanScreen({ route, navigation }) {
       console.error("Error deleting day:", error);
     }
   };
+  const updateSets = (dayIndex, exerciseIndex, setIndex, property, value) => {
+    setDays((prevDays) =>
+      prevDays.map((prevDay, dIndex) =>
+        dIndex === dayIndex
+          ? {
+              ...prevDay,
+              exercises: prevDay.exercises.map((prevExercise, eIndex) =>
+                eIndex === exerciseIndex
+                  ? {
+                      ...prevExercise,
+                      sets: prevExercise.sets.map((prevSet, sIndex) =>
+                        sIndex === setIndex
+                          ? { ...prevSet, [property]: value }
+                          : prevSet
+                      ),
+                    }
+                  : prevExercise
+              ),
+            }
+          : prevDay
+      )
+    );
+  };
+  const updateDayName = (dayIndex, newName) => {
+    setDays((days) =>
+      days.map((day, index) =>
+        index === dayIndex ? { ...day, name: newName } : day
+      )
+    );
+  };
+  const renderSetInputs = (sets, exerciseIndex, dayIndex, exercise) => {
+    return (
+      <View>
+        <View style={styles.setRow}>
+          {!exercise.cardio && (
+            <View>
+              <Text style={styles.baseText}>Reps</Text>
+              <Text style={styles.baseText}>Weight</Text>
+            </View>
+          )}
+          {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
+        </View>
+        {sets.map((set, setIndex) => (
+          <View key={setIndex} style={styles.setRow}>
+            <Text style={styles.baseText}>{`Set ${setIndex + 1}`}</Text>
+            {!exercise.cardio && (
+              <TextInput
+                style={styles.input}
+                onChangeText={(newReps) =>
+                  updateSets(dayIndex, exerciseIndex, setIndex, "reps", newReps)
+                }
+                value={set.reps.toString()}
+              />
+            )}
+            {!exercise.cardio && (
+              <TextInput
+                style={styles.input}
+                onChangeText={(newWeight) =>
+                  updateSets(
+                    dayIndex,
+                    exerciseIndex,
+                    setIndex,
+                    "weight_duration",
+                    newWeight
+                  )
+                }
+                value={set.weight_duration.toString()}
+              />
+            )}
+            {exercise.cardio && (
+              <TextInput
+                style={styles.input}
+                onChangeText={(newDuration) =>
+                  updateSets(
+                    dayIndex,
+                    exerciseIndex,
+                    setIndex,
+                    "weight_duration",
+                    newDuration
+                  )
+                }
+                value={set.weight_duration.toString()}
+              />
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -124,24 +228,30 @@ function ViewPlanScreen({ route, navigation }) {
         <Text style={styles.baseText}>Name</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(name) => setName(name)}
+          onChangeText={(newName) => setName(newName)}
           value={name}
         />
         <ScrollView>
-          {days.map((day) => (
+          {days.map((day, dayIndex) => (
             <View key={day.id}>
               <Text style={styles.titleText}>{day.name}</Text>
+              <TextInput
+                style={styles.input}
+                onChangeText={(newDayName) =>
+                  updateDayName(dayIndex, newDayName)
+                }
+                value={day.name}
+              />
               {day.exercises &&
-                day.exercises.map((exercise) => (
+                day.exercises.map((exercise, exerciseIndex) => (
                   <View key={exercise.id}>
                     <Text style={styles.baseText}>{exercise.name}</Text>
-                    {exercise.sets.map((sets, index) => (
-                      <Text style={styles.baseText}>{`Set ${index + 1} Reps: ${
-                        sets.reps
-                      } ${exercise.cardio ? `Duration: ` : `Weight: `} ${
-                        sets.weight_duration
-                      } `}</Text>
-                    ))}
+                    {renderSetInputs(
+                      exercise.sets,
+                      exerciseIndex,
+                      dayIndex,
+                      exercise
+                    )}
                     <Button
                       title={"Add Set"}
                       onPress={() =>
