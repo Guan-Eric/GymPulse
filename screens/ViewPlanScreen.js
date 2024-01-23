@@ -167,7 +167,7 @@ function ViewPlanScreen({ route, navigation }) {
       <View>
         <View style={styles.setRow}>
           {!exercise.cardio && (
-            <View>
+            <View style={styles.setRow}>
               <Text style={styles.baseText}>Reps</Text>
               <Text style={styles.baseText}>Weight</Text>
             </View>
