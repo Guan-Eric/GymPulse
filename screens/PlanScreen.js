@@ -34,7 +34,10 @@ function PlanScreen({ navigation }) {
     const fetchPlansFromFirestore = async () => {
       try {
         setUserId(FIREBASE_AUTH.currentUser.uid);
-        const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
+        const userDocRef = doc(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}`
+        );
         const userDocSnapshot = await getDoc(userDocRef);
         if (!userDocSnapshot.exists()) {
           await setDoc(userDocRef, {
