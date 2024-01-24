@@ -35,7 +35,7 @@ function AddExerciseScreen({ route, navigation }) {
   const handleAddExercise = async () => {
     const dayDoc = doc(
       FIRESTORE_DB,
-      `Plans/${route.params.planId}/Days/${route.params.dayId}`
+      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
     );
     const exerciseCollection = collection(dayDoc, "Exercise");
     const exerciseDocRef = await addDoc(exerciseCollection, {
@@ -47,7 +47,10 @@ function AddExerciseScreen({ route, navigation }) {
     const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });
     navigation.navigate("Home");
-    navigation.navigate("ViewPlan", { id: route.params.planId });
+    navigation.navigate("ViewPlan", {
+      planId: route.params.planId,
+      userId: route.params.userId,
+    });
   };
   return (
     <View>

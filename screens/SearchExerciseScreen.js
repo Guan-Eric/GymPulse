@@ -64,6 +64,7 @@ function SearchExerciseScreen({ navigation, route }) {
               onPress={() =>
                 navigation.navigate("AddExercise", {
                   exercise: item,
+                  userId: route.params.userId,
                   dayId: route.params.dayId,
                   planId: route.params.planId,
                 })

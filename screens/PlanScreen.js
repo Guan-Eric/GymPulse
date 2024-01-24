@@ -14,12 +14,13 @@ import { FIREBASE_AUTH } from "../firebaseConfig";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import {
   collection,
-  query,
   onSnapshot,
-  where,
+  setDoc,
   addDoc,
   doc,
   updateDoc,
+  getDocs,
+  getDoc,
 } from "firebase/firestore";
 
 function PlanScreen({ navigation }) {
@@ -27,35 +28,48 @@ function PlanScreen({ navigation }) {
     ? (styles = lightMode)
     : (styles = darkMode);
   const [plans, setPlans] = useState([]);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const fetchExerciseFromFirestore = () => {
-      const collectionRef = collection(FIRESTORE_DB, "Plans");
-      const queryRef = query(
-        collectionRef,
-        where("email", "==", FIREBASE_AUTH.currentUser.email)
-      );
+    const fetchPlansFromFirestore = async () => {
+      try {
+        setUserId(FIREBASE_AUTH.currentUser.uid);
+        const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
+        const userDocSnapshot = await getDoc(userDocRef);
+        if (!userDocSnapshot.exists()) {
+          await setDoc(userDocRef, {
+            name: "",
+            email: FIREBASE_AUTH.currentUser.email,
+            darkMode: false,
+            metricUnits: false,
+          });
+        }
+        const plansCollectionRef = collection(userDocRef, "Plans");
 
-      const unsubscribe = onSnapshot(queryRef, (snapshot) => {
-        const data = [];
-        snapshot.forEach((doc) => {
-          data.push(doc.data());
+        const unsubscribe = onSnapshot(plansCollectionRef, (snapshot) => {
+          const data = snapshot.docs.map((doc) => doc.data());
+          setPlans(data);
         });
-        setPlans(data);
-        console.log("plans");
-      });
 
-      return () => unsubscribe();
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error fetching plans from Firestore:", error);
+      }
     };
-    fetchExerciseFromFirestore();
+
+    fetchPlansFromFirestore();
   }, []);
+
   const handleCreatePlan = async () => {
     try {
-      const docRef = await addDoc(collection(FIRESTORE_DB, "Plans"), {
-        name: "New Plan",
-        email: FIREBASE_AUTH.currentUser.email,
-      });
-      const planDoc = doc(FIRESTORE_DB, `Plans/${docRef.id}`);
+      const docRef = await addDoc(
+        collection(FIRESTORE_DB, `Users/${userId}/Plans`),
+        {
+          name: "New Plan",
+          userId: userId,
+        }
+      );
+      const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${docRef.id}`);
       await updateDoc(planDoc, { id: docRef.id });
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -73,7 +87,12 @@ function PlanScreen({ navigation }) {
             plans.map((item) => (
               <Pressable
                 key={item.name}
-                onPress={() => navigation.navigate("ViewPlan", { id: item.id })}
+                onPress={() =>
+                  navigation.navigate("ViewPlan", {
+                    planId: item.id,
+                    userId: userId,
+                  })
+                }
               >
                 <Text style={styles.titleText}>{item.name}</Text>
               </Pressable>

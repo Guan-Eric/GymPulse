@@ -28,11 +28,23 @@ function ViewPlanScreen({ route, navigation }) {
   const [name, setName] = useState("");
   const [plan, setPlan] = useState({});
   const [days, setDays] = useState([]);
+  const [isDirty, setIsDirty] = useState(false); // Track if changes are made
+
+  useEffect(() => {
+    if (isDirty) {
+      handleSavePlan();
+      setIsDirty(false);
+    }
+  }, [name, days, isDirty]);
+
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
       try {
         const planDoc = await getDoc(
-          doc(FIRESTORE_DB, `Plans/${route.params.id}`)
+          doc(
+            FIRESTORE_DB,
+            `Users/${route.params.userId}/Plans/${route.params.planId}`
+          )
         );
         const planData = planDoc.data();
         setPlan(planData);
@@ -54,7 +66,6 @@ function ViewPlanScreen({ route, navigation }) {
           daysData.push(dayData);
         }
         setDays(daysData);
-        console.log("plan");
       } catch (error) {
         console.error("Error fetching plan data:", error);
       }
@@ -62,14 +73,18 @@ function ViewPlanScreen({ route, navigation }) {
 
     fetchPlanFromFirestore();
   }, []);
+  const setNameAndSave = (newName) => {
+    setName(newName);
+    setIsDirty(true);
+  };
   const handleSavePlan = async () => {
-    const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.id}`);
-    updateDoc(planDoc, { name: name });
+    const planDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${route.params.userId}/Plans/${route.params.planId}`
+    );
+    updateDoc(planDocRef, { name: name });
     for (const day of days) {
-      const dayDocRef = doc(
-        FIRESTORE_DB,
-        `Plans/${route.params.id}/Days/${day.id}`
-      );
+      const dayDocRef = doc(planDocRef, `Days/${day.id}`);
       await updateDoc(dayDocRef, { name: day.name });
 
       for (const exercise of day.exercises) {
@@ -82,23 +97,32 @@ function ViewPlanScreen({ route, navigation }) {
     }
   };
   const handleAddDay = async () => {
-    const planDoc = doc(FIRESTORE_DB, `Plans/${route.params.id}`);
-    const daysCollection = collection(planDoc, "Days");
-    const daysDocRef = await addDoc(daysCollection, {
-      name: "New Day",
-      planId: route.params.id,
-    });
-    const dayDoc = doc(daysCollection, daysDocRef.id);
-    await updateDoc(dayDoc, { id: daysDocRef.id });
-    const daysSnapshot = await getDocs(daysCollection);
-    const daysData = daysSnapshot.docs.map((doc) => doc.data());
-    setDays(daysData);
+    try {
+      const planDoc = doc(
+        FIRESTORE_DB,
+        `Users/${route.params.userId}/Plans/${route.params.planId}`
+      );
+      const daysCollection = collection(planDoc, "Days");
+      const daysDocRef = await addDoc(daysCollection, {
+        name: "New Day",
+        planId: route.params.planId,
+      });
+      const dayDoc = doc(daysCollection, daysDocRef.id);
+      await updateDoc(dayDoc, { id: daysDocRef.id });
+      const newDayDoc = await getDoc(doc(daysCollection, daysDocRef.id));
+      const newDayData = newDayDoc.data();
+
+      setDays((prevDays) => [...prevDays, newDayData]);
+      setIsDirty(true);
+    } catch (error) {
+      console.error("Error adding new day:", error);
+    }
   };
 
   const handleAddSet = async (dayId, exerciseId, exercise, days) => {
     const exerciseDoc = doc(
       FIRESTORE_DB,
-      `Plans/${route.params.id}/Days/${dayId}/Exercise/${exerciseId}`
+      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
     );
     const exerciseDocSnap = await getDoc(exerciseDoc);
 
@@ -117,6 +141,7 @@ function ViewPlanScreen({ route, navigation }) {
           : day
       );
       setDays(updatedDays);
+      setIsDirty(true);
     }
   };
 
@@ -124,13 +149,66 @@ function ViewPlanScreen({ route, navigation }) {
     try {
       const dayDocRef = doc(
         FIRESTORE_DB,
-        `Plans/${route.params.id}/Days/${dayId}`
+        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}`
       );
+      const exercisesCollectionRef = collection(dayDocRef, "Exercise");
+      const exercisesQuerySnapshot = await getDocs(exercisesCollectionRef);
+
+      exercisesQuerySnapshot.forEach(async (exerciseDoc) => {
+        await deleteDoc(exerciseDoc.ref);
+      });
       await deleteDoc(dayDocRef);
       setDays((prevDays) => prevDays.filter((day) => day.id !== dayId));
+      setIsDirty(true);
     } catch (error) {
       console.error("Error deleting day:", error);
     }
+  };
+  const handleDeleteExercise = async (dayId, exerciseId) => {
+    try {
+      const exerciseDocRef = doc(
+        FIRESTORE_DB,
+        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
+      );
+      await deleteDoc(exerciseDocRef);
+      setDays((prevDays) =>
+        prevDays.map((prevDay) =>
+          prevDay.id === dayId
+            ? {
+                ...prevDay,
+                exercises: prevDay.exercises.filter(
+                  (exercise) => exercise.id !== exerciseId
+                ),
+              }
+            : prevDay
+        )
+      );
+      setIsDirty(true);
+    } catch (error) {
+      console.error("Error deleting exercise:", error);
+    }
+  };
+  const handleDeleteSet = (dayIndex, exerciseIndex, setIndex) => {
+    setDays((prevDays) =>
+      prevDays.map((prevDay, dIndex) =>
+        dIndex === dayIndex
+          ? {
+              ...prevDay,
+              exercises: prevDay.exercises.map((prevExercise, eIndex) =>
+                eIndex === exerciseIndex
+                  ? {
+                      ...prevExercise,
+                      sets: prevExercise.sets.filter(
+                        (set, sIndex) => sIndex !== setIndex
+                      ),
+                    }
+                  : prevExercise
+              ),
+            }
+          : prevDay
+      )
+    );
+    setIsDirty(true);
   };
   const updateSets = (dayIndex, exerciseIndex, setIndex, property, value) => {
     setDays((prevDays) =>
@@ -154,6 +232,7 @@ function ViewPlanScreen({ route, navigation }) {
           : prevDay
       )
     );
+    setIsDirty(true);
   };
   const updateDayName = (dayIndex, newName) => {
     setDays((days) =>
@@ -161,6 +240,7 @@ function ViewPlanScreen({ route, navigation }) {
         index === dayIndex ? { ...day, name: newName } : day
       )
     );
+    setIsDirty(true);
   };
   const renderSetInputs = (sets, exerciseIndex, dayIndex, exercise) => {
     return (
@@ -179,6 +259,7 @@ function ViewPlanScreen({ route, navigation }) {
             <Text style={styles.baseText}>{`Set ${setIndex + 1}`}</Text>
             {!exercise.cardio && (
               <TextInput
+                keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newReps) =>
                   updateSets(dayIndex, exerciseIndex, setIndex, "reps", newReps)
@@ -188,6 +269,7 @@ function ViewPlanScreen({ route, navigation }) {
             )}
             {!exercise.cardio && (
               <TextInput
+                keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newWeight) =>
                   updateSets(
@@ -203,6 +285,7 @@ function ViewPlanScreen({ route, navigation }) {
             )}
             {exercise.cardio && (
               <TextInput
+                keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newDuration) =>
                   updateSets(
@@ -216,6 +299,10 @@ function ViewPlanScreen({ route, navigation }) {
                 value={set.weight_duration.toString()}
               />
             )}
+            <Button
+              title="Delete Set"
+              onPress={() => handleDeleteSet(dayIndex, exerciseIndex, setIndex)}
+            />
           </View>
         ))}
       </View>
@@ -224,11 +311,10 @@ function ViewPlanScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Button title="Save" onPress={handleSavePlan} />
         <Text style={styles.baseText}>Name</Text>
         <TextInput
           style={styles.input}
-          onChangeText={(newName) => setName(newName)}
+          onChangeText={(newName) => setNameAndSave(newName)}
           value={name}
         />
         <ScrollView>
@@ -246,6 +332,10 @@ function ViewPlanScreen({ route, navigation }) {
                 day.exercises.map((exercise, exerciseIndex) => (
                   <View key={exercise.id}>
                     <Text style={styles.baseText}>{exercise.name}</Text>
+                    <Button
+                      title="Delete Exercise"
+                      onPress={() => handleDeleteExercise(day.id, exercise.id)}
+                    />
                     {renderSetInputs(
                       exercise.sets,
                       exerciseIndex,
@@ -264,12 +354,16 @@ function ViewPlanScreen({ route, navigation }) {
                 title="Add Exercise"
                 onPress={() =>
                   navigation.navigate("SearchExercise", {
+                    userId: route.params.userId,
                     dayId: day.id,
-                    planId: route.params.id,
+                    planId: route.params.planId,
                   })
                 }
               />
-              <Button title="Delete" onPress={() => handleDeleteDay(day.id)} />
+              <Button
+                title="Delete Day"
+                onPress={() => handleDeleteDay(day.id)}
+              />
             </View>
           ))}
           <Button title="Add Day" onPress={handleAddDay} />
