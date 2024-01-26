@@ -7,8 +7,7 @@ import {
   Appearance,
   ScrollView,
 } from "react-native";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { FIRESTORE_DB } from "../firebaseConfig";
@@ -24,9 +23,9 @@ import {
 } from "firebase/firestore";
 
 function PlanScreen({ navigation }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setSetyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   const [plans, setPlans] = useState([]);
   const [userId, setUserId] = useState("");
 
@@ -43,7 +42,7 @@ function PlanScreen({ navigation }) {
           await setDoc(userDocRef, {
             name: "",
             email: FIREBASE_AUTH.currentUser.email,
-            darkMode: false,
+            darkMode: "light",
             metricUnits: false,
           });
         }

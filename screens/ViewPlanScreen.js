@@ -7,8 +7,7 @@ import {
   Appearance,
   ScrollView,
 } from "react-native";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import {
@@ -22,13 +21,14 @@ import {
 } from "firebase/firestore";
 
 function ViewPlanScreen({ route, navigation }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setSetyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   const [name, setName] = useState("");
   const [plan, setPlan] = useState({});
   const [days, setDays] = useState([]);
-  const [isDirty, setIsDirty] = useState(false); // Track if changes are made
+  const [isDirty, setIsDirty] = useState(false);
+  const [metric, setMetric] = useState();
 
   useEffect(() => {
     if (isDirty) {
@@ -40,6 +40,11 @@ function ViewPlanScreen({ route, navigation }) {
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
       try {
+        const userDoc = await getDoc(
+          doc(FIRESTORE_DB, `Users/${route.params.userId}`)
+        );
+        const userData = userDoc.data();
+        setMetric(userData.metricUnits);
         const planDoc = await getDoc(
           doc(
             FIRESTORE_DB,
@@ -267,6 +272,7 @@ function ViewPlanScreen({ route, navigation }) {
                 value={set.reps.toString()}
               />
             )}
+            {!exercise.cardio && <Text>x</Text>}
             {!exercise.cardio && (
               <TextInput
                 keyboardType="numeric"
@@ -283,6 +289,7 @@ function ViewPlanScreen({ route, navigation }) {
                 value={set.weight_duration.toString()}
               />
             )}
+            {!exercise.cardio && <Text>{metric ? "kg" : "lbs"}</Text>}
             {exercise.cardio && (
               <TextInput
                 keyboardType="numeric"

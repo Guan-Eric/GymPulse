@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -7,13 +7,12 @@ import {
   Button,
   Appearance,
 } from "react-native";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 
 function WelcomeScreen({ navigation }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setSetyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>

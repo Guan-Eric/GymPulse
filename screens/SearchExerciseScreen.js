@@ -8,16 +8,15 @@ import {
   Appearance,
 } from "react-native";
 import { SearchBar } from "@rneui/themed";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import { collection, getDocs, onSnapshot, where } from "firebase/firestore";
 
 function SearchExerciseScreen({ navigation, route }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setSetyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   const [search, setSearch] = useState("");
   const [exercises, setExecercises] = useState([]);
   useEffect(() => {

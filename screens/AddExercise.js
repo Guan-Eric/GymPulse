@@ -8,8 +8,7 @@ import {
   Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import {
   updateDoc,
@@ -22,9 +21,6 @@ import {
 } from "firebase/firestore";
 
 function AddExerciseScreen({ route, navigation }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
   const exercise = route.params.exercise;
   const instructions = exercise.instructions.map((item, index) => (
     <Text key={index}>{item}</Text>

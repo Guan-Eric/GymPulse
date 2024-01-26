@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button, Appearance } from "react-native";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Switch } from "@rneui/themed";
+import { RadioGroup } from "react-native-radio-buttons-group";
+import { CheckBox } from "@rneui/base";
 import {
   collection,
   onSnapshot,
@@ -17,11 +18,10 @@ import {
 } from "firebase/firestore";
 
 function SettingScreen() {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setStyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   const [metric, setMetric] = useState();
-  const [dark, setDark] = useState();
   useEffect(() => {
     const fetchUserFromFirestore = async () => {
       const userDocRef = doc(
@@ -34,35 +34,70 @@ function SettingScreen() {
     };
     fetchUserFromFirestore();
   }, []);
-  const setDarkMode = async () => {
-    setDark(!dark);
-    Appearance.setColorScheme(dark ? "dark" : "light");
+  const setDarkMode = async (value) => {
+    setStyles(value);
+    Appearance.setColorScheme(value);
     const userDocRef = doc(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}`
     );
     await updateDoc(userDocRef, {
-      darkMode: dark,
+      darkMode: value,
     });
   };
-  const setMetricMode = async () => {
-    setMetric(!metric);
+  const setMetricMode = async (value) => {
+    setMetric(value);
     const userDocRef = doc(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}`
     );
     await updateDoc(userDocRef, {
-      metricUnits: metric,
+      metricUnits: value,
     });
   };
   return (
     <View style={styles.container}>
       <SafeAreaView>
         <Text>SettingScreen</Text>
-        <Switch value={dark} onValueChange={(value) => setDarkMode(value)} />
-        <Switch
-          value={metric}
-          onValueChange={(value) => setMetricMode(value)}
+        <CheckBox
+          checked={styles == "dark"}
+          onPress={() => setDarkMode("dark")}
+          iconType="material-community"
+          checkedIcon="radiobox-marked"
+          uncheckedIcon="radiobox-blank"
+          title={"Dark Theme"}
+        />
+        <CheckBox
+          checked={styles == "light"}
+          onPress={() => setDarkMode("light")}
+          iconType="material-community"
+          checkedIcon="radiobox-marked"
+          uncheckedIcon="radiobox-blank"
+          title={"Light Theme"}
+        />
+        <CheckBox
+          checked={styles == null}
+          onPress={() => setDarkMode(null)}
+          iconType="material-community"
+          checkedIcon="radiobox-marked"
+          uncheckedIcon="radiobox-blank"
+          title={"Use Device Settings"}
+        />
+        <CheckBox
+          checked={metric == true}
+          onPress={() => setMetricMode(true)}
+          iconType="material-community"
+          checkedIcon="radiobox-marked"
+          uncheckedIcon="radiobox-blank"
+          title={"Metric Units"}
+        />
+        <CheckBox
+          checked={metric == false}
+          onPress={() => setMetricMode(false)}
+          iconType="material-community"
+          checkedIcon="radiobox-marked"
+          uncheckedIcon="radiobox-blank"
+          title={"Imperial Units"}
         />
         <Button onPress={() => FIREBASE_AUTH.signOut()} title="Log Out" />
       </SafeAreaView>

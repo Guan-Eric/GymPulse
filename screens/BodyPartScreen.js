@@ -8,15 +8,14 @@ import {
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import { collection, query, getDocs, where } from "firebase/firestore";
 
 function BodyPartScreen({ route, navigation }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setSetyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   const [exercises, setExercises] = useState([]);
   const bodyPart = route.params.item.name.toLowerCase();
 

@@ -7,14 +7,13 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { darkMode } from "../styles/darkMode";
-import { lightMode } from "../styles/lightMode";
+import { theme } from "../styles/Theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function ExerciseListScreen({ navigation }) {
-  Appearance.getColorScheme() == "light"
-    ? (styles = lightMode)
-    : (styles = darkMode);
+  const [styles, setSetyles] = useState(
+    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
+  );
   const [bodyPart, setBodyPart] = useState([
     { name: "Chest", key: "1" },
     { name: "Middle Back", key: "2" },
