@@ -7,15 +7,12 @@ import {
   Button,
   Appearance,
 } from "react-native";
-import { theme } from "../styles/Theme";
+import { StyleSheet } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 
 function SignInScreen() {
-  const [styles, setSetyles] = useState(
-    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
-  );
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,5 +57,34 @@ function SignInScreen() {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+});
 export default SignInScreen;

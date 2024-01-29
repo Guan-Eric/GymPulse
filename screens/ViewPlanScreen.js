@@ -7,7 +7,7 @@ import {
   Appearance,
   ScrollView,
 } from "react-native";
-import { theme } from "../styles/Theme";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../firebaseConfig";
 import {
@@ -21,14 +21,11 @@ import {
 } from "firebase/firestore";
 
 function ViewPlanScreen({ route, navigation }) {
-  const [styles, setSetyles] = useState(
-    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
-  );
   const [name, setName] = useState("");
   const [plan, setPlan] = useState({});
   const [days, setDays] = useState([]);
   const [isDirty, setIsDirty] = useState(false);
-  const [metric, setMetric] = useState();
+  const [isMetric, setIsMetric] = useState();
 
   useEffect(() => {
     if (isDirty) {
@@ -44,7 +41,7 @@ function ViewPlanScreen({ route, navigation }) {
           doc(FIRESTORE_DB, `Users/${route.params.userId}`)
         );
         const userData = userDoc.data();
-        setMetric(userData.metricUnits);
+        setIsMetric(userData.metricUnits);
         const planDoc = await getDoc(
           doc(
             FIRESTORE_DB,
@@ -289,7 +286,7 @@ function ViewPlanScreen({ route, navigation }) {
                 value={set.weight_duration.toString()}
               />
             )}
-            {!exercise.cardio && <Text>{metric ? "kg" : "lbs"}</Text>}
+            {!exercise.cardio && <Text>{isMetric ? "kg" : "lbs"}</Text>}
             {exercise.cardio && (
               <TextInput
                 keyboardType="numeric"
@@ -379,5 +376,34 @@ function ViewPlanScreen({ route, navigation }) {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+});
 export default ViewPlanScreen;

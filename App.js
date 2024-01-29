@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useColorScheme } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
+import { ThemeProvider, createTheme } from "@rneui/themed";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import PlanScreen from "./screens/PlanScreen";
@@ -18,6 +20,19 @@ import SearchExerciseScreen from "./screens/SearchExerciseScreen";
 import ViewPlanScreen from "./screens/ViewPlanScreen";
 import AddExerciseScreen from "./screens/AddExercise";
 
+const theme = createTheme({
+  lightColors: {
+    primary: "#3490de",
+    text: "black",
+    background: "white",
+  },
+  darkColors: {
+    primary: "#3490de",
+    text: "white",
+    background: "#181818",
+  },
+  mode: "light" | "dark",
+});
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -73,7 +88,7 @@ function HomeScreen() {
 
 function Navigator() {
   const [user, setUser] = useState(null);
-
+  theme.mode = useColorScheme();
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       setUser(user);
@@ -81,62 +96,64 @@ function Navigator() {
   });
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="WelcomeScreen">
-        {user ? (
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="WelcomeScreen">
+          {user ? (
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{ headerShown: false, gestureEnabled: false }}
+            />
+          ) : (
+            <Stack.Screen
+              name="Welcome"
+              component={WelcomeScreen}
+              options={{ headerShown: false }}
+            />
+          )}
+          {user == null ? (
+            <Stack.Screen
+              name="SignIn"
+              component={SignInScreen}
+              options={{ headerShown: false }}
+            />
+          ) : null}
+          {user == null ? (
+            <Stack.Screen
+              name="SignUp"
+              component={SignUpScreen}
+              options={{ headerShown: false }}
+            />
+          ) : null}
           <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{ headerShown: false, gestureEnabled: false }}
-          />
-        ) : (
-          <Stack.Screen
-            name="Welcome"
-            component={WelcomeScreen}
+            name="BodyPart"
+            component={BodyPartScreen}
             options={{ headerShown: false }}
           />
-        )}
-        {user == null ? (
           <Stack.Screen
-            name="SignIn"
-            component={SignInScreen}
+            name="Exercise"
+            component={ExerciseScreen}
             options={{ headerShown: false }}
           />
-        ) : null}
-        {user == null ? (
           <Stack.Screen
-            name="SignUp"
-            component={SignUpScreen}
+            name="SearchExercise"
+            component={SearchExerciseScreen}
             options={{ headerShown: false }}
           />
-        ) : null}
-        <Stack.Screen
-          name="BodyPart"
-          component={BodyPartScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Exercise"
-          component={ExerciseScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SearchExercise"
-          component={SearchExerciseScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="ViewPlan"
-          component={ViewPlanScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="AddExercise"
-          component={AddExerciseScreen}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen
+            name="ViewPlan"
+            component={ViewPlanScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AddExercise"
+            component={AddExerciseScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
 export default Navigator;

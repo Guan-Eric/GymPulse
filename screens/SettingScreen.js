@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button, Appearance } from "react-native";
-import { theme } from "../styles/Theme";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Switch } from "@rneui/themed";
 import { RadioGroup } from "react-native-radio-buttons-group";
 import { CheckBox } from "@rneui/base";
+import { useThemeMode, useTheme } from "@rneui/themed";
 import {
   collection,
   onSnapshot,
@@ -18,10 +18,10 @@ import {
 } from "firebase/firestore";
 
 function SettingScreen() {
-  const [styles, setStyles] = useState(
-    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
-  );
-  const [metric, setMetric] = useState();
+  const { theme } = useTheme();
+  const { mode, setMode } = useThemeMode();
+  const [isDark, setIsDark] = useState();
+  const [isMetric, setIsMetric] = useState();
   useEffect(() => {
     const fetchUserFromFirestore = async () => {
       const userDocRef = doc(
@@ -29,14 +29,14 @@ function SettingScreen() {
         `Users/${FIREBASE_AUTH.currentUser.uid}`
       );
       const userDocSnapshot = await getDoc(userDocRef);
-      setDark(userDocSnapshot.data().darkMode);
-      setMetric(userDocSnapshot.data().metricUnits);
+      setIsDark(userDocSnapshot.data().darkMode);
+      setIsMetric(userDocSnapshot.data().metricUnits);
     };
     fetchUserFromFirestore();
   }, []);
   const setDarkMode = async (value) => {
-    setStyles(value);
-    Appearance.setColorScheme(value);
+    setMode(value ? "dark" : "light");
+    setIsDark(value);
     const userDocRef = doc(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}`
@@ -46,7 +46,7 @@ function SettingScreen() {
     });
   };
   const setMetricMode = async (value) => {
-    setMetric(value);
+    setIsMetric(value);
     const userDocRef = doc(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}`
@@ -56,35 +56,29 @@ function SettingScreen() {
     });
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView>
         <Text>SettingScreen</Text>
         <CheckBox
-          checked={styles == "dark"}
-          onPress={() => setDarkMode("dark")}
+          checked={isDark == true}
+          onPress={() => setDarkMode(true)}
           iconType="material-community"
           checkedIcon="radiobox-marked"
           uncheckedIcon="radiobox-blank"
           title={"Dark Theme"}
         />
         <CheckBox
-          checked={styles == "light"}
-          onPress={() => setDarkMode("light")}
+          checked={isDark == false}
+          onPress={() => setDarkMode(false)}
           iconType="material-community"
           checkedIcon="radiobox-marked"
           uncheckedIcon="radiobox-blank"
           title={"Light Theme"}
         />
         <CheckBox
-          checked={styles == null}
-          onPress={() => setDarkMode(null)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Use Device Settings"}
-        />
-        <CheckBox
-          checked={metric == true}
+          checked={isMetric == true}
           onPress={() => setMetricMode(true)}
           iconType="material-community"
           checkedIcon="radiobox-marked"
@@ -92,7 +86,7 @@ function SettingScreen() {
           title={"Metric Units"}
         />
         <CheckBox
-          checked={metric == false}
+          checked={isMetric == false}
           onPress={() => setMetricMode(false)}
           iconType="material-community"
           checkedIcon="radiobox-marked"
@@ -104,5 +98,34 @@ function SettingScreen() {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+});
 export default SettingScreen;

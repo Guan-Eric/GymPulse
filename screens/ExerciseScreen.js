@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Appearance, Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { theme } from "../styles/Theme";
+import { StyleSheet } from "react-native";
 
 function ExerciseScreen({ route }) {
   const exercise = route.params.item;
@@ -37,5 +37,34 @@ function ExerciseScreen({ route }) {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+});
 export default ExerciseScreen;

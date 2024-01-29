@@ -1,3 +1,4 @@
+import { useTheme } from "@rneui/themed";
 import React, { useState } from "react";
 import {
   SafeAreaView,
@@ -6,15 +7,15 @@ import {
   Text,
   Button,
   Appearance,
+  StyleSheet,
 } from "react-native";
-import { theme } from "../styles/Theme";
 
 function WelcomeScreen({ navigation }) {
-  const [styles, setSetyles] = useState(
-    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
-  );
+  const { theme } = useTheme();
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView style={styles.container}>
         <Image
           style={{
@@ -32,5 +33,34 @@ function WelcomeScreen({ navigation }) {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+});
 export default WelcomeScreen;

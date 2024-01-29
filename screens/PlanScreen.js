@@ -7,7 +7,7 @@ import {
   Appearance,
   ScrollView,
 } from "react-native";
-import { theme } from "../styles/Theme";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { FIRESTORE_DB } from "../firebaseConfig";
@@ -23,11 +23,9 @@ import {
 } from "firebase/firestore";
 
 function PlanScreen({ navigation }) {
-  const [styles, setSetyles] = useState(
-    Appearance.getColorScheme() == "light" ? theme.lightMode : theme.darkMode
-  );
   const [plans, setPlans] = useState([]);
   const [userId, setUserId] = useState("");
+  const [isDark, setIsDark] = useState();
 
   useEffect(() => {
     const fetchPlansFromFirestore = async () => {
@@ -38,11 +36,14 @@ function PlanScreen({ navigation }) {
           `Users/${FIREBASE_AUTH.currentUser.uid}`
         );
         const userDocSnapshot = await getDoc(userDocRef);
+        const userData = userDocSnapshot.data();
+        setIsDark(userData.darkMode);
+
         if (!userDocSnapshot.exists()) {
           await setDoc(userDocRef, {
             name: "",
             email: FIREBASE_AUTH.currentUser.email,
-            darkMode: "light",
+            darkMode: false,
             metricUnits: false,
           });
         }
@@ -105,5 +106,34 @@ function PlanScreen({ navigation }) {
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
+  },
+});
 export default PlanScreen;
