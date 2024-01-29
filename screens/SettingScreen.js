@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button, Appearance } from "react-native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Switch } from "@rneui/themed";
-import { RadioGroup } from "react-native-radio-buttons-group";
 import { CheckBox } from "@rneui/base";
 import { useThemeMode, useTheme } from "@rneui/themed";
 import {
