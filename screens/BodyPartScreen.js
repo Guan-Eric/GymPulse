@@ -52,14 +52,6 @@ function BodyPartScreen({ route, navigation }) {
                 key={item.key}
                 onPress={() => navigation.navigate("Exercise", { item })}
               >
-                <Image
-                  source={{ uri: item.images[0] }}
-                  style={{
-                    resizeMode: "cover",
-                    height: 150,
-                    width: 150,
-                  }}
-                />
                 <Text style={styles.baseText}>{item.name}</Text>
               </Pressable>
             ))}
