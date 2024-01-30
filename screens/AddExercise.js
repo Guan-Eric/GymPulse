@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../firebaseConfig";
+import { ref, getDownloadURL } from "firebase/storage";
+import { FIREBASE_STR } from "../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -21,7 +23,21 @@ import {
 } from "firebase/firestore";
 
 function AddExerciseScreen({ route, navigation }) {
+  const [imageUrl, setImageUrl] = useState("");
   const exercise = route.params.exercise;
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const imageRef = ref(FIREBASE_STR, `${exercise.id}_0.jpg`);
+        const url = await getDownloadURL(imageRef);
+        setImageUrl(url);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, []);
   const instructions = exercise.instructions.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
@@ -52,7 +68,7 @@ function AddExerciseScreen({ route, navigation }) {
     <View>
       <SafeAreaView>
         <Image
-          source={{ uri: exercise.images[0] }}
+          source={{ uri: imageUrl }}
           style={{
             resizeMode: "cover",
             height: 150,
