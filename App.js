@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
 import { ThemeProvider, createTheme } from "@rneui/themed";
+import { FIREBASE_AUTH } from "./firebaseConfig";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import SignInScreen from "./screens/SignInScreen";
 import PlanScreen from "./screens/PlanScreen";
@@ -13,7 +14,8 @@ import SignUpScreen from "./screens/SignUpScreen";
 import SettingScreen from "./screens/SettingScreen";
 import AIScreen from "./screens/AIScreen";
 import BodyPartScreen from "./screens/BodyPartScreen";
-import { FIREBASE_AUTH } from "./firebaseConfig";
+import WorkoutHistoryScreen from "./screens/WorkoutHistoryScreen";
+import WorkoutScreen from "./screens/WorkoutScreen";
 import ExerciseListScreen from "./screens/ExerciseListScreen";
 import ExerciseScreen from "./screens/ExerciseScreen";
 import SearchExerciseScreen from "./screens/SearchExerciseScreen";
@@ -69,6 +71,16 @@ function HomeScreen() {
           title: "AI",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="robot" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="History"
+        component={WorkoutHistoryScreen}
+        options={{
+          title: "History",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons name="history" size={size} color={color} />
           ),
         }}
       />
@@ -149,6 +161,11 @@ function Navigator() {
           <Stack.Screen
             name="AddExercise"
             component={AddExerciseScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Workout"
+            component={WorkoutScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

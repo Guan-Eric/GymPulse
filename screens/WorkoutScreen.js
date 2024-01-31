@@ -20,10 +20,9 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-function ViewPlanScreen({ route, navigation }) {
+function WorkoutScreen({ route, navigation }) {
   const [name, setName] = useState("");
-  const [plan, setPlan] = useState({});
-  const [days, setDays] = useState([]);
+  const [day, setDay] = useState({});
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
 
@@ -35,89 +34,54 @@ function ViewPlanScreen({ route, navigation }) {
   }, [name, days, isDirty]);
 
   useEffect(() => {
-    const fetchPlanFromFirestore = async () => {
+    const fetchDayFromFirestore = async () => {
       try {
         const userDoc = await getDoc(
           doc(FIRESTORE_DB, `Users/${route.params.userId}`)
         );
         const userData = userDoc.data();
         setIsMetric(userData.metricUnits);
-        const planDoc = await getDoc(
+        const dayDoc = await getDoc(
           doc(
             FIRESTORE_DB,
-            `Users/${route.params.userId}/Plans/${route.params.planId}`
+            `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
           )
         );
-        const planData = planDoc.data();
-        setPlan(planData);
-        setName(planData.name);
+        const dayData = dayDoc.data();
+        setName(dayData.name);
 
-        const daysCollection = collection(planDoc.ref, "Days");
-        const daysSnapshot = await getDocs(daysCollection);
-        const daysData = [];
+        const exercisesCollection = collection(dayDoc.ref, "Exercise");
+        const exercisesSnapshot = await getDocs(exercisesCollection);
+        const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
+          exerciseDoc.data()
+        );
+        dayData.exercises = exercisesData;
 
-        for (const dayDoc of daysSnapshot.docs) {
-          const dayData = dayDoc.data();
-
-          const exercisesCollection = collection(dayDoc.ref, "Exercise");
-          const exercisesSnapshot = await getDocs(exercisesCollection);
-          const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
-            exerciseDoc.data()
-          );
-          dayData.exercises = exercisesData;
-          daysData.push(dayData);
-        }
-        setDays(daysData);
+        setDay(dayData);
       } catch (error) {
-        console.error("Error fetching plan data:", error);
+        console.error("Error fetching day data:", error);
       }
     };
 
-    fetchPlanFromFirestore();
+    fetchDayFromFirestore();
   }, []);
   const setNameAndSave = (newName) => {
     setName(newName);
     setIsDirty(true);
   };
-  const handleSavePlan = async () => {
-    const planDocRef = doc(
+  const handleSaveDay = async () => {
+    const dayDocRef = doc(
       FIRESTORE_DB,
-      `Users/${route.params.userId}/Plans/${route.params.planId}`
+      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
     );
-    updateDoc(planDocRef, { name: name });
-    for (const day of days) {
-      const dayDocRef = doc(planDocRef, `Days/${day.id}`);
-      await updateDoc(dayDocRef, { name: day.name });
+    updateDoc(dayDocRef, { name: name });
 
-      for (const exercise of day.exercises) {
-        const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
-        await updateDoc(exerciseDocRef, {
-          name: exercise.name,
-          sets: exercise.sets,
-        });
-      }
-    }
-  };
-  const handleAddDay = async () => {
-    try {
-      const planDoc = doc(
-        FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}`
-      );
-      const daysCollection = collection(planDoc, "Days");
-      const daysDocRef = await addDoc(daysCollection, {
-        name: "New Day",
-        planId: route.params.planId,
+    for (const exercise of day.exercises) {
+      const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
+      await updateDoc(exerciseDocRef, {
+        name: exercise.name,
+        sets: exercise.sets,
       });
-      const dayDoc = doc(daysCollection, daysDocRef.id);
-      await updateDoc(dayDoc, { id: daysDocRef.id });
-      const newDayDoc = await getDoc(doc(daysCollection, daysDocRef.id));
-      const newDayData = newDayDoc.data();
-
-      setDays((prevDays) => [...prevDays, newDayData]);
-      setIsDirty(true);
-    } catch (error) {
-      console.error("Error adding new day:", error);
     }
   };
 
@@ -335,8 +299,7 @@ function ViewPlanScreen({ route, navigation }) {
               <Button
                 title="Start Workout"
                 onPress={() =>
-                  navigation.navigate("Workout", {
-                    planId: route.params.planId,
+                  navigation.navigate("WorkoutScreen", {
                     dayId: day.id,
                   })
                 }
@@ -373,13 +336,8 @@ function ViewPlanScreen({ route, navigation }) {
                   })
                 }
               />
-              <Button
-                title="Delete Day"
-                onPress={() => handleDeleteDay(day.id)}
-              />
             </View>
           ))}
-          <Button title="Add Day" onPress={handleAddDay} />
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -415,4 +373,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-export default ViewPlanScreen;
+export default WorkoutScreen;
