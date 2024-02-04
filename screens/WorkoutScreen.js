@@ -25,13 +25,30 @@ function WorkoutScreen({ route, navigation }) {
   const [day, setDay] = useState({});
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
+  const [time, setTime] = useState(0);
+  const intervalRef = useRef(null);
+  const startTimeRef = useRef(0);
+
+  const startStopwatch = () => {
+    startTimeRef.current = Date.now() - time * 1000;
+    intervalRef.current = setInterval(() => {
+      setTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    }, 1000);
+    setRunning(true);
+  };
 
   useEffect(() => {
     if (isDirty) {
-      handleSavePlan();
+      handleSaveDay();
       setIsDirty(false);
     }
-  }, [name, days, isDirty]);
+  }, [name, day, isDirty]);
+
+  useEffect(() => {
+    React.useCallback(() => {
+      handleSaveDay();
+    });
+  });
 
   useEffect(() => {
     const fetchDayFromFirestore = async () => {
@@ -85,7 +102,7 @@ function WorkoutScreen({ route, navigation }) {
     }
   };
 
-  const handleAddSet = async (dayId, exerciseId, days) => {
+  const handleAddSet = async (dayId, exerciseId, day) => {
     const exerciseDoc = doc(
       FIRESTORE_DB,
       `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
@@ -96,119 +113,77 @@ function WorkoutScreen({ route, navigation }) {
       const currentSets = exerciseDocSnap.data().sets || [];
       const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
       await updateDoc(exerciseDoc, { sets: newSets });
-      const updatedDays = days.map((day) =>
-        day.id === dayId
-          ? {
-              ...day,
-              exercises: day.exercises.map((ex) =>
-                ex.id === exerciseId ? { ...ex, sets: newSets } : ex
-              ),
-            }
-          : day
-      );
-      setDays(updatedDays);
+      newDay = {
+        ...day,
+        exercises: day.exercises.map((ex) =>
+          ex.id === exerciseId ? { ...ex, sets: newSets } : ex
+        ),
+      };
+
+      setDay(newDay);
       setIsDirty(true);
     }
   };
 
-  const handleDeleteDay = async (dayId) => {
-    try {
-      const dayDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}`
-      );
-      const exercisesCollectionRef = collection(dayDocRef, "Exercise");
-      const exercisesQuerySnapshot = await getDocs(exercisesCollectionRef);
-
-      exercisesQuerySnapshot.forEach(async (exerciseDoc) => {
-        await deleteDoc(exerciseDoc.ref);
-      });
-      await deleteDoc(dayDocRef);
-      setDays((prevDays) => prevDays.filter((day) => day.id !== dayId));
-      setIsDirty(true);
-    } catch (error) {
-      console.error("Error deleting day:", error);
-    }
-  };
-  const handleDeleteExercise = async (dayId, exerciseId) => {
+  const handleDeleteExercise = async (dayId, exerciseId, day) => {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
         `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       await deleteDoc(exerciseDocRef);
-      setDays((prevDays) =>
-        prevDays.map((prevDay) =>
-          prevDay.id === dayId
-            ? {
-                ...prevDay,
-                exercises: prevDay.exercises.filter(
-                  (exercise) => exercise.id !== exerciseId
-                ),
-              }
-            : prevDay
-        )
-      );
+      newDay = {
+        ...day,
+        exercises: prevDay.exercises.filter(
+          (exercise) => exercise.id !== exerciseId
+        ),
+      };
+
+      setDay(newDay);
       setIsDirty(true);
     } catch (error) {
       console.error("Error deleting exercise:", error);
     }
   };
-  const handleDeleteSet = (dayIndex, exerciseIndex, setIndex) => {
-    setDays((prevDays) =>
-      prevDays.map((prevDay, dIndex) =>
-        dIndex === dayIndex
+  const handleDeleteSet = (day, exerciseIndex, setIndex) => {
+    newDay = {
+      ...day,
+      exercises: day.exercises.map((prevExercise, eIndex) =>
+        eIndex === exerciseIndex
           ? {
-              ...prevDay,
-              exercises: prevDay.exercises.map((prevExercise, eIndex) =>
-                eIndex === exerciseIndex
-                  ? {
-                      ...prevExercise,
-                      sets: prevExercise.sets.filter(
-                        (set, sIndex) => sIndex !== setIndex
-                      ),
-                    }
-                  : prevExercise
+              ...prevExercise,
+              sets: prevExercise.sets.filter(
+                (set, sIndex) => sIndex !== setIndex
               ),
             }
-          : prevDay
-      )
-    );
+          : prevExercise
+      ),
+    };
+
+    setDay(newDay);
     setIsDirty(true);
   };
-  const updateSets = (dayIndex, exerciseIndex, setIndex, property, value) => {
-    setDays((prevDays) =>
-      prevDays.map((prevDay, dIndex) =>
-        dIndex === dayIndex
+  const updateSets = (day, exerciseIndex, setIndex, property, value) => {
+    newDay = {
+      ...day,
+      exercises: day.exercises.map((prevExercise, eIndex) =>
+        eIndex === exerciseIndex
           ? {
-              ...prevDay,
-              exercises: prevDay.exercises.map((prevExercise, eIndex) =>
-                eIndex === exerciseIndex
-                  ? {
-                      ...prevExercise,
-                      sets: prevExercise.sets.map((prevSet, sIndex) =>
-                        sIndex === setIndex
-                          ? { ...prevSet, [property]: value }
-                          : prevSet
-                      ),
-                    }
-                  : prevExercise
+              ...prevExercise,
+              sets: prevExercise.sets.map((prevSet, sIndex) =>
+                sIndex === setIndex
+                  ? { ...prevSet, [property]: value }
+                  : prevSet
               ),
             }
-          : prevDay
-      )
-    );
+          : prevExercise
+      ),
+    };
+    setDay(newDay);
     setIsDirty(true);
   };
-  const updateDayName = (dayIndex, newName) => {
-    setDays((days) =>
-      days.map((day, index) =>
-        index === dayIndex ? { ...day, name: newName } : day
-      )
-    );
-    setIsDirty(true);
-  };
-  const renderSetInputs = (sets, exerciseIndex, dayIndex, exercise) => {
+
+  const renderSetInputs = (sets, exerciseIndex, day, exercise) => {
     return (
       <View>
         <View style={styles.setRow}>
@@ -228,7 +203,7 @@ function WorkoutScreen({ route, navigation }) {
                 keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newReps) =>
-                  updateSets(dayIndex, exerciseIndex, setIndex, "reps", newReps)
+                  updateSets(day, exerciseIndex, setIndex, "reps", newReps)
                 }
                 value={set.reps.toString()}
               />
@@ -240,7 +215,7 @@ function WorkoutScreen({ route, navigation }) {
                 style={styles.input}
                 onChangeText={(newWeight) =>
                   updateSets(
-                    dayIndex,
+                    day,
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
@@ -257,7 +232,7 @@ function WorkoutScreen({ route, navigation }) {
                 style={styles.input}
                 onChangeText={(newDuration) =>
                   updateSets(
-                    dayIndex,
+                    day,
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
@@ -269,7 +244,7 @@ function WorkoutScreen({ route, navigation }) {
             )}
             <Button
               title="Delete Set"
-              onPress={() => handleDeleteSet(dayIndex, exerciseIndex, setIndex)}
+              onPress={() => handleDeleteSet(day, exerciseIndex, setIndex)}
             />
           </View>
         ))}
@@ -279,65 +254,42 @@ function WorkoutScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Text style={styles.baseText}>Name</Text>
+        <Text style={styles.baseText}>{day.name}</Text>
         <TextInput
           style={styles.input}
           onChangeText={(newName) => setNameAndSave(newName)}
           value={name}
         />
         <ScrollView>
-          {days.map((day, dayIndex) => (
-            <View key={day.id}>
-              <Text style={styles.titleText}>{day.name}</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={(newDayName) =>
-                  updateDayName(dayIndex, newDayName)
-                }
-                value={day.name}
-              />
-              <Button
-                title="Start Workout"
-                onPress={() =>
-                  navigation.navigate("WorkoutScreen", {
-                    dayId: day.id,
-                  })
-                }
-              />
-              {day.exercises &&
-                day.exercises.map((exercise, exerciseIndex) => (
-                  <View key={exercise.id}>
-                    <Text style={styles.baseText}>{exercise.name}</Text>
-                    <Button
-                      title="Delete Exercise"
-                      onPress={() => handleDeleteExercise(day.id, exercise.id)}
-                    />
-                    {renderSetInputs(
-                      exercise.sets,
-                      exerciseIndex,
-                      dayIndex,
-                      exercise
-                    )}
-                    <Button
-                      title={"Add Set"}
-                      onPress={() =>
-                        handleAddSet(day.id, exercise.id, exercise, days)
-                      }
-                    />
-                  </View>
-                ))}
-              <Button
-                title="Add Exercise"
-                onPress={() =>
-                  navigation.navigate("SearchExercise", {
-                    userId: route.params.userId,
-                    dayId: day.id,
-                    planId: route.params.planId,
-                  })
-                }
-              />
-            </View>
-          ))}
+          <View>
+            {day.exercises &&
+              day.exercises.map((exercise, exerciseIndex) => (
+                <View key={exercise.id}>
+                  <Text style={styles.baseText}>{exercise.name}</Text>
+                  <Button
+                    title="Delete Exercise"
+                    onPress={() => handleDeleteExercise(day.id, exercise.id)}
+                  />
+                  {renderSetInputs(exercise.sets, exerciseIndex, day, exercise)}
+                  <Button
+                    title={"Add Set"}
+                    onPress={() =>
+                      handleAddSet(day.id, exercise.id, exercise, day)
+                    }
+                  />
+                </View>
+              ))}
+            <Button
+              title="Add Exercise"
+              onPress={() =>
+                navigation.navigate("SearchExercise", {
+                  userId: route.params.userId,
+                  dayId: day.id,
+                  planId: route.params.planId,
+                })
+              }
+            />
+          </View>
         </ScrollView>
       </SafeAreaView>
     </View>

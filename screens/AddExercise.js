@@ -58,11 +58,6 @@ function AddExerciseScreen({ route, navigation }) {
     });
     const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });
-    /*navigation.navigate("Home");
-    navigation.navigate("ViewPlan", {
-      planId: route.params.planId,
-      userId: route.params.userId,
-    });*/
     navigation.goBack();
     navigation.goBack();
   };
