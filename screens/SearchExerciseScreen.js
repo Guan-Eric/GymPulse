@@ -27,7 +27,6 @@ function SearchExerciseScreen({ navigation, route }) {
           data.push(doc.data());
         });
         setExecercises(data);
-        console.log("data retreived");
       } catch (error) {
         console.error("Error fetching data:", error);
       }

@@ -27,7 +27,7 @@ function SignUpScreen() {
         password
       );
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Sign up failed: " + error.message);
     } finally {
       setLoading(false);

@@ -23,7 +23,7 @@ function SignInScreen() {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Sign in failed: " + error.message);
     } finally {
       setLoading(false);

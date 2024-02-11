@@ -217,7 +217,6 @@ function WorkoutScreen({ route, navigation }) {
       },
       {
         text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
         style: "cancel",
       },
       { text: "Delete Workout", onPress: () => navigation.goBack() },

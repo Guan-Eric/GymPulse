@@ -32,7 +32,7 @@ function ViewWorkoutScreen({ route, navigation }) {
           )
         );
         const workoutData = workoutDoc.data();
-        console.log(workoutData);
+
         const exercisesCollection = collection(workoutDoc.ref, "Exercise");
         const exercisesSnapshot = await getDocs(exercisesCollection);
         const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
