@@ -171,6 +171,7 @@ function WorkoutScreen({ route, navigation }) {
       const docRef = await addDoc(
         collection(FIRESTORE_DB, `Users/${route.params.userId}/Workouts`),
         {
+          name: name,
           date: formattedDateTime,
           duration: time,
           userId: route.params.userId,

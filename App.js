@@ -21,6 +21,7 @@ import ExerciseScreen from "./screens/ExerciseScreen";
 import SearchExerciseScreen from "./screens/SearchExerciseScreen";
 import ViewPlanScreen from "./screens/ViewPlanScreen";
 import AddExerciseScreen from "./screens/AddExercise";
+import ViewWorkoutScreen from "./screens/ViewWorkoutScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -167,6 +168,11 @@ function Navigator() {
             name="Workout"
             component={WorkoutScreen}
             options={{ headerShown: false, gestureEnabled: false }}
+          />
+          <Stack.Screen
+            name="ViewWorkout"
+            component={ViewWorkoutScreen}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

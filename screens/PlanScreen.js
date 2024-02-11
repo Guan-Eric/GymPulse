@@ -36,7 +36,6 @@ function PlanScreen({ navigation }) {
         );
         const userDocSnapshot = await getDoc(userDocRef);
         const userData = userDocSnapshot.data();
-        setIsDark(userData.darkMode);
 
         if (!userDocSnapshot.exists()) {
           await setDoc(userDocRef, {
