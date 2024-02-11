@@ -13,7 +13,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-function WorkoutScreen({ route, navigation }) {
+function ViewWorkoutScreen({ route, navigation }) {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -388,4 +388,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-export default WorkoutScreen;
+export default ViewWorkoutScreen;

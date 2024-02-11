@@ -35,12 +35,6 @@ function ViewPlanScreen({ route, navigation }) {
   }, [name, days, isDirty]);
 
   useEffect(() => {
-    React.useCallback(() => {
-      handleSavePlan();
-    });
-  });
-
-  useEffect(() => {
     const fetchPlanFromFirestore = async () => {
       try {
         const userDoc = await getDoc(

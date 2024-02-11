@@ -25,7 +25,6 @@ import {
 function PlanScreen({ navigation }) {
   const [plans, setPlans] = useState([]);
   const [userId, setUserId] = useState("");
-  const [isDark, setIsDark] = useState();
 
   useEffect(() => {
     const fetchPlansFromFirestore = async () => {
