@@ -121,7 +121,7 @@ function ViewPlanScreen({ route, navigation }) {
     }
   };
 
-  const handleAddSet = async (dayId, exerciseId, exercise, days) => {
+  const handleAddSet = async (dayId, exerciseId, days) => {
     const exerciseDoc = doc(
       FIRESTORE_DB,
       `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
@@ -331,6 +331,16 @@ function ViewPlanScreen({ route, navigation }) {
                   updateDayName(dayIndex, newDayName)
                 }
                 value={day.name}
+              />
+              <Button
+                title="Start Workout"
+                onPress={() =>
+                  navigation.navigate("Workout", {
+                    userId: route.params.userId,
+                    planId: route.params.planId,
+                    dayId: day.id,
+                  })
+                }
               />
               {day.exercises &&
                 day.exercises.map((exercise, exerciseIndex) => (

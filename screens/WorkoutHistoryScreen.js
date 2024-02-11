@@ -22,75 +22,49 @@ import {
   getDoc,
 } from "firebase/firestore";
 
-function PlanScreen({ navigation }) {
-  const [plans, setPlans] = useState([]);
+function WorkoutHistoryScreen({ navigation }) {
+  const [workouts, setWorkouts] = useState([]);
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const fetchPlansFromFirestore = async () => {
+    const fetchWorkoutsFromFirestore = async () => {
       try {
         setUserId(FIREBASE_AUTH.currentUser.uid);
         const userDocRef = doc(
           FIRESTORE_DB,
           `Users/${FIREBASE_AUTH.currentUser.uid}`
         );
-        const userDocSnapshot = await getDoc(userDocRef);
-        const userData = userDocSnapshot.data();
 
-        if (!userDocSnapshot.exists()) {
-          await setDoc(userDocRef, {
-            name: "",
-            email: FIREBASE_AUTH.currentUser.email,
-            darkMode: false,
-            metricUnits: false,
-          });
-        }
-        const plansCollectionRef = collection(userDocRef, "Plans");
+        const workoutsCollectionRef = collection(userDocRef, "Workouts");
 
-        const unsubscribe = onSnapshot(plansCollectionRef, (snapshot) => {
+        const unsubscribe = onSnapshot(workoutsCollectionRef, (snapshot) => {
           const data = snapshot.docs.map((doc) => doc.data());
-          setPlans(data);
+          setWorkouts(data);
         });
 
         return () => unsubscribe();
       } catch (error) {
-        console.error("Error fetching plans from Firestore:", error);
+        console.error("Error fetching workouts from Firestore:", error);
       }
     };
 
-    fetchPlansFromFirestore();
+    fetchWorkoutsFromFirestore();
   }, []);
 
-  const handleCreatePlan = async () => {
-    try {
-      const docRef = await addDoc(
-        collection(FIRESTORE_DB, `Users/${userId}/Plans`),
-        {
-          name: "New Plan",
-          userId: userId,
-        }
-      );
-      const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${docRef.id}`);
-      await updateDoc(planDoc, { id: docRef.id });
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
-        <Text>Your Plan</Text>
-        <Button title="Create Plan" onPress={handleCreatePlan} />
+        <Text>Your Workouts</Text>
         <ScrollView>
-          {plans.length == 0 ? (
-            <Text>No plans available. Create a new plan!</Text>
+          {workouts.length == 0 ? (
+            <Text>No workouts found. Start a workout!</Text>
           ) : (
-            plans.map((item) => (
+            workouts.map((item) => (
               <Pressable
                 key={item.name}
                 onPress={() =>
-                  navigation.navigate("ViewPlan", {
-                    planId: item.id,
+                  navigation.navigate("ViewWorkout", {
+                    workoutId: item.id,
                     userId: userId,
                   })
                 }
@@ -134,4 +108,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-export default PlanScreen;
+export default WorkoutHistoryScreen;
