@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIREBASE_AUTH } from "../firebaseConfig";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import {
   collection,
   onSnapshot,

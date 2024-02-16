@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import { collection, query, getDocs, where } from "firebase/firestore";
 
 function BodyPartScreen({ route, navigation }) {

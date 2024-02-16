@@ -1,22 +1,23 @@
 import React from "react";
-import { Text, View, SafeAreaView, Pressable, Appearance } from "react-native";
+import {
+  Text,
+  View,
+  SafeAreaView,
+  Pressable,
+  Appearance,
+  Button,
+} from "react-native";
 import { StyleSheet } from "react-native";
 
-function AIScreen() {
+function AIScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
         <Text>Create Your Plan with AI</Text>
-        <Text>Choose your fitness level</Text>
-        <Pressable>
-          <Text>Beginner</Text>
-        </Pressable>
-        <Pressable>
-          <Text>Intermediate</Text>
-        </Pressable>
-        <Pressable>
-          <Text>Advanced</Text>
-        </Pressable>
+        <Button
+          title="Create Plan with AI"
+          onPress={() => navigation.navigate("Gender")}
+        />
       </SafeAreaView>
     </View>
   );
