@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Appearance, Image, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  View,
+  Text,
+  Appearance,
+  Image,
+  ScrollView,
+  Button,
+} from "react-native";
 import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
-import { FIREBASE_STR } from "../firebaseConfig";
+import { FIREBASE_STR } from "../../firebaseConfig";
+import {
+  updateDoc,
+  getDoc,
+  doc,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
 
-function ExerciseScreen({ route }) {
+function AddExerciseScreen({ route, navigation }) {
   const [imageUrl, setImageUrl] = useState("");
-  const exercise = route.params.item;
+  const exercise = route.params.exercise;
   useEffect(() => {
     const fetchImage = async () => {
       try {
@@ -27,13 +44,28 @@ function ExerciseScreen({ route }) {
   const secondaryMuscles = exercise.secondaryMuscles.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
+  const handleAddExercise = async () => {
+    const dayDoc = doc(
+      FIRESTORE_DB,
+      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
+    );
+    const exerciseCollection = collection(dayDoc, "Exercise");
+    const exerciseDocRef = await addDoc(exerciseCollection, {
+      name: exercise.name,
+      dayId: route.params.dayId,
+      sets: [{ reps: 0, weight_duration: 0 }],
+      cardio: exercise.category == "cardio",
+    });
+    const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
+    await updateDoc(exerciseDoc, { id: exerciseDoc.id });
+    navigation.goBack();
+    navigation.goBack();
+  };
   return (
     <View>
       <SafeAreaView>
         <Image
-          source={{
-            uri: imageUrl,
-          }}
+          source={{ uri: imageUrl }}
           style={{
             resizeMode: "cover",
             height: 150,
@@ -42,6 +74,7 @@ function ExerciseScreen({ route }) {
         />
         <ScrollView>
           <Text>{exercise.name}</Text>
+          <Button title="Add Exercise" onPress={handleAddExercise} />
           <Text>Equipment</Text>
           <Text>{exercise.equipment}</Text>
           <Text>Secondary Muscles</Text>
@@ -85,4 +118,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-export default ExerciseScreen;
+export default AddExerciseScreen;

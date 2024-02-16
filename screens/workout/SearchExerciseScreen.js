@@ -10,10 +10,12 @@ import {
 import { SearchBar } from "@rneui/themed";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import { collection, getDocs, onSnapshot, where } from "firebase/firestore";
+import { useThemeMode } from "@rneui/themed";
 
 function SearchExerciseScreen({ navigation, route }) {
+  const { mode, setMode } = useThemeMode();
   const [search, setSearch] = useState("");
   const [exercises, setExecercises] = useState([]);
   useEffect(() => {
@@ -48,6 +50,7 @@ function SearchExerciseScreen({ navigation, route }) {
           onChangeText={(text) => setSearch(text)}
           onClear={() => setSearch("")}
           value={search}
+          lightTheme={mode == "light"}
         />
         <FlatList
           data={filteredExercises}

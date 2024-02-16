@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -280,10 +280,14 @@ function ViewPlanScreen({ route, navigation }) {
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
-                    newWeight
+                    isMetric ? newWeight * 2.205 : newWeight
                   )
                 }
-                value={set.weight_duration.toString()}
+                value={
+                  isMetric
+                    ? Math.floor(set.weight_duration / 2.205).toString()
+                    : Math.floor(set.weight_duration).toString()
+                }
               />
             )}
             {!exercise.cardio && <Text>{isMetric ? "kg" : "lbs"}</Text>}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { FIRESTORE_DB } from "../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -65,7 +65,10 @@ function ViewWorkoutScreen({ route, navigation }) {
             <Text style={styles.baseText}>{`Set ${setIndex + 1}: `}</Text>
             {!exercise.cardio && (
               <Text style={styles.baseText}>
-                {set.reps.toString()} x {set.weight_duration.toString()}{" "}
+                {set.reps.toString()} x{" "}
+                {isMetric
+                  ? Math.floor(set.weight_duration / 2.205).toString()
+                  : Math.floor(set.weight_duration).toString()}{" "}
                 {isMetric ? "kg" : "lbs"}
               </Text>
             )}
