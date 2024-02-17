@@ -22,6 +22,7 @@ import SearchExerciseScreen from "./screens/SearchExerciseScreen";
 import ViewPlanScreen from "./screens/ViewPlanScreen";
 import AddExerciseScreen from "./screens/AddExercise";
 import ViewWorkoutScreen from "./screens/ViewWorkoutScreen";
+import SocialScreen from "./screens/social/SocialScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -42,9 +43,19 @@ const Tab = createBottomTabNavigator();
 function HomeScreen() {
   return (
     <Tab.Navigator
-      initialRouteName="Plan"
+      initialRouteName="Home"
       screenOptions={{ headerShown: false }}
     >
+      <Tab.Screen
+        name="Home"
+        component={SocialScreen}
+        options={{
+          title: "Home",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons name="home" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Plan"
         component={PlanScreen}
@@ -75,6 +86,7 @@ function HomeScreen() {
           ),
         }}
       />
+
       <Tab.Screen
         name="History"
         component={WorkoutHistoryScreen}
