@@ -1,4 +1,4 @@
-# FitAI
+# Shape
 
 A fitness tracker app that helps users organize their workout plans and track their progress.
 
@@ -16,6 +16,7 @@ A fitness tracker app that helps users organize their workout plans and track th
 - Add, edit, and delete exercises within workout plans
 - Track sets, reps, weights, and durations for each exercise
 - View detailed instructions for each exercise
+- Social feed to share your progress and workout pictures
 - Dark mode support
 - User authentication and data persistence
 
