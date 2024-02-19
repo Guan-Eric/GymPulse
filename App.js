@@ -12,24 +12,18 @@ import SignInScreen from "./screens/SignInScreen";
 import PlanScreen from "./screens/workout/PlanScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import SettingScreen from "./screens/SettingScreen";
-import AIScreen from "./screens/ai/AIScreen";
-import BodyPartScreen from "./screens/workout/BodyPartScreen";
-import WorkoutHistoryScreen from "./screens/history/WorkoutHistoryScreen";
-import WorkoutScreen from "./screens/workout/WorkoutScreen";
-import ExerciseListScreen from "./screens/workout/ExerciseListScreen";
-import ExerciseScreen from "./screens/workout/ExerciseScreen";
-import SearchExerciseScreen from "./screens/workout/SearchExerciseScreen";
-import ViewPlanScreen from "./screens/workout/ViewPlanScreen";
-import AddExerciseScreen from "./screens/workout/AddExercise";
-import ViewWorkoutScreen from "./screens/history/ViewWorkoutScreen";
-import EquipmentScreen from "./screens/ai/EquipmentScreen";
-import FitnessLevelScreen from "./screens/ai/FitnessLevelScreen";
-import FrequencyScreen from "./screens/ai/FrequencyScreen";
-import GenderScreen from "./screens/ai/GenderScreen";
-import GoalsScreen from "./screens/ai/GoalsScreen";
-import HealthScreen from "./screens/ai/HealthScreen";
-import HeightScreen from "./screens/ai/HeightScreen";
-import WeightScreen from "./screens/ai/WeightScreen";
+import BodyPartScreen from "./screens/BodyPartScreen";
+import WorkoutHistoryScreen from "./screens/WorkoutHistoryScreen";
+import WorkoutScreen from "./screens/WorkoutScreen";
+import ExerciseListScreen from "./screens/ExerciseListScreen";
+import ExerciseScreen from "./screens/ExerciseScreen";
+import SearchExerciseScreen from "./screens/SearchExerciseScreen";
+import ViewPlanScreen from "./screens/ViewPlanScreen";
+import AddExerciseScreen from "./screens/AddExercise";
+import ViewWorkoutScreen from "./screens/ViewWorkoutScreen";
+import SocialScreen from "./screens/social/SocialScreen";
+import CameraScreen from "./screens/social/CameraScreen";
+import CreatePostScreen from "./screens/social/CreatePostScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -50,9 +44,19 @@ const Tab = createBottomTabNavigator();
 function HomeScreen() {
   return (
     <Tab.Navigator
-      initialRouteName="Plan"
+      initialRouteName="Feed"
       screenOptions={{ headerShown: false }}
     >
+      <Tab.Screen
+        name="Feed"
+        component={SocialScreen}
+        options={{
+          title: "Feed",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons name="home" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Plan"
         component={PlanScreen}
@@ -70,16 +74,6 @@ function HomeScreen() {
           title: "Exercises",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="dumbbell" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="AI"
-        component={AIScreen}
-        options={{
-          title: "AI",
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="robot" size={size} color={color} />
           ),
         }}
       />
@@ -183,43 +177,13 @@ function Navigator() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Equipment"
-            component={EquipmentScreen}
+            name="Camera"
+            component={CameraScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="FitnessLevel"
-            component={FitnessLevelScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Frequency"
-            component={FrequencyScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Gender"
-            component={GenderScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Goals"
-            component={GoalsScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Health"
-            component={HealthScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Height"
-            component={HeightScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Weight"
-            component={WeightScreen}
+            name="CreatePost"
+            component={CreatePostScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

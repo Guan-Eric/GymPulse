@@ -25,8 +25,8 @@ function WelcomeScreen({ navigation }) {
           }}
           source={require("../assets/logo.png")}
         />
-        <Text style={styles.logoText}>FitAI</Text>
-        <Text style={styles.baseText}>Your Personal Trainer</Text>
+        <Text style={styles.logoText}>Shape</Text>
+        <Text style={styles.baseText}>Shaping Together, One Rep at a Time</Text>
         <Button title="Sign In" onPress={() => navigation.navigate("SignIn")} />
         <Button title="Sign Up" onPress={() => navigation.navigate("SignUp")} />
       </SafeAreaView>
