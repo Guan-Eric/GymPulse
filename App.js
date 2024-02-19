@@ -12,7 +12,6 @@ import SignInScreen from "./screens/SignInScreen";
 import PlanScreen from "./screens/PlanScreen";
 import SignUpScreen from "./screens/SignUpScreen";
 import SettingScreen from "./screens/SettingScreen";
-import AIScreen from "./screens/AIScreen";
 import BodyPartScreen from "./screens/BodyPartScreen";
 import WorkoutHistoryScreen from "./screens/WorkoutHistoryScreen";
 import WorkoutScreen from "./screens/WorkoutScreen";
@@ -23,6 +22,8 @@ import ViewPlanScreen from "./screens/ViewPlanScreen";
 import AddExerciseScreen from "./screens/AddExercise";
 import ViewWorkoutScreen from "./screens/ViewWorkoutScreen";
 import SocialScreen from "./screens/social/SocialScreen";
+import CameraScreen from "./screens/social/CameraScreen";
+import CreatePostScreen from "./screens/social/CreatePostScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -43,14 +44,14 @@ const Tab = createBottomTabNavigator();
 function HomeScreen() {
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Feed"
       screenOptions={{ headerShown: false }}
     >
       <Tab.Screen
-        name="Home"
+        name="Feed"
         component={SocialScreen}
         options={{
-          title: "Home",
+          title: "Feed",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
@@ -76,17 +77,6 @@ function HomeScreen() {
           ),
         }}
       />
-      <Tab.Screen
-        name="AI"
-        component={AIScreen}
-        options={{
-          title: "AI",
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="robot" size={size} color={color} />
-          ),
-        }}
-      />
-
       <Tab.Screen
         name="History"
         component={WorkoutHistoryScreen}
@@ -184,6 +174,16 @@ function Navigator() {
           <Stack.Screen
             name="ViewWorkout"
             component={ViewWorkoutScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Camera"
+            component={CameraScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CreatePost"
+            component={CreatePostScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

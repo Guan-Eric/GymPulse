@@ -11,7 +11,7 @@ function ExerciseScreen({ route }) {
   useEffect(() => {
     const fetchImage = async () => {
       try {
-        const imageRef = ref(FIREBASE_STR, `${exercise.id}_0.jpg`);
+        const imageRef = ref(FIREBASE_STR, `assets/${exercise.id}_0.jpg`);
         const url = await getDownloadURL(imageRef);
         setImageUrl(url);
       } catch (error) {
@@ -36,8 +36,6 @@ function ExerciseScreen({ route }) {
           }}
           style={{
             resizeMode: "cover",
-            height: 150,
-            width: 150,
           }}
         />
         <ScrollView>
