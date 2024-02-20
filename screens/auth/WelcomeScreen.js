@@ -23,7 +23,7 @@ function WelcomeScreen({ navigation }) {
             height: 50,
             width: 50,
           }}
-          source={require("../assets/logo.png")}
+          source={require("../../assets/logo.png")}
         />
         <Text style={styles.logoText}>Shape</Text>
         <Text style={styles.baseText}>Shaping Together, One Rep at a Time</Text>

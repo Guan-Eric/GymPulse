@@ -7,23 +7,24 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
 import { ThemeProvider, createTheme } from "@rneui/themed";
 import { FIREBASE_AUTH } from "./firebaseConfig";
-import WelcomeScreen from "./screens/WelcomeScreen";
-import SignInScreen from "./screens/SignInScreen";
+import WelcomeScreen from "./screens/auth/WelcomeScreen";
+import SignInScreen from "./screens/auth/SignInScreen";
 import PlanScreen from "./screens/workout/PlanScreen";
-import SignUpScreen from "./screens/SignUpScreen";
-import SettingScreen from "./screens/SettingScreen";
-import BodyPartScreen from "./screens/BodyPartScreen";
-import WorkoutHistoryScreen from "./screens/WorkoutHistoryScreen";
-import WorkoutScreen from "./screens/WorkoutScreen";
-import ExerciseListScreen from "./screens/ExerciseListScreen";
-import ExerciseScreen from "./screens/ExerciseScreen";
-import SearchExerciseScreen from "./screens/SearchExerciseScreen";
-import ViewPlanScreen from "./screens/ViewPlanScreen";
-import AddExerciseScreen from "./screens/AddExercise";
-import ViewWorkoutScreen from "./screens/ViewWorkoutScreen";
-import SocialScreen from "./screens/social/SocialScreen";
+import SignUpScreen from "./screens/auth/SignUpScreen";
+import SettingScreen from "./screens/auth/SettingScreen";
+import BodyPartScreen from "./screens/workout/BodyPartScreen";
+import WorkoutHistoryScreen from "./screens/history/WorkoutHistoryScreen";
+import WorkoutScreen from "./screens/workout/WorkoutScreen";
+import ExerciseListScreen from "./screens/workout/ExerciseListScreen";
+import ExerciseScreen from "./screens/workout/ExerciseScreen";
+import SearchExerciseScreen from "./screens/workout/SearchExerciseScreen";
+import ViewPlanScreen from "./screens/workout/ViewPlanScreen";
+import AddExerciseScreen from "./screens/workout/AddExercise";
+import ViewWorkoutScreen from "./screens/history/ViewWorkoutScreen";
+import FeedScreen from "./screens/social/FeedScreen";
 import CameraScreen from "./screens/social/CameraScreen";
 import CreatePostScreen from "./screens/social/CreatePostScreen";
+import ProfileScreen from "./screens/social/ProfileScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -49,9 +50,9 @@ function HomeScreen() {
     >
       <Tab.Screen
         name="Feed"
-        component={SocialScreen}
+        component={FeedScreen}
         options={{
-          title: "Feed",
+          title: "Home",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
@@ -88,12 +89,12 @@ function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={SettingScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{
-          title: "Settings",
+          title: "Profile",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="cog" size={size} color={color} />
+            <MaterialCommunityIcons name="account" size={size} color={color} />
           ),
         }}
       />
@@ -184,6 +185,11 @@ function Navigator() {
           <Stack.Screen
             name="CreatePost"
             component={CreatePostScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
