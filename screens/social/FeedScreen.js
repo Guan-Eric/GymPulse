@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, View, Pressable, Image } from "react-native";
+import { Button, FlatList, View, Pressable, Image, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
+import { CheckBox, Icon } from "@rneui/themed";
 import {
   collection,
-  onSnapshot,
+  getCountFromServer,
   setDoc,
   addDoc,
   doc,
@@ -14,11 +15,13 @@ import {
   orderBy,
   collectionGroup,
   where,
+  deleteDoc,
 } from "firebase/firestore";
+import { ScreenWidth } from "@rneui/base";
 
 function FeedScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
-  const [following, setFollowing] = useState([]);
+
   useEffect(() => {
     const fetchFeedFromFirestore = async () => {
       try {
@@ -35,42 +38,67 @@ function FeedScreen({ navigation }) {
             darkMode: true,
             metricUnits: false,
             bio: "",
+            id: FIREBASE_AUTH.currentUser.uid,
           });
 
-          await addDoc(
-            FIRESTORE_DB,
-            `Following/${FIREBASE_AUTH.currentUser.uid}`
-          );
-          await addDoc(
-            FIRESTORE_DB,
-            `Followers/${FIREBASE_AUTH.currentUser.uid}`
-          );
-          await addDoc(
-            FIRESTORE_DB,
-            `UserLikes/${FIREBASE_AUTH.currentUser.uid}`
+          await setDoc(
+            doc(FIRESTORE_DB, `Following/${FIREBASE_AUTH.currentUser.uid}`),
+            {}
           );
         } else {
           const userFollowingCollection = collection(
             doc(FIRESTORE_DB, `Following/${FIREBASE_AUTH.currentUser.uid}`),
             "UserFollowing"
           );
+
           const userFollowingSnapshot = await getDocs(userFollowingCollection);
           const data = userFollowingSnapshot.docs.map((doc) => doc.id);
-          console.log(data);
+          if (data.length > 0) {
+            const followingUserPostsQuery = query(
+              collectionGroup(FIRESTORE_DB, "UserPosts"),
+              orderBy("date", "desc"),
+              where("userId", "in", data)
+            );
 
-          const followingUserPostsQuery = query(
-            collectionGroup(FIRESTORE_DB, "UserPosts"),
-            orderBy("date", "desc"),
-            where("userId", "in", data)
-          );
-          const followingUserPostsSnapshot = await getDocs(
-            followingUserPostsQuery
-          );
-          const followingPosts = followingUserPostsSnapshot.docs.map((doc) =>
-            doc.data()
-          );
-          console.log(followingPosts);
-          setPosts(followingPosts);
+            const followingUserPostsSnapshot = await getDocs(
+              followingUserPostsQuery
+            );
+
+            const followingPosts = await Promise.all(
+              followingUserPostsSnapshot.docs.map(async (document) => {
+                const postData = document.data();
+                const userDocRef = doc(
+                  FIRESTORE_DB,
+                  `Users/${postData.userId}`
+                );
+                const userDocSnapshot = await getDoc(userDocRef);
+                const userLikeDocRef = doc(
+                  FIRESTORE_DB,
+                  `Posts/${postData.userId}/UserPosts/${postData.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
+                );
+                const numLikesCollection = collection(
+                  FIRESTORE_DB,
+                  `Posts/${postData.userId}/UserPosts/${postData.id}/Likes/`
+                );
+                const numLikesSnapshot = await getCountFromServer(
+                  numLikesCollection
+                );
+                const userLikeSnapshot = await getDoc(userLikeDocRef);
+                if (userDocSnapshot.exists()) {
+                  const userData = userDocSnapshot.data();
+
+                  return {
+                    ...postData,
+                    userName: userData.name,
+                    like: userLikeSnapshot.exists(),
+                    numLikes: numLikesSnapshot.data().count.toString(),
+                  };
+                }
+                return postData;
+              })
+            );
+            setPosts(followingPosts);
+          }
         }
       } catch (error) {
         console.error("Error fetching feed:", error);
@@ -78,6 +106,39 @@ function FeedScreen({ navigation }) {
     };
     fetchFeedFromFirestore();
   }, []);
+
+  const toggleLike = async (post) => {
+    try {
+      setPosts(
+        posts.map((p) => (p.id === post.id ? { ...p, like: !p.like } : p))
+      );
+
+      const likeRef = doc(
+        FIRESTORE_DB,
+        `Posts/${post.userId}/UserPosts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
+      );
+
+      if (post.like) {
+        await deleteDoc(likeRef);
+      } else {
+        await setDoc(likeRef, {});
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      setPosts(
+        posts.map((p) => (p.id === post.id ? { ...p, like: !p.like } : p))
+      );
+    }
+  };
+
+  const navigateProfile = (id) => {
+    if (id == FIREBASE_AUTH.currentUser.uid) {
+      navigation.navigate("Profile");
+    } else {
+      navigation.navigate("ViewProfile", { userId: id });
+    }
+  };
+
   return (
     <View>
       <SafeAreaView>
@@ -87,16 +148,44 @@ function FeedScreen({ navigation }) {
           horizontal={false}
           data={posts}
           renderItem={({ item }) => (
-            <Pressable>
-              <Image
-                source={{ uri: item.url }}
-                style={{
-                  width: 400,
-                  height: 400,
-                  resizeMode: "cover",
-                }}
+            <View>
+              <Pressable onPress={() => navigateProfile(item.userId)}>
+                <Text>{item.userName}</Text>
+              </Pressable>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("ViewPost", {
+                    postId: item.id,
+                    userId: item.userId,
+                  })
+                }
+              >
+                <Image
+                  source={{ uri: item.url }}
+                  style={{
+                    width: ScreenWidth,
+                    height: ScreenWidth * 1.25,
+                    resizeMode: "cover",
+                  }}
+                />
+              </Pressable>
+              <CheckBox
+                title={item.numLikes}
+                checked={item.like}
+                checkedIcon={
+                  <Icon
+                    name="arm-flex"
+                    type="material-community"
+                    color="#ffde34"
+                  />
+                }
+                uncheckedIcon={
+                  <Icon name="arm-flex-outline" type="material-community" />
+                }
+                onPress={() => toggleLike(item)}
               />
-            </Pressable>
+              <Text>{item.caption}</Text>
+            </View>
           )}
         />
       </SafeAreaView>

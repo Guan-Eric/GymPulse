@@ -1,6 +1,6 @@
-import { useScrollToTop } from "@react-navigation/native";
 import { Camera, CameraType } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import { manipulateAsync } from "expo-image-manipulator";
 import { useState } from "react";
 import {
   Button,
@@ -10,12 +10,12 @@ import {
   View,
   Dimensions,
 } from "react-native";
+import { ScreenWidth } from "@rneui/base";
 
 function CameraScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
   const [camera, setCamera] = useState();
   const [permission, requestPermission] = Camera.useCameraPermissions();
-
   if (!permission) {
     return <View />;
   }
@@ -33,17 +33,23 @@ function CameraScreen({ navigation }) {
 
   const takePicture = async () => {
     if (camera) {
-      const data = await camera.takePictureAsync(null);
-      if (data) {
-        navigation.navigate("CreatePost", { image: data.uri });
+      let result = await camera.takePictureAsync(null);
+      if (!result.canceled) {
+        editedImage = await manipulateAsync(
+          result.uri,
+          [{ resize: { width: ScreenWidth, height: ScreenWidth * 1.25 } }],
+          { compress: 1, format: "png", base64: false }
+        );
+        if (editedImage) {
+          navigation.navigate("CreatePost", { image: result.uri });
+        }
       }
     }
   };
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 5],
       quality: 1,
@@ -56,7 +62,14 @@ function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={(ref) => setCamera(ref)}>
+      <Camera
+        style={[
+          styles.camera,
+          { width: ScreenWidth, height: ScreenWidth * 1.25 },
+        ]}
+        type={type}
+        ref={(ref) => setCamera(ref)}
+      >
         <View style={styles.buttonContainer}>
           <Button
             title="Flip"

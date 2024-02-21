@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  View,
-  FlatList,
-  Pressable,
-  Image,
-  Text,
-  Dimensions,
-} from "react-native";
+import { Button, View, FlatList, Pressable, Image, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
@@ -24,15 +16,14 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
+import { ScreenWidth } from "@rneui/base";
 
 function ProfileScreen({ navigation }) {
   const { theme } = useTheme();
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
-
-  const screenWidth = Dimensions.get("window").width;
-  const imageWidth = screenWidth / 3;
+  const imageWidth = ScreenWidth / 3;
 
   useEffect(() => {
     setLoading(true);

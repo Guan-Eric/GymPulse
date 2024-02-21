@@ -17,6 +17,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import { ScreenWidth } from "@rneui/base";
 
 function CreatePostScreen({ route, navigation }) {
   const [caption, setCaption] = useState("");
@@ -37,9 +38,7 @@ function CreatePostScreen({ route, navigation }) {
       const postDocSnapshot = await getDoc(postDocRef);
 
       if (!postDocSnapshot.exists()) {
-        await setDoc(postDocRef, {
-          userId: FIREBASE_AUTH.currentUser.uid,
-        });
+        await setDoc(postDocRef, {});
       }
 
       const userPostsCollection = collection(postDocRef, "UserPosts");
@@ -72,7 +71,7 @@ function CreatePostScreen({ route, navigation }) {
       <Button title="Post" onPress={createPost} />
       <Image
         source={{ uri: route.params.image }}
-        style={{ width: 200, height: 200 }}
+        style={{ width: ScreenWidth, height: ScreenWidth * 1.25 }}
       />
       <TextInput
         editable

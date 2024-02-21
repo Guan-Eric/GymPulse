@@ -25,6 +25,8 @@ import FeedScreen from "./screens/social/FeedScreen";
 import CameraScreen from "./screens/social/CameraScreen";
 import CreatePostScreen from "./screens/social/CreatePostScreen";
 import ProfileScreen from "./screens/social/ProfileScreen";
+import ViewPostScreen from "./screens/social/ViewPostScreen";
+import ViewProfileScreen from "./screens/social/ViewProfileScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -190,6 +192,16 @@ function Navigator() {
           <Stack.Screen
             name="Settings"
             component={SettingScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ViewPost"
+            component={ViewPostScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ViewProfile"
+            component={ViewProfileScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
