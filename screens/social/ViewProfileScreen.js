@@ -61,17 +61,21 @@ function ViewProfileScreen({ navigation, route }) {
     };
     fetchUserAndUserPostsFirestore();
   }, []);
+
+  const toggleFollow = async () => {};
   return (
     <View>
       <SafeAreaView>
         <View>
           <Text>{user?.name}</Text>
+          <Button title="Follow" onPress={toggleFollow} />
+          <Button title="Unfollow" onPress={toggleFollow} />
           <FlatList
             numColumns={3}
             horizontal={false}
             data={posts}
             renderItem={({ item }) => (
-              <Pressable>
+              <Pressable onPress={() => navigation.navigate("ViewPost")}>
                 <Image
                   source={{ uri: item.url }}
                   style={{

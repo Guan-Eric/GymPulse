@@ -10,7 +10,7 @@ import {
   setDoc,
   query,
   orderBy,
-  addDoc,
+  deleteDoc,
   doc,
   getCountFromServer,
   getDocs,
@@ -21,42 +21,39 @@ import { ScreenWidth } from "@rneui/base";
 function ViewPostScreen({ navigation, route }) {
   const { theme } = useTheme();
   const [post, setPost] = useState();
-  const [user, setUser] = useState();
 
   useEffect(() => {
     const fetchUserAndUserPostFirestore = async () => {
       try {
         const userDocRef = doc(FIRESTORE_DB, `Users/${route.params.userId}`);
         const userDocSnapshot = await getDoc(userDocRef);
-        setUser(userDocSnapshot.data());
 
         const userPostDocRef = doc(
           FIRESTORE_DB,
           `Posts/${route.params.userId}/UserPosts/${route.params.postId}`
         );
+        const userPostSnapshot = await getDoc(userPostDocRef);
+        const postData = userPostSnapshot.data();
         const userLikeDocRef = doc(
           FIRESTORE_DB,
           `Posts/${route.params.userId}/UserPosts/${route.params.postId}/Likes/${FIREBASE_AUTH.currentUser.uid}`
         );
-        const userPostSnapshot = await getDoc(userPostDocRef);
-        const postData = userPostSnapshot.data();
+        const userLikeSnapshot = await getDoc(userLikeDocRef);
         const numLikesCollection = collection(
           FIRESTORE_DB,
           `Posts/${route.params.userId}/UserPosts/${route.params.postId}/Likes/`
         );
         const numLikesSnapshot = await getCountFromServer(numLikesCollection);
-        const userLikeSnapshot = await getDoc(userLikeDocRef);
-        if (userDocSnapshot.exists()) {
-          return {
-            ...postData,
-            userName: user?.name,
-            like: userLikeSnapshot.exists(),
-            numLikes: numLikesSnapshot.data().count.toString(),
-          };
-        }
 
-        setPost(postData);
-        console.log("Post Data:", postData);
+        if (userDocSnapshot.exists()) {
+          setPost({
+            ...postData,
+            userName: userDocSnapshot.data().name,
+            like: userLikeSnapshot.exists(),
+            numLikes: numLikesSnapshot.data().count,
+          });
+        }
+        console.log(postData);
       } catch (error) {
         console.error("Error fetching user and userPosts:", error);
       }
@@ -66,16 +63,16 @@ function ViewPostScreen({ navigation, route }) {
 
   const toggleLike = async (post) => {
     try {
-      setPost({ ...post, like: !post.like });
-
       const likeRef = doc(
         FIRESTORE_DB,
         `Posts/${post.userId}/UserPosts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
       );
 
       if (post.like) {
+        setPost({ ...post, like: !post.like, numLikes: post.numLikes - 1 });
         await deleteDoc(likeRef);
       } else {
+        setPost({ ...post, like: !post.like, numLikes: post.numLikes + 1 });
         await setDoc(likeRef, {});
       }
     } catch (error) {
@@ -85,10 +82,10 @@ function ViewPostScreen({ navigation, route }) {
   };
 
   const navigateProfile = () => {
-    if (user.id == FIREBASE_AUTH.currentUser.uid) {
+    if (post.userId == FIREBASE_AUTH.currentUser.uid) {
       navigation.navigate("Profile");
     } else {
-      navigation.navigate("ViewProfile", { userId: user.id });
+      navigation.navigate("ViewProfile", { userId: post.userId });
     }
   };
   return (
@@ -96,7 +93,7 @@ function ViewPostScreen({ navigation, route }) {
       <SafeAreaView>
         <View>
           <Pressable onPress={navigateProfile}>
-            <Text>{user?.name}</Text>
+            <Text>{post?.userName}</Text>
           </Pressable>
           <Image
             source={{ uri: post?.url }}

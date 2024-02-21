@@ -91,7 +91,7 @@ function FeedScreen({ navigation }) {
                     ...postData,
                     userName: userData.name,
                     like: userLikeSnapshot.exists(),
-                    numLikes: numLikesSnapshot.data().count.toString(),
+                    numLikes: numLikesSnapshot.data().count,
                   };
                 }
                 return postData;
@@ -109,18 +109,28 @@ function FeedScreen({ navigation }) {
 
   const toggleLike = async (post) => {
     try {
-      setPosts(
-        posts.map((p) => (p.id === post.id ? { ...p, like: !p.like } : p))
-      );
-
       const likeRef = doc(
         FIRESTORE_DB,
         `Posts/${post.userId}/UserPosts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
       );
 
       if (post.like) {
+        setPosts(
+          posts.map((p) =>
+            p.id === post.id
+              ? { ...p, like: !p.like, numLikes: p.numLikes - 1 }
+              : p
+          )
+        );
         await deleteDoc(likeRef);
       } else {
+        setPosts(
+          posts.map((p) =>
+            p.id === post.id
+              ? { ...p, like: !p.like, numLikes: p.numLikes + 1 }
+              : p
+          )
+        );
         await setDoc(likeRef, {});
       }
     } catch (error) {
