@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { FIREBASE_AUTH } from "../firebaseConfig";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 
 function SignInScreen() {

@@ -34,17 +34,7 @@ function PlanScreen({ navigation }) {
           FIRESTORE_DB,
           `Users/${FIREBASE_AUTH.currentUser.uid}`
         );
-        const userDocSnapshot = await getDoc(userDocRef);
-        const userData = userDocSnapshot.data();
 
-        if (!userDocSnapshot.exists()) {
-          await setDoc(userDocRef, {
-            name: "",
-            email: FIREBASE_AUTH.currentUser.email,
-            darkMode: false,
-            metricUnits: false,
-          });
-        }
         const plansCollectionRef = collection(userDocRef, "Plans");
 
         const unsubscribe = onSnapshot(plansCollectionRef, (snapshot) => {
