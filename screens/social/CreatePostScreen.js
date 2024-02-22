@@ -33,19 +33,12 @@ function CreatePostScreen({ route, navigation }) {
     try {
       const postDocRef = doc(
         FIRESTORE_DB,
-        `Posts/${FIREBASE_AUTH.currentUser.uid}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}`
       );
-      const postDocSnapshot = await getDoc(postDocRef);
 
-      if (!postDocSnapshot.exists()) {
-        await setDoc(postDocRef, {});
-      }
-
-      const userPostsCollection = collection(postDocRef, "UserPosts");
+      const userPostsCollection = collection(postDocRef, "Posts");
       const userPostsDocRef = await addDoc(userPostsCollection, {
         caption: caption,
-        likesCount: 0,
-        commentsCount: 0,
         date: formattedDateTime,
         userId: FIREBASE_AUTH.currentUser.uid,
       });

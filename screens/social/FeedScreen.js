@@ -40,22 +40,17 @@ function FeedScreen({ navigation }) {
             bio: "",
             id: FIREBASE_AUTH.currentUser.uid,
           });
-
-          await setDoc(
-            doc(FIRESTORE_DB, `Following/${FIREBASE_AUTH.currentUser.uid}`),
-            {}
-          );
         } else {
           const userFollowingCollection = collection(
-            doc(FIRESTORE_DB, `Following/${FIREBASE_AUTH.currentUser.uid}`),
-            "UserFollowing"
+            doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`),
+            "Following"
           );
 
           const userFollowingSnapshot = await getDocs(userFollowingCollection);
           const data = userFollowingSnapshot.docs.map((doc) => doc.id);
           if (data.length > 0) {
             const followingUserPostsQuery = query(
-              collectionGroup(FIRESTORE_DB, "UserPosts"),
+              collectionGroup(FIRESTORE_DB, "Posts"),
               orderBy("date", "desc"),
               where("userId", "in", data)
             );
@@ -74,11 +69,11 @@ function FeedScreen({ navigation }) {
                 const userDocSnapshot = await getDoc(userDocRef);
                 const userLikeDocRef = doc(
                   FIRESTORE_DB,
-                  `Posts/${postData.userId}/UserPosts/${postData.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
+                  `Users/${postData.userId}/Posts/${postData.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
                 );
                 const numLikesCollection = collection(
                   FIRESTORE_DB,
-                  `Posts/${postData.userId}/UserPosts/${postData.id}/Likes/`
+                  `Users/${postData.userId}/Posts/${postData.id}/Likes/`
                 );
                 const numLikesSnapshot = await getCountFromServer(
                   numLikesCollection
@@ -111,7 +106,7 @@ function FeedScreen({ navigation }) {
     try {
       const likeRef = doc(
         FIRESTORE_DB,
-        `Posts/${post.userId}/UserPosts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
+        `Users/${post.userId}/Posts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
       );
 
       if (post.like) {
@@ -180,7 +175,7 @@ function FeedScreen({ navigation }) {
                 />
               </Pressable>
               <CheckBox
-                title={item.numLikes}
+                title={item.numLikes.toString()}
                 checked={item.like}
                 checkedIcon={
                   <Icon

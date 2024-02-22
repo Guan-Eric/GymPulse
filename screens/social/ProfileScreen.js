@@ -38,7 +38,7 @@ function ProfileScreen({ navigation }) {
 
         const userPostsCollection = collection(
           FIRESTORE_DB,
-          `Posts/${FIREBASE_AUTH.currentUser.uid}/UserPosts`
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Posts`
         );
         const queryRef = query(userPostsCollection, orderBy("date", "desc"));
         const querySnapshot = await getDocs(queryRef);
@@ -69,7 +69,14 @@ function ProfileScreen({ navigation }) {
             horizontal={false}
             data={posts}
             renderItem={({ item }) => (
-              <Pressable>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("ViewPost", {
+                    postId: item.id,
+                    userId: item.userId,
+                  })
+                }
+              >
                 <Image
                   source={{ uri: item.url }}
                   style={{

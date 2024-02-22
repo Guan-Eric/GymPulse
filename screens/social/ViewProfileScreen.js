@@ -18,7 +18,7 @@ import {
   setDoc,
   query,
   orderBy,
-  addDoc,
+  deleteDoc,
   doc,
   updateDoc,
   getDocs,
@@ -30,6 +30,7 @@ function ViewProfileScreen({ navigation, route }) {
   const { theme } = useTheme();
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState();
+  const [following, setFollowing] = useState();
   const [loading, setLoading] = useState(true);
 
   const imageWidth = ScreenWidth / 3;
@@ -42,9 +43,16 @@ function ViewProfileScreen({ navigation, route }) {
         const userDocSnapshot = await getDoc(userDocRef);
         setUser(userDocSnapshot.data());
 
+        const followingDocRef = doc(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${route.params.userId}`
+        );
+        const followingSnapshot = await getDoc(followingDocRef);
+        setFollowing(followingSnapshot.exists());
+
         const userPostsCollection = collection(
           FIRESTORE_DB,
-          `Posts/${route.params.userId}/UserPosts`
+          `User/${route.params.userId}/Posts`
         );
         const queryRef = query(userPostsCollection, orderBy("date", "desc"));
         const querySnapshot = await getDocs(queryRef);
@@ -62,20 +70,46 @@ function ViewProfileScreen({ navigation, route }) {
     fetchUserAndUserPostsFirestore();
   }, []);
 
-  const toggleFollow = async () => {};
+  const toggleFollow = async () => {
+    try {
+      const followingDocRef = doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${route.params.userId}`
+      );
+      setFollowing(!following);
+      if (following) {
+        await deleteDoc(followingDocRef);
+      } else {
+        await setDoc(followingDocRef, {});
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      setFollowing(!following);
+    }
+  };
   return (
     <View>
       <SafeAreaView>
         <View>
           <Text>{user?.name}</Text>
-          <Button title="Follow" onPress={toggleFollow} />
-          <Button title="Unfollow" onPress={toggleFollow} />
+          {following ? (
+            <Button title="Follow" onPress={toggleFollow} />
+          ) : (
+            <Button title="Unfollow" onPress={toggleFollow} />
+          )}
           <FlatList
             numColumns={3}
             horizontal={false}
             data={posts}
             renderItem={({ item }) => (
-              <Pressable onPress={() => navigation.navigate("ViewPost")}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("ViewPost", {
+                    postId: item.id,
+                    userId: item.userId,
+                  })
+                }
+              >
                 <Image
                   source={{ uri: item.url }}
                   style={{
