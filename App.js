@@ -7,12 +7,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
 import { ThemeProvider, createTheme } from "@rneui/themed";
 import { FIREBASE_AUTH } from "./firebaseConfig";
-import WelcomeScreen from "./screens/WelcomeScreen";
-import SignInScreen from "./screens/SignInScreen";
+import WelcomeScreen from "./screens/auth/WelcomeScreen";
+import SignInScreen from "./screens/auth/SignInScreen";
 import PlanScreen from "./screens/workout/PlanScreen";
-import SignUpScreen from "./screens/SignUpScreen";
-import SettingScreen from "./screens/SettingScreen";
-import AIScreen from "./screens/ai/AIScreen";
+import SignUpScreen from "./screens/auth/SignUpScreen";
+import SettingScreen from "./screens/auth/SettingScreen";
 import BodyPartScreen from "./screens/workout/BodyPartScreen";
 import WorkoutHistoryScreen from "./screens/history/WorkoutHistoryScreen";
 import WorkoutScreen from "./screens/workout/WorkoutScreen";
@@ -22,14 +21,12 @@ import SearchExerciseScreen from "./screens/workout/SearchExerciseScreen";
 import ViewPlanScreen from "./screens/workout/ViewPlanScreen";
 import AddExerciseScreen from "./screens/workout/AddExercise";
 import ViewWorkoutScreen from "./screens/history/ViewWorkoutScreen";
-import EquipmentScreen from "./screens/ai/EquipmentScreen";
-import FitnessLevelScreen from "./screens/ai/FitnessLevelScreen";
-import FrequencyScreen from "./screens/ai/FrequencyScreen";
-import GenderScreen from "./screens/ai/GenderScreen";
-import GoalsScreen from "./screens/ai/GoalsScreen";
-import HealthScreen from "./screens/ai/HealthScreen";
-import HeightScreen from "./screens/ai/HeightScreen";
-import WeightScreen from "./screens/ai/WeightScreen";
+import FeedScreen from "./screens/social/FeedScreen";
+import CameraScreen from "./screens/social/CameraScreen";
+import CreatePostScreen from "./screens/social/CreatePostScreen";
+import ProfileScreen from "./screens/social/ProfileScreen";
+import ViewPostScreen from "./screens/social/ViewPostScreen";
+import ViewProfileScreen from "./screens/social/ViewProfileScreen";
 
 const theme = createTheme({
   lightColors: {
@@ -50,9 +47,19 @@ const Tab = createBottomTabNavigator();
 function HomeScreen() {
   return (
     <Tab.Navigator
-      initialRouteName="Plan"
+      initialRouteName="Feed"
       screenOptions={{ headerShown: false }}
     >
+      <Tab.Screen
+        name="Feed"
+        component={FeedScreen}
+        options={{
+          title: "Home",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons name="home" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Plan"
         component={PlanScreen}
@@ -74,16 +81,6 @@ function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="AI"
-        component={AIScreen}
-        options={{
-          title: "AI",
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="robot" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="History"
         component={WorkoutHistoryScreen}
         options={{
@@ -94,12 +91,12 @@ function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={SettingScreen}
+        name="Profile"
+        component={ProfileScreen}
         options={{
-          title: "Settings",
+          title: "Profile",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="cog" size={size} color={color} />
+            <MaterialCommunityIcons name="account" size={size} color={color} />
           ),
         }}
       />
@@ -183,43 +180,28 @@ function Navigator() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Equipment"
-            component={EquipmentScreen}
+            name="Camera"
+            component={CameraScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="FitnessLevel"
-            component={FitnessLevelScreen}
+            name="CreatePost"
+            component={CreatePostScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Frequency"
-            component={FrequencyScreen}
+            name="Settings"
+            component={SettingScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Gender"
-            component={GenderScreen}
+            name="ViewPost"
+            component={ViewPostScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="Goals"
-            component={GoalsScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Health"
-            component={HealthScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Height"
-            component={HeightScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Weight"
-            component={WeightScreen}
+            name="ViewProfile"
+            component={ViewProfileScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
