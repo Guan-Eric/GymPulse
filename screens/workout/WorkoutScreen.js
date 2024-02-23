@@ -318,7 +318,7 @@ function WorkoutScreen({ route, navigation }) {
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <Text style={styles.titleText}>
-          {Math.floor(time / 60)}m {time % 60}s
+          {Math.floor(time / 60)}:{time % 60}
         </Text>
         <Button title="End Workout" onPress={handleEndWorkout} />
         <Text style={styles.baseText}>{day.name}</Text>
