@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button, Appearance } from "react-native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CheckBox } from "@rneui/base";
-import { useThemeMode, useTheme } from "@rneui/themed";
+import { useThemeMode, useTheme, CheckBox } from "@rneui/themed";
 import {
   collection,
   onSnapshot,
@@ -91,6 +90,7 @@ function SettingScreen() {
           uncheckedIcon="radiobox-blank"
           title={"Imperial Units"}
         />
+        <Text style={styles.logoText}>Shape</Text>
         <Button onPress={() => FIREBASE_AUTH.signOut()} title="Log Out" />
       </SafeAreaView>
     </View>
@@ -112,6 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoText: {
+    fontFamily: "roboto-bold",
     fontSize: 50,
   },
   input: {
