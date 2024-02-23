@@ -1,34 +1,35 @@
 import { useTheme } from "@rneui/themed";
 import React, { useState } from "react";
-import {
-  SafeAreaView,
-  View,
-  Image,
-  Text,
-  Button,
-  Appearance,
-  StyleSheet,
-} from "react-native";
+import { Button } from "@rneui/themed";
+import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
 
 function WelcomeScreen({ navigation }) {
   const { theme } = useTheme();
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <SafeAreaView>
         <Image
           style={{
             resizeMode: "contain",
-            height: 50,
-            width: 50,
+            height: 100,
+            width: 250,
           }}
-          source={require("../../assets/logo.png")}
+          source={require("../../assets/newLogo.png")}
         />
-        <Text style={styles.logoText}>Shape</Text>
-        <Text style={styles.baseText}>Shaping Together, One Rep at a Time</Text>
-        <Button title="Sign In" onPress={() => navigation.navigate("SignIn")} />
-        <Button title="Sign Up" onPress={() => navigation.navigate("SignUp")} />
+        <Text style={styles.logoText}>GymPulse</Text>
+        <Text style={styles.sloganText}>Power Up Your Fitness</Text>
+
+        <Button
+          size="lg"
+          buttonStyle={styles.signUpButton}
+          title="Sign Up"
+          onPress={() => navigation.navigate("SignUp")}
+        />
+        <Button
+          type="clear"
+          title="Sign In"
+          onPress={() => navigation.navigate("SignIn")}
+        />
       </SafeAreaView>
     </View>
   );
@@ -36,31 +37,22 @@ function WelcomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#181818",
   },
-  content: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  baseText: {
+  sloganText: {
     fontSize: 20,
-  },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    color: "white",
+    fontFamily: "Lato_700Bold",
   },
   logoText: {
-    fontSize: 50,
+    fontSize: 64,
+    fontFamily: "Roboto_700Bold",
+    color: "#3490de",
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
+  signUpButton: {
+    fontFamily: "Lato_700Bold",
+    borderRadius: 15,
+    width: 200,
   },
 });
 export default WelcomeScreen;

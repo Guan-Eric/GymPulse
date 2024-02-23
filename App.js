@@ -26,7 +26,7 @@ import CameraScreen from "./screens/social/CameraScreen";
 import CreatePostScreen from "./screens/social/CreatePostScreen";
 import ProfileScreen from "./screens/social/ProfileScreen";
 import ViewPostScreen from "./screens/social/ViewPostScreen";
-import ViewProfileScreen from "./screens/social/ViewProfileScreen";
+import ViewProfileScreen from "./screens/social/viewProfileScreen";
 import {
   useFonts,
   Roboto_700Bold,
@@ -204,11 +204,13 @@ function Navigator() {
             component={CreatePostScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen
-            name="Settings"
-            component={SettingScreen}
-            options={{ headerShown: false }}
-          />
+          {user ? (
+            <Stack.Screen
+              name="Settings"
+              component={SettingScreen}
+              options={{ headerShown: false }}
+            />
+          ) : null}
           <Stack.Screen
             name="ViewPost"
             component={ViewPostScreen}
