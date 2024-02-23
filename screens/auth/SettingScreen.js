@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Button, Appearance } from "react-native";
+import { Text, View, StyleSheet, Button } from "react-native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useThemeMode, useTheme, CheckBox } from "@rneui/themed";
-import {
-  collection,
-  onSnapshot,
-  setDoc,
-  addDoc,
-  doc,
-  updateDoc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
+import { doc, updateDoc, getDoc } from "firebase/firestore";
 
 function SettingScreen() {
   const { theme } = useTheme();
@@ -52,6 +43,7 @@ function SettingScreen() {
       metricUnits: value,
     });
   };
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -90,7 +82,6 @@ function SettingScreen() {
           uncheckedIcon="radiobox-blank"
           title={"Imperial Units"}
         />
-        <Text style={styles.logoText}>Shape</Text>
         <Button onPress={() => FIREBASE_AUTH.signOut()} title="Log Out" />
       </SafeAreaView>
     </View>
@@ -112,7 +103,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoText: {
-    fontFamily: "roboto-bold",
+    fontFamily: "Roboto_700Bold",
     fontSize: 50,
   },
   input: {

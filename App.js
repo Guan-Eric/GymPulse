@@ -27,6 +27,12 @@ import CreatePostScreen from "./screens/social/CreatePostScreen";
 import ProfileScreen from "./screens/social/ProfileScreen";
 import ViewPostScreen from "./screens/social/ViewPostScreen";
 import ViewProfileScreen from "./screens/social/ViewProfileScreen";
+import {
+  useFonts,
+  Roboto_700Bold,
+  Roboto_400Regular,
+} from "@expo-google-fonts/roboto";
+import { Lato_700Bold, Lato_400Regular } from "@expo-google-fonts/lato";
 
 const theme = createTheme({
   lightColors: {
@@ -105,6 +111,12 @@ function HomeScreen() {
 }
 
 function Navigator() {
+  let [fontsLoaded, fontError] = useFonts({
+    Roboto_700Bold,
+    Roboto_400Regular,
+    Lato_400Regular,
+    Lato_700Bold,
+  });
   const [user, setUser] = useState(null);
   theme.mode = useColorScheme();
   useEffect(() => {
@@ -113,6 +125,9 @@ function Navigator() {
     });
   });
 
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
   return (
     <ThemeProvider theme={theme}>
       <NavigationContainer>

@@ -15,27 +15,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eronkgonk.Shape"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.eronkgonk.Shape"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font",
-      {
-        "fonts": [
-        "node_modules/@expo-google-fonts/roboto/Roboto_700Bold.ttf",
-        "node_modules/@expo-google-fonts/roboto/Roboto_400Regular.ttf",
-        "node_modules/@expo-google-fonts/lato/Lato_700Bold.ttf",
-        "node_modules/@expo-google-fonts/lato/Lato_400Regular.ttf"
-        ]
-      }
+      [
+        "expo-font"
+      ]
     ]
   }
 }
