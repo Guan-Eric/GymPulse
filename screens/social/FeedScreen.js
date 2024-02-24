@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, FlatList, View, Pressable, Image, Text } from "react-native";
+import {
+  FlatList,
+  View,
+  Pressable,
+  Image,
+  Text,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
-import { CheckBox, Icon } from "@rneui/themed";
+import { CheckBox, Icon, useTheme, Button } from "@rneui/themed";
 import {
   collection,
   getCountFromServer,
@@ -20,6 +27,7 @@ import {
 import { ScreenWidth } from "@rneui/base";
 
 function FeedScreen({ navigation }) {
+  const { theme } = useTheme();
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -145,17 +153,35 @@ function FeedScreen({ navigation }) {
   };
 
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
-        <Button title="Camera" onPress={() => navigation.navigate("Camera")} />
+        <View>
+          <Button type="clear" onPress={() => navigation.navigate("Camera")}>
+            <Icon name="camera-outline" type="material-community" />
+          </Button>
+        </View>
         <FlatList
           numColumns={1}
           horizontal={false}
           data={posts}
           renderItem={({ item }) => (
-            <View>
-              <Pressable onPress={() => navigateProfile(item.userId)}>
-                <Text>{item.userName}</Text>
+            <View style={{ paddingBottom: 20 }}>
+              <Pressable
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingBottom: 5,
+                  paddingLeft: 30,
+                }}
+                onPress={() => navigateProfile(item.userId)}
+              >
+                <Image
+                  style={{ width: 40, height: 40 }}
+                  source={require("../../assets/profile.png")}
+                />
+                <Text style={[styles.userName, { color: theme.colors.text }]}>
+                  {item.userName}
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() =>
@@ -168,28 +194,58 @@ function FeedScreen({ navigation }) {
                 <Image
                   source={{ uri: item.url }}
                   style={{
-                    width: ScreenWidth,
-                    height: ScreenWidth * 1.25,
+                    alignSelf: "center",
+                    borderRadius: 20,
+                    width: 0.9 * ScreenWidth,
+                    height: 0.9 * ScreenWidth * 1.25,
                     resizeMode: "cover",
                   }}
                 />
               </Pressable>
-              <CheckBox
-                title={item.numLikes.toString()}
-                checked={item.like}
-                checkedIcon={
-                  <Icon
-                    name="arm-flex"
-                    type="material-community"
-                    color="#ffde34"
-                  />
-                }
-                uncheckedIcon={
-                  <Icon name="arm-flex-outline" type="material-community" />
-                }
-                onPress={() => toggleLike(item)}
-              />
-              <Text>{item.caption}</Text>
+              <View
+                style={{
+                  paddingLeft: 10,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <CheckBox
+                  title={item.numLikes.toString()}
+                  checked={item.like}
+                  checkedIcon={
+                    <Icon
+                      size={28}
+                      name="arm-flex"
+                      type="material-community"
+                      color="#ffde34"
+                    />
+                  }
+                  uncheckedIcon={
+                    <Icon
+                      size={28}
+                      name="arm-flex-outline"
+                      type="material-community"
+                    />
+                  }
+                  onPress={() => toggleLike(item)}
+                />
+                <Pressable
+                  style={{ paddingRight: 30 }}
+                  onPress={() =>
+                    navigation.navigate("ViewPost", {
+                      postId: item.id,
+                      userId: item.userId,
+                    })
+                  }
+                >
+                  <Icon name="comment-outline" type="material-community" />
+                </Pressable>
+              </View>
+
+              <Text style={[styles.caption, { color: theme.colors.text }]}>
+                {item.caption}
+              </Text>
             </View>
           )}
         />
@@ -197,5 +253,19 @@ function FeedScreen({ navigation }) {
     </View>
   );
 }
+const styles = StyleSheet.create({
+  userName: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 16,
+    paddingLeft: 10,
+  },
+  caption: {
+    textAlign: "justify",
+    fontFamily: "Lato_400Regular",
+    paddingLeft: 25,
+    paddingRight: 25,
+    fontSize: 14,
+  },
+});
 
 export default FeedScreen;

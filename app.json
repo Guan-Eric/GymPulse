@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Shape",
-    "slug": "Shape",
+    "name": "GymPulse",
+    "slug": "gympulse",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,15 +15,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.eronkgonk.Shape"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.eronkgonk.Shape"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +30,12 @@
       [
         "expo-font"
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0ca3bc1d-ffa0-46b9-986f-7c478192a465"
+      }
+    },
+    "owner": "eronkgonk"
   }
 }

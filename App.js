@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { onAuthStateChanged } from "firebase/auth";
-import { ThemeProvider, createTheme } from "@rneui/themed";
+import { ThemeProvider, createTheme, useTheme } from "@rneui/themed";
 import { FIREBASE_AUTH } from "./firebaseConfig";
 import WelcomeScreen from "./screens/auth/WelcomeScreen";
 import SignInScreen from "./screens/auth/SignInScreen";
@@ -54,7 +54,12 @@ function HomeScreen() {
   return (
     <Tab.Navigator
       initialRouteName="Feed"
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: "#181818",
+        },
+      }}
     >
       <Tab.Screen
         name="Feed"
@@ -149,14 +154,14 @@ function Navigator() {
             <Stack.Screen
               name="SignIn"
               component={SignInScreen}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, gestureEnabled: false }}
             />
           ) : null}
           {user == null ? (
             <Stack.Screen
               name="SignUp"
               component={SignUpScreen}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, gestureEnabled: false }}
             />
           ) : null}
           <Stack.Screen

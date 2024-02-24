@@ -49,7 +49,6 @@ function SettingScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView>
-        <Text>SettingScreen</Text>
         <CheckBox
           checked={isDark == true}
           onPress={() => setDarkMode(true)}

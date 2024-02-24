@@ -1,18 +1,12 @@
 import React, { useState } from "react";
-import {
-  View,
-  SafeAreaView,
-  TextInput,
-  Text,
-  Button,
-  Appearance,
-} from "react-native";
-import { StyleSheet } from "react-native";
+import { View, SafeAreaView, TextInput, Text, Image } from "react-native";
+import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { Button, Input, Icon } from "@rneui/themed";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 
-function SignUpScreen() {
+function SignUpScreen({ navigation }) {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,11 +15,7 @@ function SignUpScreen() {
   const signUp = async () => {
     setLoading(true);
     try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error(error);
       alert("Sign up failed: " + error.message);
@@ -34,61 +24,90 @@ function SignUpScreen() {
     }
   };
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.content}>
-        <Text style={styles.titleText}>Sign Up</Text>
-        <Text style={styles.baseText}>Email</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(email) => onChangeEmail(email)}
-          value={email}
-          autoCapitalize="none"
-        />
-        <Text style={styles.baseText}>Password</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(password) => onChangePassword(password)}
-          value={password}
-          secureTextEntry={true}
-          autoCapitalize="none"
-        />
-        {loading ? (
-          <ActivityIndicator size="large" color="white" />
-        ) : (
-          <Button title="Sign Up" onPress={signUp} />
-        )}
-      </SafeAreaView>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <SafeAreaView style={styles.content}>
+          <Image
+            style={{
+              resizeMode: "contain",
+              height: 100,
+              width: 250,
+            }}
+            source={require("../../assets/newLogo.png")}
+          />
+          <Text style={styles.titleText}>Sign Up</Text>
+          <View>
+            <Input
+              style={styles.input}
+              placeholder="E-mail Address"
+              onChangeText={(email) => onChangeEmail(email)}
+              autoCapitalize="none"
+            />
+            <Input
+              style={styles.input}
+              placeholder="Password"
+              onChangeText={(password) => onChangePassword(password)}
+              secureTextEntry={true}
+              autoCapitalize="none"
+            />
+          </View>
+          {loading ? (
+            <Button buttonStyle={styles.signUpButton} loading />
+          ) : (
+            <Button
+              buttonStyle={styles.signUpButton}
+              title="Sign Up"
+              onPress={signUp}
+            />
+          )}
+          <View style={{ alignItems: "center" }}>
+            <Text style={styles.baseText}>Already have an account?</Text>
+            <Button
+              type="clear"
+              buttonStyle={styles.signInButton}
+              title="Sign In"
+              onPress={() => navigation.navigate("SignIn")}
+            />
+          </View>
+        </SafeAreaView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#181818",
+    alignItems: "center",
   },
   content: {
     flex: 1,
-    flexDirection: "column",
+    justifyContent: "space-around",
   },
   baseText: {
-    fontSize: 20,
+    fontFamily: "Lato_400Regular",
+    color: "gray",
+    fontSize: 15,
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 40,
+    color: "white",
+    fontFamily: "Lato_700Bold",
   },
-  logoText: {
-    fontSize: 50,
+  signUpButton: {
+    fontFamily: "Lato_700Bold",
+    borderRadius: 15,
+    alignSelf: "center",
+    width: 200,
+  },
+  signInButton: {
+    width: 100,
   },
   input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
+    borderColor: "white",
+    flex: 1,
+    fontFamily: "Lato_400Regular",
+    fontSize: 20,
   },
 });
 export default SignUpScreen;

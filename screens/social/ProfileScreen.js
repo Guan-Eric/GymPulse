@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Button, View, FlatList, Pressable, Image, Text } from "react-native";
+import {
+  View,
+  FlatList,
+  Pressable,
+  Image,
+  Text,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
-import { useTheme } from "@rneui/themed";
+import { useTheme, Button, Icon } from "@rneui/themed";
 import {
   collection,
   onSnapshot,
@@ -56,14 +63,40 @@ function ProfileScreen({ navigation }) {
     fetchUserAndUserPostsFirestore();
   }, []);
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
         <Button
-          title="Settings"
+          style={{
+            width: 50,
+            alignSelf: "flex-end",
+          }}
+          type="clear"
           onPress={() => navigation.navigate("Settings")}
-        />
+        >
+          <Icon name="cog-outline" type="material-community" />
+        </Button>
         <View>
-          <Text>{user?.name}</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingBottom: 5,
+              paddingLeft: 10,
+            }}
+          >
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require("../../assets/profile.png")}
+            />
+            <Text style={[styles.userName, { color: theme.colors.text }]}>
+              {user?.name}
+            </Text>
+          </View>
+          {user?.bio != "" ? (
+            <Text style={[styles.bio, { color: theme.colors.text }]}>
+              {user?.bio}
+            </Text>
+          ) : null}
           <FlatList
             numColumns={3}
             horizontal={false}
@@ -93,5 +126,21 @@ function ProfileScreen({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  userName: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 16,
+    paddingLeft: 10,
+  },
+  bio: {
+    textAlign: "justify",
+    fontFamily: "Lato_400Regular",
+    paddingLeft: 25,
+    paddingRight: 25,
+    fontSize: 14,
+    paddingBottom: 15,
+  },
+});
 
 export default ProfileScreen;

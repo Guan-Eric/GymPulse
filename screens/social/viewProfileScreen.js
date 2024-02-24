@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {
-  Button,
   View,
   FlatList,
   Pressable,
   Image,
   Text,
-  Dimensions,
+  StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
-import { useTheme } from "@rneui/themed";
+import { useTheme, Button } from "@rneui/themed";
 import {
   collection,
   onSnapshot,
@@ -52,7 +51,7 @@ function ViewProfileScreen({ navigation, route }) {
 
         const userPostsCollection = collection(
           FIRESTORE_DB,
-          `User/${route.params.userId}/Posts`
+          `Users/${route.params.userId}/Posts`
         );
         const queryRef = query(userPostsCollection, orderBy("date", "desc"));
         const querySnapshot = await getDocs(queryRef);
@@ -88,15 +87,36 @@ function ViewProfileScreen({ navigation, route }) {
     }
   };
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
         <View>
-          <Text>{user?.name}</Text>
-          {following ? (
-            <Button title="Follow" onPress={toggleFollow} />
-          ) : (
-            <Button title="Unfollow" onPress={toggleFollow} />
-          )}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingBottom: 5,
+              paddingLeft: 10,
+            }}
+          >
+            <Image
+              style={{ width: 40, height: 40 }}
+              source={require("../../assets/profile.png")}
+            />
+            <Text style={[styles.userName, { color: theme.colors.text }]}>
+              {user?.name}
+            </Text>
+
+            {following ? (
+              <Button size="sm" title="Unfollow" onPress={toggleFollow} />
+            ) : (
+              <Button size="sm" title="Follow" onPress={toggleFollow} />
+            )}
+          </View>
+          {user?.bio != "" ? (
+            <Text style={[styles.bio, { color: theme.colors.text }]}>
+              {user?.bio}
+            </Text>
+          ) : null}
           <FlatList
             numColumns={3}
             horizontal={false}
@@ -127,4 +147,20 @@ function ViewProfileScreen({ navigation, route }) {
   );
 }
 
+const styles = StyleSheet.create({
+  userName: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 16,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  bio: {
+    textAlign: "justify",
+    fontFamily: "Lato_400Regular",
+    paddingLeft: 25,
+    paddingRight: 25,
+    fontSize: 14,
+    paddingBottom: 15,
+  },
+});
 export default ViewProfileScreen;
