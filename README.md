@@ -1,4 +1,4 @@
-# Shape
+# GymPulse
 
 A fitness tracker app that helps users organize their workout plans and track their progress.
 
