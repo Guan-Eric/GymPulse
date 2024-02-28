@@ -2,14 +2,8 @@ import { Camera, CameraType } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { manipulateAsync } from "expo-image-manipulator";
 import { useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-} from "react-native";
+import { Button, Icon } from "@rneui/themed";
+import { StyleSheet, Text, View } from "react-native";
 import { ScreenWidth } from "@rneui/base";
 
 function CameraScreen({ navigation }) {
@@ -22,11 +16,11 @@ function CameraScreen({ navigation }) {
 
   if (!permission.granted) {
     return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
+      <View style={styles.permissionContainer}>
+        <Text style={styles.permissionText}>
+          We need your permission to use the camera
         </Text>
-        <Button onPress={requestPermission} title="Grant Permission" />
+        <Button title="Grant Permission" onPress={requestPermission} />
       </View>
     );
   }
@@ -62,17 +56,16 @@ function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Camera
-        style={[
-          styles.camera,
-          { width: ScreenWidth, height: ScreenWidth * 1.25 },
-        ]}
-        type={type}
-        ref={(ref) => setCamera(ref)}
-      >
+      <Camera style={styles.camera} type={type} ref={(ref) => setCamera(ref)}>
         <View style={styles.buttonContainer}>
+          <Button type="clear" onPress={pickImage}>
+            <Icon size={40} name="image-outline" type="material-community" />
+          </Button>
+          <Button type="clear" onPress={takePicture}>
+            <Icon size={75} name="circle-slice-8" type="material-community" />
+          </Button>
           <Button
-            title="Flip"
+            type="clear"
             onPress={() => {
               setType(
                 type === Camera.Constants.Type.back
@@ -80,9 +73,13 @@ function CameraScreen({ navigation }) {
                   : Camera.Constants.Type.back
               );
             }}
-          />
-          <Button title="Take Picture" onPress={takePicture} />
-          <Button title="Pick an image from camera roll" onPress={pickImage} />
+          >
+            <Icon
+              size={40}
+              name="camera-flip-outline"
+              type="material-community"
+            />
+          </Button>
         </View>
       </Camera>
     </View>
@@ -94,16 +91,28 @@ export default CameraScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#000",
   },
   camera: {
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  buttonContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+    paddingRight: 30,
+    paddingLeft: 30,
+  },
+  permissionContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
-  buttonContainer: {
-    flexDirection: "column",
-    justifyContent: "space-between",
+  permissionText: {
+    fontSize: 18,
     marginBottom: 20,
-    marginHorizontal: 20,
+    textAlign: "center",
   },
 });
