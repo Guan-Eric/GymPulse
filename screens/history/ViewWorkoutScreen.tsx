@@ -12,9 +12,10 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import { Workout } from "../../components/types";
 
 function ViewWorkoutScreen({ route, navigation }) {
-  const [workout, setWorkout] = useState({});
+  const [workout, setWorkout] = useState<Workout>();
   const [isMetric, setIsMetric] = useState();
 
   useEffect(() => {
@@ -40,7 +41,7 @@ function ViewWorkoutScreen({ route, navigation }) {
         );
         workoutData.exercises = exercisesData;
 
-        setWorkout(workoutData);
+        setWorkout(workoutData as Workout);
       } catch (error) {
         console.error("Error fetching workout data:", error);
       }

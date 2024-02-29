@@ -22,7 +22,7 @@ function WorkoutScreen({ route, navigation }) {
   const minutes = String(currentDate.getMinutes()).padStart(2, "0");
   const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
   const [name, setName] = useState("");
-  const [day, setDay] = useState({});
+  const [day, setDay] = useState<any>({});
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
   const [time, setTime] = useState(0);
@@ -223,7 +223,7 @@ function WorkoutScreen({ route, navigation }) {
     ]);
 
   const updateSets = (day, exerciseIndex, setIndex, property, value) => {
-    newDay = {
+    const newDay = {
       ...day,
       exercises: day.exercises.map((prevExercise, eIndex) =>
         eIndex === exerciseIndex
@@ -278,7 +278,7 @@ function WorkoutScreen({ route, navigation }) {
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
-                    isMetric ? newWeight * 2.205 : newWeight
+                    isMetric ? parseFloat(newWeight) * 2.205 : parseFloat(newWeight)
                   )
                 }
                 value={
@@ -341,7 +341,7 @@ function WorkoutScreen({ route, navigation }) {
                   <Button
                     title={"Add Set"}
                     onPress={() =>
-                      handleAddSet(day.id, exercise.id, exercise, day)
+                      handleAddSet(day.id, exercise.id)
                     }
                   />
                 </View>

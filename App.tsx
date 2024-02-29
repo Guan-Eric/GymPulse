@@ -37,15 +37,15 @@ import { Lato_700Bold, Lato_400Regular } from "@expo-google-fonts/lato";
 const theme = createTheme({
   lightColors: {
     primary: "#3490de",
-    text: "black",
+    black: "black",
     background: "white",
   },
   darkColors: {
     primary: "#3490de",
-    text: "white",
+    black: "white",
     background: "#181818",
   },
-  mode: "light" | "dark",
+  mode: "light" as "light" | "dark",
 });
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();

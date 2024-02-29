@@ -24,12 +24,13 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
+import { Post, User } from "../../components/types";
 
 function ViewProfileScreen({ navigation, route }) {
   const { theme } = useTheme();
-  const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState();
-  const [following, setFollowing] = useState();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [user, setUser] = useState<User>();
+  const [following, setFollowing] = useState<Boolean>();
   const [loading, setLoading] = useState(true);
 
   const imageWidth = ScreenWidth / 3;
@@ -40,14 +41,15 @@ function ViewProfileScreen({ navigation, route }) {
       try {
         const userDocRef = doc(FIRESTORE_DB, `Users/${route.params.userId}`);
         const userDocSnapshot = await getDoc(userDocRef);
-        setUser(userDocSnapshot.data());
+        const userData = userDocSnapshot.data() as User;
+        setUser(userData);
 
         const followingDocRef = doc(
           FIRESTORE_DB,
           `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${route.params.userId}`
         );
         const followingSnapshot = await getDoc(followingDocRef);
-        setFollowing(followingSnapshot.exists());
+        setFollowing(followingSnapshot.exists() as Boolean);
 
         const userPostsCollection = collection(
           FIRESTORE_DB,
@@ -102,7 +104,7 @@ function ViewProfileScreen({ navigation, route }) {
               style={{ width: 40, height: 40 }}
               source={require("../../assets/profile.png")}
             />
-            <Text style={[styles.userName, { color: theme.colors.text }]}>
+            <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.name}
             </Text>
 
@@ -113,7 +115,7 @@ function ViewProfileScreen({ navigation, route }) {
             )}
           </View>
           {user?.bio != "" ? (
-            <Text style={[styles.bio, { color: theme.colors.text }]}>
+            <Text style={[styles.bio, { color: theme.colors.black }]}>
               {user?.bio}
             </Text>
           ) : null}

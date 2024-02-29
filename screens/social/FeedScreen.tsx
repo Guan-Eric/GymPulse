@@ -179,7 +179,7 @@ function FeedScreen({ navigation }) {
                   style={{ width: 40, height: 40 }}
                   source={require("../../assets/profile.png")}
                 />
-                <Text style={[styles.userName, { color: theme.colors.text }]}>
+                <Text style={[styles.userName, { color: theme.colors.black }]}>
                   {item.userName}
                 </Text>
               </Pressable>
@@ -243,7 +243,7 @@ function FeedScreen({ navigation }) {
                 </Pressable>
               </View>
 
-              <Text style={[styles.caption, { color: theme.colors.text }]}>
+              <Text style={[styles.caption, { color: theme.colors.black }]}>
                 {item.caption}
               </Text>
             </View>

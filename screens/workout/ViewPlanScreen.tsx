@@ -280,7 +280,7 @@ function ViewPlanScreen({ route, navigation }) {
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
-                    isMetric ? newWeight * 2.205 : newWeight
+                    isMetric ? parseFloat(newWeight) * 2.205 : parseFloat(newWeight)
                   )
                 }
                 value={
@@ -363,7 +363,7 @@ function ViewPlanScreen({ route, navigation }) {
                     <Button
                       title={"Add Set"}
                       onPress={() =>
-                        handleAddSet(day.id, exercise.id, exercise, days)
+                        handleAddSet(day.id, exercise.id, days)
                       }
                     />
                   </View>

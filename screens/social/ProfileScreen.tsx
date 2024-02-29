@@ -24,11 +24,13 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
+import { Post, User } from "../../components/types";
+
 
 function ProfileScreen({ navigation }) {
   const { theme } = useTheme();
-  const [posts, setPosts] = useState([]);
-  const [user, setUser] = useState();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [user, setUser] = useState<User | null>();
   const [loading, setLoading] = useState(true);
   const imageWidth = ScreenWidth / 3;
 
@@ -41,7 +43,7 @@ function ProfileScreen({ navigation }) {
           `Users/${FIREBASE_AUTH.currentUser.uid}`
         );
         const userDocSnapshot = await getDoc(userDocRef);
-        setUser(userDocSnapshot.data());
+        setUser(userDocSnapshot.data() as User);
 
         const userPostsCollection = collection(
           FIRESTORE_DB,
@@ -88,12 +90,12 @@ function ProfileScreen({ navigation }) {
               style={{ width: 40, height: 40 }}
               source={require("../../assets/profile.png")}
             />
-            <Text style={[styles.userName, { color: theme.colors.text }]}>
+            <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.name}
             </Text>
           </View>
           {user?.bio != "" ? (
-            <Text style={[styles.bio, { color: theme.colors.text }]}>
+            <Text style={[styles.bio, { color: theme.colors.black }]}>
               {user?.bio}
             </Text>
           ) : null}

@@ -28,12 +28,13 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
+import { Post } from "../../components/types";
 
 function ViewPostScreen({ navigation, route }) {
   const { theme } = useTheme();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
-  const [post, setPost] = useState({ comments: [] });
+  const [post, setPost] = useState<Post>();
 
   useEffect(() => {
     const fetchUserAndUserPostFirestore = async () => {
@@ -86,7 +87,10 @@ function ViewPostScreen({ navigation, route }) {
         setComments(comments);
         if (userDocSnapshot.exists()) {
           setPost({
-            ...userPostSnapshot.data(),
+            userId: userPostSnapshot.data().userId,
+            id: userPostSnapshot.data().id,
+            caption: userPostSnapshot.data().caption,
+            url: userPostSnapshot.data().url,
             userName: userDocSnapshot.data().name,
             like: userLikeSnapshot.exists(),
             numLikes: numLikesSnapshot.data().count,
@@ -155,7 +159,7 @@ function ViewPostScreen({ navigation, route }) {
         id: commentDocRef.id,
       });
       setComment("");
-      setComments();
+      setComments([...comments, comment]);
     } catch (error) {
       console.error("Error posting comment:", error);
     }
@@ -171,13 +175,13 @@ function ViewPostScreen({ navigation, route }) {
               paddingBottom: 5,
               paddingLeft: 30,
             }}
-            onPress={() => navigateProfile(route.params.userId)}
+            onPress={() => navigateProfile()}
           >
             <Image
               style={{ width: 40, height: 40 }}
               source={require("../../assets/profile.png")}
             />
-            <Text style={[styles.userName, { color: theme.colors.text }]}>
+            <Text style={[styles.userName, { color: theme.colors.black }]}>
               {post?.userName}
             </Text>
           </Pressable>
@@ -217,17 +221,17 @@ function ViewPostScreen({ navigation, route }) {
               onPress={() => toggleLike(post)}
             />
           </View>
-          <Text style={[styles.caption, { color: theme.colors.text }]}>
+          <Text style={[styles.caption, { color: theme.colors.black }]}>
             {post?.caption}
           </Text>
           {comments?.map((item) => (
             <View style={{ flexDirection: "row" }}>
               <Text
-                style={[styles.commentUserName, { color: theme.colors.text }]}
+                style={[styles.commentUserName, { color: theme.colors.black }]}
               >
                 {item.userName}
               </Text>
-              <Text style={[styles.comment, { color: theme.colors.text }]}>
+              <Text style={[styles.comment, { color: theme.colors.black }]}>
                 {item.comment}
               </Text>
             </View>
