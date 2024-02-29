@@ -21,9 +21,10 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
+import { Workout } from "../../components/types";
 
 function WorkoutHistoryScreen({ navigation }) {
-  const [workouts, setWorkouts] = useState([]);
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
@@ -39,7 +40,7 @@ function WorkoutHistoryScreen({ navigation }) {
 
         const unsubscribe = onSnapshot(workoutsCollectionRef, (snapshot) => {
           const data = snapshot.docs.map((doc) => doc.data());
-          setWorkouts(data);
+          setWorkouts(data as Workout[]);
         });
 
         return () => unsubscribe();

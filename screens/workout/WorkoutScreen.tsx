@@ -12,6 +12,7 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import { Day } from "../../components/types";
 
 function WorkoutScreen({ route, navigation }) {
   const currentDate = new Date();
@@ -22,7 +23,7 @@ function WorkoutScreen({ route, navigation }) {
   const minutes = String(currentDate.getMinutes()).padStart(2, "0");
   const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
   const [name, setName] = useState("");
-  const [day, setDay] = useState<any>({});
+  const [day, setDay] = useState<Day>();
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
   const [time, setTime] = useState(0);
@@ -69,7 +70,7 @@ function WorkoutScreen({ route, navigation }) {
         );
         dayData.exercises = exercisesData;
 
-        setDay(dayData);
+        setDay(dayData as Day);
       } catch (error) {
         console.error("Error fetching day data:", error);
       }

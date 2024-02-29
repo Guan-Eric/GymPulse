@@ -11,9 +11,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_STR } from "../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import { Exercise } from "../../components/types";
 
 function BodyPartScreen({ route, navigation }) {
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [imageUrls, setImageUrls] = useState({});
 
   const bodyPart = route.params.item.name.toLowerCase();

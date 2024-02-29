@@ -14,6 +14,18 @@ export interface User {
     numLikes: number,
   }
 
+  export interface Plan {
+    id: string,
+    name: string,
+    days: Day[],
+  }
+
+  export interface Day {
+    id: string,
+    name: string,
+    exercises: Exercise[],
+  }
+
   export interface Workout {
     id: string,
     name: string,
@@ -25,9 +37,12 @@ export interface User {
   export interface Exercise {
     id: string,
     name: string,
-    sets: [
-        
-    ],
+    sets: Set[],
     cardio: boolean,
+  }
+
+  export interface Set {
+    reps: number;
+    weight_duration: number;
   }
   

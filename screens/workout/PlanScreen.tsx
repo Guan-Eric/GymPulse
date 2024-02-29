@@ -21,9 +21,10 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
+import { Plan } from "../../components/types";
 
 function PlanScreen({ navigation }) {
-  const [plans, setPlans] = useState([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
@@ -39,7 +40,7 @@ function PlanScreen({ navigation }) {
 
         const unsubscribe = onSnapshot(plansCollectionRef, (snapshot) => {
           const data = snapshot.docs.map((doc) => doc.data());
-          setPlans(data);
+          setPlans(data as Plan[]);
         });
 
         return () => unsubscribe();

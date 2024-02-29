@@ -19,11 +19,11 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import { Day } from "../../components/types";
 
 function ViewPlanScreen({ route, navigation }) {
   const [name, setName] = useState("");
-  const [plan, setPlan] = useState({});
-  const [days, setDays] = useState([]);
+  const [days, setDays] = useState<Day[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
 
@@ -49,7 +49,6 @@ function ViewPlanScreen({ route, navigation }) {
           )
         );
         const planData = planDoc.data();
-        setPlan(planData);
         setName(planData.name);
 
         const daysCollection = collection(planDoc.ref, "Days");
@@ -114,7 +113,7 @@ function ViewPlanScreen({ route, navigation }) {
       const newDayDoc = await getDoc(doc(daysCollection, daysDocRef.id));
       const newDayData = newDayDoc.data();
 
-      setDays((prevDays) => [...prevDays, newDayData]);
+      setDays((prevDays) => [...prevDays, newDayData] as Day[]);
       setIsDirty(true);
     } catch (error) {
       console.error("Error adding new day:", error);

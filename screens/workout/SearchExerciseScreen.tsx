@@ -13,11 +13,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../../firebaseConfig";
 import { collection, getDocs, onSnapshot, where } from "firebase/firestore";
 import { useThemeMode } from "@rneui/themed";
+import { Exercise } from "../../components/types";
 
 function SearchExerciseScreen({ navigation, route }) {
   const { mode, setMode } = useThemeMode();
   const [search, setSearch] = useState("");
-  const [exercises, setExecercises] = useState([]);
+  const [exercises, setExecercises] = useState<Exercise[]>([]);
   useEffect(() => {
     const fetchExerciseFromFirestore = async () => {
       try {
@@ -58,7 +59,6 @@ function SearchExerciseScreen({ navigation, route }) {
           contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
           renderItem={({ item }) => (
             <Pressable
-              key={item.key}
               onPress={() =>
                 navigation.navigate("AddExercise", {
                   exercise: item,

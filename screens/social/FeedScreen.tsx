@@ -25,10 +25,11 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
+import { Post } from "../../components/types";
 
 function FeedScreen({ navigation }) {
   const { theme } = useTheme();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     const fetchFeedFromFirestore = async () => {
@@ -100,7 +101,7 @@ function FeedScreen({ navigation }) {
                 return postData;
               })
             );
-            setPosts(followingPosts);
+            setPosts(followingPosts as Post[]);
           }
         }
       } catch (error) {
