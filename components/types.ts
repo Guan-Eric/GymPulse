@@ -1,48 +1,52 @@
 export interface User {
-    name: string;
-    bio: string;
-    id: string,
-  }
-  
-  export interface Post {
-    id: string;
-    url: string;
-    userId: string;
-    caption: string,
-    userName: string,
-    like: boolean,
-    numLikes: number,
-  }
+  name: string;
+  bio: string;
+  id: string;
+}
 
-  export interface Plan {
-    id: string,
-    name: string,
-    days: Day[],
-  }
+export interface Post {
+  id: string;
+  url: string;
+  userId: string;
+  caption: string;
+  userName: string;
+  like: boolean;
+  numLikes: number;
+}
 
-  export interface Day {
-    id: string,
-    name: string,
-    exercises: Exercise[],
-  }
+export interface Plan {
+  id: string;
+  name: string;
+  days: Day[];
+}
 
-  export interface Workout {
-    id: string,
-    name: string,
-    duration: number,
-    date: string,
-    exercises: Exercise[],
-  }
+export interface Day {
+  id: string;
+  name: string;
+  exercises: Exercise[];
+}
 
-  export interface Exercise {
-    id: string,
-    name: string,
-    sets: Set[],
-    cardio: boolean,
-  }
+export interface Workout {
+  id: string;
+  name: string;
+  duration: number;
+  date: string;
+  exercises: Exercise[];
+}
 
-  export interface Set {
-    reps: number;
-    weight_duration: number;
-  }
-  
+export interface Exercise {
+  instructions: string[];
+  secondaryMuscles: string[];
+  id: string;
+  name: string;
+  sets: Set[];
+  cardio: boolean;
+  category: string;
+  equipment: string;
+  level: string;
+}
+
+export interface Set {
+  reps: number;
+  weight_duration: number;
+}

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIRESTORE_DB } from "../../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -19,13 +19,15 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import { Day } from "../../components/types";
+import { Day } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
 
-function ViewPlanScreen({ route, navigation }) {
+function ViewPlanScreen() {
   const [name, setName] = useState("");
   const [days, setDays] = useState<Day[]>([]);
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
+  const { userId, planId } = useLocalSearchParams();
 
   useEffect(() => {
     if (isDirty) {
@@ -37,16 +39,11 @@ function ViewPlanScreen({ route, navigation }) {
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
       try {
-        const userDoc = await getDoc(
-          doc(FIRESTORE_DB, `Users/${route.params.userId}`)
-        );
+        const userDoc = await getDoc(doc(FIRESTORE_DB, `Users/${userId}`));
         const userData = userDoc.data();
         setIsMetric(userData.metricUnits);
         const planDoc = await getDoc(
-          doc(
-            FIRESTORE_DB,
-            `Users/${route.params.userId}/Plans/${route.params.planId}`
-          )
+          doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`)
         );
         const planData = planDoc.data();
         setName(planData.name);
@@ -79,10 +76,7 @@ function ViewPlanScreen({ route, navigation }) {
     setIsDirty(true);
   };
   const handleSavePlan = async () => {
-    const planDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${route.params.userId}/Plans/${route.params.planId}`
-    );
+    const planDocRef = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
     updateDoc(planDocRef, { name: name });
     for (const day of days) {
       const dayDocRef = doc(planDocRef, `Days/${day.id}`);
@@ -99,14 +93,11 @@ function ViewPlanScreen({ route, navigation }) {
   };
   const handleAddDay = async () => {
     try {
-      const planDoc = doc(
-        FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}`
-      );
+      const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
       const daysCollection = collection(planDoc, "Days");
       const daysDocRef = await addDoc(daysCollection, {
         name: "New Day",
-        planId: route.params.planId,
+        planId: planId,
       });
       const dayDoc = doc(daysCollection, daysDocRef.id);
       await updateDoc(dayDoc, { id: daysDocRef.id });
@@ -123,7 +114,7 @@ function ViewPlanScreen({ route, navigation }) {
   const handleAddSet = async (dayId, exerciseId, days) => {
     const exerciseDoc = doc(
       FIRESTORE_DB,
-      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
+      `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
     );
     const exerciseDocSnap = await getDoc(exerciseDoc);
 
@@ -150,7 +141,7 @@ function ViewPlanScreen({ route, navigation }) {
     try {
       const dayDocRef = doc(
         FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}`
+        `Users/${userId}/Plans/${planId}/Days/${dayId}`
       );
       const exercisesCollectionRef = collection(dayDocRef, "Exercise");
       const exercisesQuerySnapshot = await getDocs(exercisesCollectionRef);
@@ -169,7 +160,7 @@ function ViewPlanScreen({ route, navigation }) {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       await deleteDoc(exerciseDocRef);
       setDays((prevDays) =>
@@ -279,7 +270,9 @@ function ViewPlanScreen({ route, navigation }) {
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
-                    isMetric ? parseFloat(newWeight) * 2.205 : parseFloat(newWeight)
+                    isMetric
+                      ? parseFloat(newWeight) * 2.205
+                      : parseFloat(newWeight)
                   )
                 }
                 value={
@@ -338,10 +331,13 @@ function ViewPlanScreen({ route, navigation }) {
               <Button
                 title="Start Workout"
                 onPress={() =>
-                  navigation.navigate("Workout", {
-                    userId: route.params.userId,
-                    planId: route.params.planId,
-                    dayId: day.id,
+                  router.push({
+                    pathname: "/(tabs)/(workout)/workout",
+                    params: {
+                      userId: userId,
+                      planId: planId,
+                      dayId: day.id,
+                    },
                   })
                 }
               />
@@ -361,19 +357,20 @@ function ViewPlanScreen({ route, navigation }) {
                     )}
                     <Button
                       title={"Add Set"}
-                      onPress={() =>
-                        handleAddSet(day.id, exercise.id, days)
-                      }
+                      onPress={() => handleAddSet(day.id, exercise.id, days)}
                     />
                   </View>
                 ))}
               <Button
                 title="Add Exercise"
                 onPress={() =>
-                  navigation.navigate("SearchExercise", {
-                    userId: route.params.userId,
-                    dayId: day.id,
-                    planId: route.params.planId,
+                  router.push({
+                    pathname: "/(tabs)/(workout)/search",
+                    params: {
+                      userId: userId,
+                      planId: planId,
+                      dayId: day.id,
+                    },
                   })
                 }
               />

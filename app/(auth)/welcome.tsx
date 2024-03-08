@@ -1,10 +1,9 @@
-import { useTheme } from "@rneui/themed";
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@rneui/themed";
 import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
+import { router } from "expo-router";
 
-function WelcomeScreen({ navigation }) {
-  const { theme } = useTheme();
+function WelcomeScreen() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
@@ -25,15 +24,17 @@ function WelcomeScreen({ navigation }) {
             size="lg"
             buttonStyle={styles.signUpButton}
             title="Sign Up"
-            onPress={() => navigation.navigate("SignUp")}
+            onPress={() => router.push("/(auth)/signup")}
           />
+
           <View style={{ alignItems: "center", paddingTop: 40 }}>
             <Text style={styles.baseText}>Already have an account?</Text>
+
             <Button
               type="clear"
               buttonStyle={styles.signInButton}
               title="Sign In"
-              onPress={() => navigation.navigate("SignIn")}
+              onPress={() => router.push("/(auth)/signin")}
             />
           </View>
         </View>

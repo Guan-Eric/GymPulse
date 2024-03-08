@@ -10,15 +10,18 @@ import {
 import { SearchBar } from "@rneui/themed";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIRESTORE_DB } from "../../../firebaseConfig";
 import { collection, getDocs, onSnapshot, where } from "firebase/firestore";
 import { useThemeMode } from "@rneui/themed";
-import { Exercise } from "../../components/types";
+import { Exercise } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
 
-function SearchExerciseScreen({ navigation, route }) {
+function SearchExerciseScreen() {
   const { mode, setMode } = useThemeMode();
   const [search, setSearch] = useState("");
   const [exercises, setExecercises] = useState<Exercise[]>([]);
+  const { userId, planId, dayId } = useLocalSearchParams();
+
   useEffect(() => {
     const fetchExerciseFromFirestore = async () => {
       try {
@@ -60,11 +63,14 @@ function SearchExerciseScreen({ navigation, route }) {
           renderItem={({ item }) => (
             <Pressable
               onPress={() =>
-                navigation.navigate("AddExercise", {
-                  exercise: item,
-                  userId: route.params.userId,
-                  dayId: route.params.dayId,
-                  planId: route.params.planId,
+                router.push({
+                  pathname: "/(tabs)/(workout)/add",
+                  params: {
+                    exerciseId: item.id,
+                    userId: userId,
+                    dayId: dayId,
+                    planId: planId,
+                  },
                 })
               }
             >

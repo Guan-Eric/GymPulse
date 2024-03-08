@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIRESTORE_DB } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
-import { FIREBASE_STR } from "../../firebaseConfig";
+import { FIREBASE_STR } from "../../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -22,56 +22,58 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
+import { router, useLocalSearchParams } from "expo-router";
+import { Exercise } from "../../../components/types";
 
-function AddExerciseScreen({ route, navigation }) {
+function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
+  const { exerciseId, userId, planId, dayId } = useLocalSearchParams();
+  const [exercise, setExercise] = useState<Exercise>();
 
   useEffect(() => {
-    const fetchImage = async () => {
+    const fetchExercise = async () => {
       try {
-        const image1Ref = ref(
-          FIREBASE_STR,
-          `assets/${route.params.exercise.id}_0.jpg`
+        const exerciseDoc = await getDoc(
+          doc(FIRESTORE_DB, `Exercise/${exerciseId}`)
         );
+        setExercise(exerciseDoc.data() as Exercise);
+        const image1Ref = ref(FIREBASE_STR, `assets/${exerciseId}_0.jpg`);
         const url1 = await getDownloadURL(image1Ref);
-        const image2Ref = ref(
-          FIREBASE_STR,
-          `assets/${route.params.exercise.id}_1.jpg`
-        );
+        const image2Ref = ref(FIREBASE_STR, `assets/${exerciseId}_1.jpg`);
         const url2 = await getDownloadURL(image2Ref);
         setImageUrls([
           { id: 0, uri: url1 },
           { id: 1, uri: url2 },
         ]);
       } catch (error) {
-        console.error("Error fetching image:", error);
+        console.error("Error fetching exercise:", error);
       }
     };
 
-    fetchImage();
+    fetchExercise();
   }, []);
-  const instructions = route.params.exercise.instructions.map((item, index) => (
+  const instructions = exercise.instructions.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
-  const secondaryMuscles = route.params.exercise.secondaryMuscles.map(
-    (item, index) => <Text key={index}>{item}</Text>
-  );
+  const secondaryMuscles = exercise.secondaryMuscles.map((item, index) => (
+    <Text key={index}>{item}</Text>
+  ));
   const handleAddExercise = async () => {
     const dayDoc = doc(
       FIRESTORE_DB,
-      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
+      `Users/${userId}/Plans/${planId}/Days/${dayId}`
     );
     const exerciseCollection = collection(dayDoc, "Exercise");
     const exerciseDocRef = await addDoc(exerciseCollection, {
-      name: route.params.exercise.name,
-      dayId: route.params.dayId,
+      name: exercise.name,
+      dayId: dayId,
       sets: [{ reps: 0, weight_duration: 0 }],
-      cardio: route.params.exercise.category == "cardio",
+      cardio: exercise.category == "cardio",
     });
     const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });
-    navigation.goBack();
-    navigation.goBack();
+    router.back();
+    router.back();
   };
   return (
     <View>
@@ -92,14 +94,14 @@ function AddExerciseScreen({ route, navigation }) {
           )}
         />
         <ScrollView>
-          <Text>{route.params.exercise.name}</Text>
+          <Text>{exercise.name}</Text>
           <Button title="Add Exercise" onPress={handleAddExercise} />
           <Text>Equipment</Text>
-          <Text>{route.params.exercise.equipment}</Text>
+          <Text>{exercise.equipment}</Text>
           <Text>Secondary Muscles</Text>
           {secondaryMuscles}
           <Text>Level</Text>
-          <Text>{route.params.exercise.level}</Text>
+          <Text>{exercise.level}</Text>
           <Text>Instructions</Text>
           {instructions}
         </ScrollView>

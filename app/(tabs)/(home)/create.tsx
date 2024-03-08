@@ -4,7 +4,7 @@ import {
   FIRESTORE_DB,
   FIREBASE_AUTH,
   FIREBASE_STR,
-} from "../../firebaseConfig";
+} from "../../../firebaseConfig";
 import {
   Keyboard,
   TouchableWithoutFeedback,
@@ -27,10 +27,13 @@ import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { ScreenWidth } from "@rneui/base";
 import { Input, useTheme, Button } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useLocalSearchParams } from "expo-router";
 
-function CreatePostScreen({ route, navigation }) {
+function CreatePostScreen() {
   const [caption, setCaption] = useState("");
   const { theme } = useTheme();
+  const { image } = useLocalSearchParams();
+  
   const createPost = async () => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -39,6 +42,7 @@ function CreatePostScreen({ route, navigation }) {
     const hours = String(currentDate.getHours()).padStart(2, "0");
     const minutes = String(currentDate.getMinutes()).padStart(2, "0");
     const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
+
     try {
       const postDocRef = doc(
         FIRESTORE_DB,
@@ -51,7 +55,7 @@ function CreatePostScreen({ route, navigation }) {
         date: formattedDateTime,
         userId: FIREBASE_AUTH.currentUser.uid,
       });
-      const response = await fetch(route.params.image);
+      const response = await fetch(image as string);
       const blob = await response.blob();
 
       const imageRef = ref(FIREBASE_STR, `posts/${userPostsDocRef.id}`);
@@ -63,7 +67,7 @@ function CreatePostScreen({ route, navigation }) {
         id: userPostsDocRef.id,
         url: downloadUrl,
       });
-      navigation.navigate("Home");
+      router.push("/(tabs)/(home)/feed");
     } catch (error) {
       console.error("Error creating post:", error);
     }
@@ -84,7 +88,7 @@ function CreatePostScreen({ route, navigation }) {
         >
           <ScrollView>
             <Image
-              source={{ uri: route.params.image }}
+              source={{ uri: image as string }}
               style={{
                 alignSelf: "center",
                 borderRadius: 20,
@@ -106,7 +110,7 @@ function CreatePostScreen({ route, navigation }) {
                 type="outline"
                 buttonStyle={styles.cancelButton}
                 title="Cancel"
-                onPress={() => navigation.goBack()}
+                onPress={() => router.back()}
               />
               <Button
                 buttonStyle={styles.postButton}

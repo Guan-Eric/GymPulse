@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 import { useTheme, CheckBox, Icon, Input } from "@rneui/themed";
 import {
@@ -28,41 +28,44 @@ import {
   addDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
-import { Post } from "../../components/types";
+import { Post } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
 
-function ViewPostScreen({ navigation, route }) {
+function ViewPostScreen() {
   const { theme } = useTheme();
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [post, setPost] = useState<Post>();
 
+  const { userId, postId } = useLocalSearchParams();
+
   useEffect(() => {
     const fetchUserAndUserPostFirestore = async () => {
       try {
-        const userDocRef = doc(FIRESTORE_DB, `Users/${route.params.userId}`);
+        const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
         const userDocSnapshot = await getDoc(userDocRef);
 
         const userPostDocRef = doc(
           FIRESTORE_DB,
-          `Users/${route.params.userId}/Posts/${route.params.postId}`
+          `Users/${userId}/Posts/${postId}`
         );
         const userPostSnapshot = await getDoc(userPostDocRef);
 
         const userLikeDocRef = doc(
           FIRESTORE_DB,
-          `Users/${route.params.userId}/Posts/${route.params.postId}/Likes/${FIREBASE_AUTH.currentUser.uid}`
+          `Users/${userId}/Posts/${postId}/Likes/${FIREBASE_AUTH.currentUser.uid}`
         );
         const userLikeSnapshot = await getDoc(userLikeDocRef);
 
         const numLikesCollection = collection(
           FIRESTORE_DB,
-          `Users/${route.params.userId}/Posts/${route.params.postId}/Likes/`
+          `Users/${userId}/Posts/${postId}/Likes/`
         );
         const numLikesSnapshot = await getCountFromServer(numLikesCollection);
 
         const postCommentsCollection = collection(
           FIRESTORE_DB,
-          `Users/${route.params.userId}/Posts/${route.params.postId}/Comments/`
+          `Users/${userId}/Posts/${postId}/Comments/`
         );
         const commentsQueryRef = query(
           postCommentsCollection,
@@ -130,9 +133,12 @@ function ViewPostScreen({ navigation, route }) {
 
   const navigateProfile = () => {
     if (post.userId == FIREBASE_AUTH.currentUser.uid) {
-      navigation.navigate("Profile");
+      router.push("/(tabs)/(profile)/user");
     } else {
-      navigation.navigate("ViewProfile", { userId: post.userId });
+      router.push({
+        pathname: "/(tabs)/(home)/profile",
+        params: { userId: post.userId },
+      });
     }
   };
 
@@ -179,7 +185,7 @@ function ViewPostScreen({ navigation, route }) {
           >
             <Image
               style={{ width: 40, height: 40 }}
-              source={require("../../assets/profile.png")}
+              source={require("../../../assets/profile.png")}
             />
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {post?.userName}
@@ -189,9 +195,9 @@ function ViewPostScreen({ navigation, route }) {
             source={{ uri: post?.url }}
             style={{
               alignSelf: "center",
-              borderRadius: 20,
-              width: 0.9 * ScreenWidth,
-              height: 0.9 * ScreenWidth * 1.25,
+              borderRadius: 15,
+              width: 0.93 * ScreenWidth,
+              height: 0.93 * ScreenWidth * 1.25,
               resizeMode: "cover",
             }}
           />

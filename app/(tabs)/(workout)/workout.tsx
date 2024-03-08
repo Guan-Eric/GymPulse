@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIRESTORE_DB } from "../../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -12,9 +12,10 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import { Day } from "../../components/types";
+import { Day } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
 
-function WorkoutScreen({ route, navigation }) {
+function WorkoutScreen() {
   const currentDate = new Date();
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -30,6 +31,7 @@ function WorkoutScreen({ route, navigation }) {
   const [running, setRunning] = useState(false);
   const intervalRef = useRef(null);
   const startTimeRef = useRef(0);
+  const { userId, planId, dayId } = useLocalSearchParams();
 
   const startStopwatch = () => {
     startTimeRef.current = Date.now() - time * 1000;
@@ -49,16 +51,11 @@ function WorkoutScreen({ route, navigation }) {
   useEffect(() => {
     const fetchDayFromFirestore = async () => {
       try {
-        const userDoc = await getDoc(
-          doc(FIRESTORE_DB, `Users/${route.params.userId}`)
-        );
+        const userDoc = await getDoc(doc(FIRESTORE_DB, `Users/${userId}`));
         const userData = userDoc.data();
         setIsMetric(userData.metricUnits);
         const dayDoc = await getDoc(
-          doc(
-            FIRESTORE_DB,
-            `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
-          )
+          doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}/Days/${dayId}`)
         );
         const dayData = dayDoc.data();
         setName(dayData.name);
@@ -86,7 +83,7 @@ function WorkoutScreen({ route, navigation }) {
   const handleSaveDay = async () => {
     const dayDocRef = doc(
       FIRESTORE_DB,
-      `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${route.params.dayId}`
+      `Users/${userId}/Plans/${planId}/Days/${dayId}`
     );
     updateDoc(dayDocRef, { name: name });
 
@@ -103,7 +100,7 @@ function WorkoutScreen({ route, navigation }) {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       const exerciseDocSnap = await getDoc(exerciseDocRef);
 
@@ -128,7 +125,7 @@ function WorkoutScreen({ route, navigation }) {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       await deleteDoc(exerciseDocRef);
 
@@ -147,7 +144,7 @@ function WorkoutScreen({ route, navigation }) {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${route.params.userId}/Plans/${route.params.planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       const exerciseDocSnap = await getDoc(exerciseDocRef);
 
@@ -170,18 +167,18 @@ function WorkoutScreen({ route, navigation }) {
   const handleSaveWorkout = async () => {
     try {
       const docRef = await addDoc(
-        collection(FIRESTORE_DB, `Users/${route.params.userId}/Workouts`),
+        collection(FIRESTORE_DB, `Users/${userId}/Workouts`),
         {
           name: name,
           date: formattedDateTime,
           duration: time,
-          userId: route.params.userId,
+          userId: userId,
         }
       );
 
       const workoutDoc = doc(
         FIRESTORE_DB,
-        `Users/${route.params.userId}/Workouts/${docRef.id}`
+        `Users/${userId}/Workouts/${docRef.id}`
       );
       await updateDoc(workoutDoc, { id: docRef.id });
 
@@ -189,7 +186,7 @@ function WorkoutScreen({ route, navigation }) {
         const exerciseDocRef = await addDoc(
           collection(
             FIRESTORE_DB,
-            `Users/${route.params.userId}/Workouts/${docRef.id}/Exercise`
+            `Users/${userId}/Workouts/${docRef.id}/Exercise`
           ),
           {
             name: exercise.name,
@@ -199,14 +196,14 @@ function WorkoutScreen({ route, navigation }) {
         );
         const exerciseDoc = doc(
           FIRESTORE_DB,
-          `Users/${route.params.userId}/Workouts/${docRef.id}/Exercise/${exerciseDocRef.id}`
+          `Users/${userId}/Workouts/${docRef.id}/Exercise/${exerciseDocRef.id}`
         );
         await updateDoc(exerciseDoc, { id: exerciseDocRef.id });
       }
     } catch (error) {
       console.error("Error saving workout:", error);
     } finally {
-      navigation.goBack();
+      router.back();
     }
   };
 
@@ -220,7 +217,7 @@ function WorkoutScreen({ route, navigation }) {
         text: "Cancel",
         style: "cancel",
       },
-      { text: "Delete Workout", onPress: () => navigation.goBack() },
+      { text: "Delete Workout", onPress: () => router.back() },
     ]);
 
   const updateSets = (day, exerciseIndex, setIndex, property, value) => {
@@ -279,7 +276,9 @@ function WorkoutScreen({ route, navigation }) {
                     exerciseIndex,
                     setIndex,
                     "weight_duration",
-                    isMetric ? parseFloat(newWeight) * 2.205 : parseFloat(newWeight)
+                    isMetric
+                      ? parseFloat(newWeight) * 2.205
+                      : parseFloat(newWeight)
                   )
                 }
                 value={
@@ -341,19 +340,20 @@ function WorkoutScreen({ route, navigation }) {
                   {renderSetInputs(exercise.sets, exerciseIndex, day, exercise)}
                   <Button
                     title={"Add Set"}
-                    onPress={() =>
-                      handleAddSet(day.id, exercise.id)
-                    }
+                    onPress={() => handleAddSet(day.id, exercise.id)}
                   />
                 </View>
               ))}
             <Button
               title="Add Exercise"
               onPress={() =>
-                navigation.navigate("SearchExercise", {
-                  userId: route.params.userId,
-                  dayId: day.id,
-                  planId: route.params.planId,
+                router.push({
+                  pathname: "/(tabs)/(workout)/search",
+                  params: {
+                    userId: userId,
+                    dayId: dayId,
+                    planId: planId,
+                  },
                 })
               }
             />

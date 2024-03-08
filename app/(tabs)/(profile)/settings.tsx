@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Button } from "react-native";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useThemeMode, useTheme, CheckBox } from "@rneui/themed";
 import { doc, updateDoc, getDoc } from "firebase/firestore";

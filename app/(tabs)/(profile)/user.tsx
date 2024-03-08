@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 import { useTheme, Button, Icon } from "@rneui/themed";
 import {
@@ -24,10 +24,10 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
-import { Post, User } from "../../components/types";
+import { Post, User } from "../../../components/types";
+import { router } from "expo-router";
 
-
-function ProfileScreen({ navigation }) {
+function UserScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
@@ -73,7 +73,7 @@ function ProfileScreen({ navigation }) {
             alignSelf: "flex-end",
           }}
           type="clear"
-          onPress={() => navigation.navigate("Settings")}
+          onPress={() => router.push("/(tabs)/(profile)/settings")}
         >
           <Icon name="cog-outline" type="material-community" />
         </Button>
@@ -88,7 +88,7 @@ function ProfileScreen({ navigation }) {
           >
             <Image
               style={{ width: 40, height: 40 }}
-              source={require("../../assets/profile.png")}
+              source={require("../../../assets/profile.png")}
             />
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.name}
@@ -106,9 +106,9 @@ function ProfileScreen({ navigation }) {
             renderItem={({ item }) => (
               <Pressable
                 onPress={() =>
-                  navigation.navigate("ViewPost", {
-                    postId: item.id,
-                    userId: item.userId,
+                  router.push({
+                    pathname: "/(tabs)/(profile)/post",
+                    params: { userId: user.id },
                   })
                 }
               >
@@ -145,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileScreen;
+export default UserScreen;

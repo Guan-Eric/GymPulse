@@ -8,16 +8,18 @@ import {
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_STR } from "../../firebaseConfig";
+import { FIRESTORE_DB, FIREBASE_STR } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { Exercise } from "../../components/types";
+import { Exercise } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
 
-function BodyPartScreen({ route, navigation }) {
+function BodyPartScreen() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [imageUrls, setImageUrls] = useState({});
+  const { bodypart } = useLocalSearchParams();
 
-  const bodyPart = route.params.item.name.toLowerCase();
+  const bodyPart = (bodypart as string).toLowerCase();
 
   const fetchExercisesFromFirestore = async () => {
     try {
@@ -58,13 +60,18 @@ function BodyPartScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <SafeAreaView>
-        <Text style={styles.baseText}>{route.params.item.name}</Text>
+        <Text style={styles.baseText}>{bodyPart}</Text>
         <FlatList
           data={exercises}
           renderItem={({ item }) => {
             return (
               <Pressable
-                onPress={() => navigation.navigate("Exercise", { item })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/(workout)/exercise",
+                    params: { exerciseId: item.id },
+                  })
+                }
               >
                 <Image
                   source={{ uri: imageUrls[item.id] }}

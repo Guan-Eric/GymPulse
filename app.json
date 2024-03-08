@@ -3,13 +3,14 @@
     "name": "GymPulse",
     "slug": "gympulse",
     "version": "1.0.0",
+    "scheme": "your-app-scheme",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#181818"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,22 +20,26 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/newLogo.png"
     },
     "plugins": [
       [
         "expo-font"
-      ]
+      ],
+      "expo-router"
     ],
     "extra": {
       "eas": {
         "projectId": "0ca3bc1d-ffa0-46b9-986f-7c478192a465"
       }
+    },
+    "experiments": {
+      "typedRoutes": true
     },
     "owner": "eronkgonk"
   }

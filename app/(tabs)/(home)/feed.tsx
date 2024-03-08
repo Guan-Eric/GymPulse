@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { CheckBox, Icon, useTheme, Button } from "@rneui/themed";
 import {
   collection,
@@ -25,9 +25,10 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
-import { Post } from "../../components/types";
+import { Post } from "../../../components/types";
+import { router } from "expo-router";
 
-function FeedScreen({ navigation }) {
+function FeedScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
 
@@ -147,9 +148,12 @@ function FeedScreen({ navigation }) {
 
   const navigateProfile = (id) => {
     if (id == FIREBASE_AUTH.currentUser.uid) {
-      navigation.navigate("Profile");
+      router.push("/(tabs)/(profile)/user");
     } else {
-      navigation.navigate("ViewProfile", { userId: id });
+      router.push({
+        pathname: "/(tabs)/(home)/profile",
+        params: { userId: id },
+      });
     }
   };
 
@@ -157,7 +161,10 @@ function FeedScreen({ navigation }) {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
         <View>
-          <Button type="clear" onPress={() => navigation.navigate("Camera")}>
+          <Button
+            type="clear"
+            onPress={() => router.push("/(tabs)/(home)/camera")}
+          >
             <Icon name="camera-outline" type="material-community" />
           </Button>
         </View>
@@ -178,7 +185,7 @@ function FeedScreen({ navigation }) {
               >
                 <Image
                   style={{ width: 40, height: 40 }}
-                  source={require("../../assets/profile.png")}
+                  source={require("../../../assets/profile.png")}
                 />
                 <Text style={[styles.userName, { color: theme.colors.black }]}>
                   {item.userName}
@@ -186,9 +193,12 @@ function FeedScreen({ navigation }) {
               </Pressable>
               <Pressable
                 onPress={() =>
-                  navigation.navigate("ViewPost", {
-                    postId: item.id,
-                    userId: item.userId,
+                  router.push({
+                    pathname: "/(tabs)/(home)/post",
+                    params: {
+                      postId: item.id,
+                      userId: item.userId,
+                    },
                   })
                 }
               >
@@ -196,9 +206,9 @@ function FeedScreen({ navigation }) {
                   source={{ uri: item.url }}
                   style={{
                     alignSelf: "center",
-                    borderRadius: 20,
-                    width: 0.9 * ScreenWidth,
-                    height: 0.9 * ScreenWidth * 1.25,
+                    borderRadius: 15,
+                    width: 0.93 * ScreenWidth,
+                    height: 0.93 * ScreenWidth * 1.25,
                     resizeMode: "cover",
                   }}
                 />
@@ -234,9 +244,12 @@ function FeedScreen({ navigation }) {
                 <Pressable
                   style={{ paddingRight: 30 }}
                   onPress={() =>
-                    navigation.navigate("ViewPost", {
-                      postId: item.id,
-                      userId: item.userId,
+                    router.push({
+                      pathname: "/(tabs)/(home)/post",
+                      params: {
+                        postId: item.id,
+                        userId: item.userId,
+                      },
                     })
                   }
                 >

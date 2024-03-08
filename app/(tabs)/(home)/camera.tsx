@@ -5,8 +5,9 @@ import { useState } from "react";
 import { Button, Icon } from "@rneui/themed";
 import { StyleSheet, Text, View } from "react-native";
 import { ScreenWidth } from "@rneui/base";
+import { router } from "expo-router";
 
-function CameraScreen({ navigation }) {
+function CameraScreen() {
   const [type, setType] = useState<CameraType>(CameraType.back);
   const [camera, setCamera] = useState<Camera | null>();
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -27,7 +28,9 @@ function CameraScreen({ navigation }) {
 
   const takePicture = async () => {
     if (camera) {
-      let result: CameraCapturedPicture | null = await camera.takePictureAsync(null);
+      let result: CameraCapturedPicture | null = await camera.takePictureAsync(
+        null
+      );
       if (result != null) {
         let editedImage = await manipulateAsync(
           result.uri,
@@ -35,7 +38,10 @@ function CameraScreen({ navigation }) {
           { compress: 1, format: SaveFormat.PNG, base64: false }
         );
         if (editedImage) {
-          navigation.navigate("CreatePost", { image: result.uri });
+          router.push({
+            pathname: "/(tabs)/(home)/create",
+            params: { image: result.uri },
+          });
         }
       }
     }
@@ -50,7 +56,10 @@ function CameraScreen({ navigation }) {
     });
 
     if (!result.canceled) {
-      navigation.navigate("CreatePost", { image: result.assets[0].uri });
+      router.push({
+        pathname: "/(tabs)/(home)/create",
+        params: { image: result.assets[0].uri },
+      });
     }
   };
 
@@ -68,9 +77,7 @@ function CameraScreen({ navigation }) {
             type="clear"
             onPress={() => {
               setType(
-                type === CameraType.back
-                  ? CameraType.front
-                  : CameraType.back
+                type === CameraType.back ? CameraType.front : CameraType.back
               );
             }}
           >

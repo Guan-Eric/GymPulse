@@ -1,31 +1,24 @@
 import React, { useState } from "react";
-import {
-  View,
-  SafeAreaView,
-  TextInput,
-  Text,
-  Image,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, SafeAreaView, Text, Image } from "react-native";
+import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Button, Input } from "@rneui/themed";
-import { StyleSheet } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { router } from "expo-router";
 
-function SignInScreen({ navigation }) {
+function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
 
-  const signIn = async () => {
+  const signUp = async () => {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
       console.error(error);
-      alert("Sign in failed: " + error.message);
+      alert("Sign up failed: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -42,7 +35,7 @@ function SignInScreen({ navigation }) {
             }}
             source={require("../../assets/newLogo.png")}
           />
-          <Text style={styles.titleText}>Sign In</Text>
+          <Text style={styles.titleText}>Sign Up</Text>
           <View>
             <Input
               style={styles.input}
@@ -59,21 +52,21 @@ function SignInScreen({ navigation }) {
             />
           </View>
           {loading ? (
-            <Button buttonStyle={styles.signInButton} loading />
+            <Button buttonStyle={styles.signUpButton} loading />
           ) : (
             <Button
-              buttonStyle={styles.signInButton}
-              title="Sign In"
-              onPress={signIn}
+              buttonStyle={styles.signUpButton}
+              title="Sign Up"
+              onPress={signUp}
             />
           )}
           <View style={{ alignItems: "center" }}>
             <Text style={styles.baseText}>Already have an account?</Text>
             <Button
               type="clear"
-              buttonStyle={styles.signUpButton}
-              title="Sign Up"
-              onPress={() => navigation.navigate("SignUp")}
+              buttonStyle={styles.signInButton}
+              title="Sign In"
+              onPress={() => router.push("/(auth)/signin")}
             />
           </View>
         </SafeAreaView>
@@ -101,13 +94,13 @@ const styles = StyleSheet.create({
     color: "white",
     fontFamily: "Lato_700Bold",
   },
-  signInButton: {
+  signUpButton: {
     fontFamily: "Lato_700Bold",
     borderRadius: 15,
     alignSelf: "center",
     width: 200,
   },
-  signUpButton: {
+  signInButton: {
     width: 100,
   },
   input: {
@@ -115,7 +108,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: "Lato_400Regular",
     fontSize: 20,
-    width: 24,
   },
 });
-export default SignInScreen;
+export default SignUpScreen;

@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { FIRESTORE_DB } from "../../../firebaseConfig";
 import {
   collection,
   onSnapshot,
@@ -21,14 +21,15 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
-import { Workout } from "../../components/types";
+import { Plan } from "../../../components/types";
+import { router } from "expo-router";
 
-function WorkoutHistoryScreen({ navigation }) {
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
+function PlanScreen() {
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const fetchWorkoutsFromFirestore = async () => {
+    const fetchPlansFromFirestore = async () => {
       try {
         setUserId(FIREBASE_AUTH.currentUser.uid);
         const userDocRef = doc(
@@ -36,37 +37,56 @@ function WorkoutHistoryScreen({ navigation }) {
           `Users/${FIREBASE_AUTH.currentUser.uid}`
         );
 
-        const workoutsCollectionRef = collection(userDocRef, "Workouts");
+        const plansCollectionRef = collection(userDocRef, "Plans");
 
-        const unsubscribe = onSnapshot(workoutsCollectionRef, (snapshot) => {
+        const unsubscribe = onSnapshot(plansCollectionRef, (snapshot) => {
           const data = snapshot.docs.map((doc) => doc.data());
-          setWorkouts(data as Workout[]);
+          setPlans(data as Plan[]);
         });
 
         return () => unsubscribe();
       } catch (error) {
-        console.error("Error fetching workouts from Firestore:", error);
+        console.error("Error fetching plans from Firestore:", error);
       }
     };
 
-    fetchWorkoutsFromFirestore();
+    fetchPlansFromFirestore();
   }, []);
 
+  const handleCreatePlan = async () => {
+    try {
+      const docRef = await addDoc(
+        collection(FIRESTORE_DB, `Users/${userId}/Plans`),
+        {
+          name: "New Plan",
+          userId: userId,
+        }
+      );
+      const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${docRef.id}`);
+      await updateDoc(planDoc, { id: docRef.id });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
-        <Text>Your Workouts</Text>
+        <Text>Your Plan</Text>
+        <Button title="Create Plan" onPress={handleCreatePlan} />
         <ScrollView>
-          {workouts.length == 0 ? (
-            <Text>No workouts found. Start a workout!</Text>
+          {plans.length == 0 ? (
+            <Text>No plans available. Create a new plan!</Text>
           ) : (
-            workouts.map((item) => (
+            plans.map((item) => (
               <Pressable
                 key={item.name}
                 onPress={() =>
-                  navigation.navigate("ViewWorkout", {
-                    workoutId: item.id,
-                    userId: userId,
+                  router.push({
+                    pathname: "/(tabs)/(workout)/plan",
+                    params: {
+                      userId: userId,
+                      planId: item.id,
+                    },
                   })
                 }
               >
@@ -109,4 +129,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-export default WorkoutHistoryScreen;
+export default PlanScreen;

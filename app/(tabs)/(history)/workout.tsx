@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -12,24 +12,26 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import { Workout } from "../../components/types";
+import { Workout } from "../../../components/types";
+import { useLocalSearchParams } from "expo-router";
 
-function ViewWorkoutScreen({ route, navigation }) {
+function ViewWorkoutScreen() {
   const [workout, setWorkout] = useState<Workout>();
   const [isMetric, setIsMetric] = useState();
+  const { workoutId } = useLocalSearchParams();
 
   useEffect(() => {
     const fetchWorkoutFromFirestore = async () => {
       try {
         const userDoc = await getDoc(
-          doc(FIRESTORE_DB, `Users/${route.params.userId}`)
+          doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
         );
         const userData = userDoc.data();
         setIsMetric(userData.metricUnits);
         const workoutDoc = await getDoc(
           doc(
             FIRESTORE_DB,
-            `Users/${route.params.userId}/Workouts/${route.params.workoutId}`
+            `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${workoutId}`
           )
         );
         const workoutData = workoutDoc.data();

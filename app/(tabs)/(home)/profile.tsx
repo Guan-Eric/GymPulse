@@ -8,8 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../firebaseConfig";
-import { ActivityIndicator } from "react-native-paper";
+import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { useTheme, Button } from "@rneui/themed";
 import {
   collection,
@@ -24,14 +23,17 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
-import { Post, User } from "../../components/types";
+import { Post, User } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
 
-function ViewProfileScreen({ navigation, route }) {
+function ViewProfileScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [following, setFollowing] = useState<Boolean>();
   const [loading, setLoading] = useState(true);
+
+  const { userId } = useLocalSearchParams();
 
   const imageWidth = ScreenWidth / 3;
 
@@ -39,21 +41,21 @@ function ViewProfileScreen({ navigation, route }) {
     setLoading(true);
     const fetchUserAndUserPostsFirestore = async () => {
       try {
-        const userDocRef = doc(FIRESTORE_DB, `Users/${route.params.userId}`);
+        const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
         const userDocSnapshot = await getDoc(userDocRef);
         const userData = userDocSnapshot.data() as User;
         setUser(userData);
 
         const followingDocRef = doc(
           FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${route.params.userId}`
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
         );
         const followingSnapshot = await getDoc(followingDocRef);
         setFollowing(followingSnapshot.exists() as Boolean);
 
         const userPostsCollection = collection(
           FIRESTORE_DB,
-          `Users/${route.params.userId}/Posts`
+          `Users/${userId}/Posts`
         );
         const queryRef = query(userPostsCollection, orderBy("date", "desc"));
         const querySnapshot = await getDocs(queryRef);
@@ -75,7 +77,7 @@ function ViewProfileScreen({ navigation, route }) {
     try {
       const followingDocRef = doc(
         FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${route.params.userId}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
       );
       setFollowing(!following);
       if (following) {
@@ -102,7 +104,7 @@ function ViewProfileScreen({ navigation, route }) {
           >
             <Image
               style={{ width: 40, height: 40 }}
-              source={require("../../assets/profile.png")}
+              source={require("../../../assets/profile.png")}
             />
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.name}
@@ -126,9 +128,12 @@ function ViewProfileScreen({ navigation, route }) {
             renderItem={({ item }) => (
               <Pressable
                 onPress={() =>
-                  navigation.navigate("ViewPost", {
-                    postId: item.id,
-                    userId: item.userId,
+                  router.push({
+                    pathname: "/(tabs)/(home)/post",
+                    params: {
+                      postId: item.id,
+                      userId: item.userId,
+                    },
                   })
                 }
               >

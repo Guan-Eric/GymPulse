@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Text,
@@ -10,7 +11,7 @@ import {
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-function ExerciseListScreen({ navigation }) {
+function ExerciseListScreen() {
   const [bodyPart, setBodyPart] = useState([
     { name: "Chest", key: "1" },
     { name: "Middle Back", key: "2" },
@@ -41,7 +42,12 @@ function ExerciseListScreen({ navigation }) {
             {bodyPart.map((item) => (
               <Pressable
                 key={item.key}
-                onPress={() => navigation.navigate("BodyPart", { item })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/(workout)/bodypart",
+                    params: { bodypart: item.name },
+                  })
+                }
               >
                 <Text style={styles.baseText}>{item.name}</Text>
               </Pressable>
