@@ -39,7 +39,7 @@ function CameraScreen() {
         );
         if (editedImage) {
           router.push({
-            pathname: "/(tabs)/(home)/create",
+            pathname: "/(camera)/create",
             params: { image: result.uri },
           });
         }
@@ -57,7 +57,7 @@ function CameraScreen() {
 
     if (!result.canceled) {
       router.push({
-        pathname: "/(tabs)/(home)/create",
+        pathname: "/(camera)/create",
         params: { image: result.assets[0].uri },
       });
     }

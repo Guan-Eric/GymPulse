@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   titleText: {
+    alignSelf: "center",
     fontSize: 40,
     color: "white",
     fontFamily: "Lato_700Bold",

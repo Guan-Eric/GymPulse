@@ -1,15 +1,19 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTheme } from "@rneui/themed";
 
 function TabLayout() {
+  const { theme } = useTheme();
   return (
     <Tabs
       initialRouteName="(home)"
       screenOptions={{
         headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.black,
         tabBarStyle: {
-          backgroundColor: "#181818",
+          backgroundColor: theme.colors.background,
         },
       }}
     >
@@ -25,9 +29,9 @@ function TabLayout() {
       <Tabs.Screen
         name="(workout)"
         options={{
-          title: "Plan",
+          title: "Workout",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="notebook" size={size} color={color} />
+            <MaterialCommunityIcons name="dumbbell" size={size} color={color} />
           ),
         }}
       />

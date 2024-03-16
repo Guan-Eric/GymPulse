@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  Button,
-  Appearance,
-  ScrollView,
-} from "react-native";
+import { Text, View, Pressable, Appearance, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
@@ -23,10 +16,12 @@ import {
 } from "firebase/firestore";
 import { Plan } from "../../../components/types";
 import { router } from "expo-router";
+import { useTheme, Button, Icon } from "@rneui/themed";
 
 function PlanScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [userId, setUserId] = useState("");
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchPlansFromFirestore = async () => {
@@ -69,10 +64,28 @@ function PlanScreen() {
     }
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView style={styles.container}>
-        <Text>Your Plan</Text>
-        <Button title="Create Plan" onPress={handleCreatePlan} />
+        <View
+          style={{
+            alignItems: "center",
+            flexDirection: "row",
+            alignContent: "space-between",
+          }}
+        >
+          <Text style={[styles.titleText, { color: theme.colors.black }]}>
+            Your Plans
+          </Text>
+          <Button type="clear" onPress={handleCreatePlan}>
+            <Icon
+              color={theme.colors.primary}
+              name="plus"
+              type="material-community"
+            />
+          </Button>
+        </View>
         <ScrollView>
           {plans.length == 0 ? (
             <Text>No plans available. Create a new plan!</Text>
@@ -90,7 +103,22 @@ function PlanScreen() {
                   })
                 }
               >
-                <Text style={styles.titleText}>{item.name}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    alignContent: "space-between",
+                  }}
+                >
+                  <Text
+                    style={[styles.baseText, { color: theme.colors.black }]}
+                  >
+                    {item.name}
+                  </Text>
+                  <Button type="clear">
+                    <Icon name="minus" type="material-community" />
+                  </Button>
+                </View>
               </Pressable>
             ))
           )}
@@ -108,11 +136,14 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   baseText: {
+    paddingLeft: 10,
+    fontFamily: "Lato_400Regular",
     fontSize: 20,
   },
   titleText: {
+    fontFamily: "Lato_700Bold",
     fontSize: 24,
-    fontWeight: "bold",
+    paddingLeft: 10,
   },
   logoText: {
     fontSize: 50,

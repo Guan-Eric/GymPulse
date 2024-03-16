@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Appearance,
-  ScrollView,
-} from "react-native";
+import { View, Text, TextInput, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../../../firebaseConfig";
@@ -21,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { Day } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
+import { Input, useTheme, Button } from "@rneui/themed";
 
 function ViewPlanScreen() {
   const [name, setName] = useState("");
@@ -28,6 +22,7 @@ function ViewPlanScreen() {
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
   const { userId, planId } = useLocalSearchParams();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (isDirty) {
@@ -240,17 +235,23 @@ function ViewPlanScreen() {
         <View style={styles.setRow}>
           {!exercise.cardio && (
             <View style={styles.setRow}>
-              <Text style={styles.baseText}>Reps</Text>
-              <Text style={styles.baseText}>Weight</Text>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                Reps
+              </Text>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                Weight
+              </Text>
             </View>
           )}
           {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
         </View>
         {sets.map((set, setIndex) => (
           <View key={setIndex} style={styles.setRow}>
-            <Text style={styles.baseText}>{`Set ${setIndex + 1}`}</Text>
+            <Text
+              style={[styles.baseText, { color: theme.colors.black }]}
+            >{`Set ${setIndex + 1}`}</Text>
             {!exercise.cardio && (
-              <TextInput
+              <Input
                 keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newReps) =>
@@ -259,9 +260,11 @@ function ViewPlanScreen() {
                 value={set.reps.toString()}
               />
             )}
-            {!exercise.cardio && <Text>x</Text>}
             {!exercise.cardio && (
-              <TextInput
+              <Text style={{ color: theme.colors.black }}>x</Text>
+            )}
+            {!exercise.cardio && (
+              <Input
                 keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newWeight) =>
@@ -282,9 +285,13 @@ function ViewPlanScreen() {
                 }
               />
             )}
-            {!exercise.cardio && <Text>{isMetric ? "kg" : "lbs"}</Text>}
+            {!exercise.cardio && (
+              <Text style={{ color: theme.colors.black }}>
+                {isMetric ? "kg" : "lbs"}
+              </Text>
+            )}
             {exercise.cardio && (
-              <TextInput
+              <Input
                 keyboardType="numeric"
                 style={styles.input}
                 onChangeText={(newDuration) =>
@@ -300,6 +307,7 @@ function ViewPlanScreen() {
               />
             )}
             <Button
+              type="clear"
               title="Delete Set"
               onPress={() => handleDeleteSet(dayIndex, exerciseIndex, setIndex)}
             />
@@ -309,46 +317,58 @@ function ViewPlanScreen() {
     );
   };
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView style={{ flex: 1 }}>
-        <Text style={styles.baseText}>Name</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          style={styles.nameInput}
           onChangeText={(newName) => setNameAndSave(newName)}
           value={name}
         />
         <ScrollView>
           {days.map((day, dayIndex) => (
             <View key={day.id}>
-              <Text style={styles.titleText}>{day.name}</Text>
-              <TextInput
-                style={styles.input}
-                onChangeText={(newDayName) =>
-                  updateDayName(dayIndex, newDayName)
-                }
-                value={day.name}
-              />
-              <Button
-                title="Start Workout"
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/workout",
-                    params: {
-                      userId: userId,
-                      planId: planId,
-                      dayId: day.id,
-                    },
-                  })
-                }
-              />
+              <View style={{ flexDirection: "row" }}>
+                <Input
+                  style={styles.nameInput}
+                  onChangeText={(newDayName) =>
+                    updateDayName(dayIndex, newDayName)
+                  }
+                  value={day.name}
+                />
+                <Button
+                  title="Start Workout"
+                  type="clear"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(tabs)/(workout)/workout",
+                      params: {
+                        userId: userId,
+                        planId: planId,
+                        dayId: day.id,
+                      },
+                    })
+                  }
+                />
+              </View>
               {day.exercises &&
                 day.exercises.map((exercise, exerciseIndex) => (
                   <View key={exercise.id}>
-                    <Text style={styles.baseText}>{exercise.name}</Text>
-                    <Button
-                      title="Delete Exercise"
-                      onPress={() => handleDeleteExercise(day.id, exercise.id)}
-                    />
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={[styles.baseText, { color: theme.colors.black }]}
+                      >
+                        {exercise.name}
+                      </Text>
+                      <Button
+                        type="clear"
+                        title="Delete Exercise"
+                        onPress={() =>
+                          handleDeleteExercise(day.id, exercise.id)
+                        }
+                      />
+                    </View>
                     {renderSetInputs(
                       exercise.sets,
                       exerciseIndex,
@@ -356,12 +376,15 @@ function ViewPlanScreen() {
                       exercise
                     )}
                     <Button
-                      title={"Add Set"}
+                      size="sm"
+                      type="clear"
+                      title="Add Set"
                       onPress={() => handleAddSet(day.id, exercise.id, days)}
                     />
                   </View>
                 ))}
               <Button
+                type="clear"
                 title="Add Exercise"
                 onPress={() =>
                   router.push({
@@ -375,12 +398,13 @@ function ViewPlanScreen() {
                 }
               />
               <Button
+                type="clear"
                 title="Delete Day"
                 onPress={() => handleDeleteDay(day.id)}
               />
             </View>
           ))}
-          <Button title="Add Day" onPress={handleAddDay} />
+          <Button type="clear" title="Add Day" onPress={handleAddDay} />
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -404,12 +428,8 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 50,
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
+  input: { width: 50 },
+  nameInput: {},
   setRow: {
     flexDirection: "row",
     alignItems: "center",

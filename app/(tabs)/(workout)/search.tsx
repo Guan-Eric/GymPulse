@@ -7,7 +7,7 @@ import {
   Image,
   Appearance,
 } from "react-native";
-import { SearchBar } from "@rneui/themed";
+import { SearchBar, useTheme } from "@rneui/themed";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB } from "../../../firebaseConfig";
@@ -21,6 +21,7 @@ function SearchExerciseScreen() {
   const [search, setSearch] = useState("");
   const [exercises, setExecercises] = useState<Exercise[]>([]);
   const { userId, planId, dayId } = useLocalSearchParams();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchExerciseFromFirestore = async () => {
@@ -47,14 +48,15 @@ function SearchExerciseScreen() {
     }
   });
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView>
         <SearchBar
           placeholder="Type Here..."
           onChangeText={(text) => setSearch(text)}
           onClear={() => setSearch("")}
           value={search}
-          lightTheme={mode == "light"}
         />
         <FlatList
           data={filteredExercises}
@@ -74,7 +76,9 @@ function SearchExerciseScreen() {
                 })
               }
             >
-              <Text style={styles.baseText}>{item.name}</Text>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                {item.name}
+              </Text>
             </Pressable>
           )}
         />

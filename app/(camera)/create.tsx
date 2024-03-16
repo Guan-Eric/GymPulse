@@ -1,10 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import {
-  FIRESTORE_DB,
   FIREBASE_AUTH,
+  FIRESTORE_DB,
   FIREBASE_STR,
-} from "../../../firebaseConfig";
+} from "../../firebaseConfig";
 import {
   Keyboard,
   TouchableWithoutFeedback,
@@ -33,7 +33,7 @@ function CreatePostScreen() {
   const [caption, setCaption] = useState("");
   const { theme } = useTheme();
   const { image } = useLocalSearchParams();
-  
+
   const createPost = async () => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
