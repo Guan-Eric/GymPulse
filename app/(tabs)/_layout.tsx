@@ -11,7 +11,6 @@ function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.black,
         tabBarStyle: {
           backgroundColor: theme.colors.background,
         },

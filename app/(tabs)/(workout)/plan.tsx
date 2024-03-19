@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { Day } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
-import { Input, useTheme, Button } from "@rneui/themed";
+import { Input, useTheme, Button, Icon } from "@rneui/themed";
 
 function ViewPlanScreen() {
   const [name, setName] = useState("");
@@ -234,11 +234,11 @@ function ViewPlanScreen() {
       <View>
         <View style={styles.setRow}>
           {!exercise.cardio && (
-            <View style={styles.setRow}>
-              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+            <View style={{ flexDirection: "row", paddingLeft: 65 }}>
+              <Text style={[styles.gridText, { color: theme.colors.black }]}>
                 Reps
               </Text>
-              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+              <Text style={[styles.gridText, { color: theme.colors.black }]}>
                 Weight
               </Text>
             </View>
@@ -253,7 +253,10 @@ function ViewPlanScreen() {
             {!exercise.cardio && (
               <Input
                 keyboardType="numeric"
-                style={styles.input}
+                containerStyle={styles.inputContainer}
+                inputContainerStyle={styles.input}
+                textAlign={"center"}
+                inputStyle={{ alignContent: "center" }}
                 onChangeText={(newReps) =>
                   updateSets(dayIndex, exerciseIndex, setIndex, "reps", newReps)
                 }
@@ -261,12 +264,17 @@ function ViewPlanScreen() {
               />
             )}
             {!exercise.cardio && (
-              <Text style={{ color: theme.colors.black }}>x</Text>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                x
+              </Text>
             )}
             {!exercise.cardio && (
               <Input
                 keyboardType="numeric"
-                style={styles.input}
+                containerStyle={styles.inputContainer}
+                inputContainerStyle={styles.input}
+                textAlign={"center"}
+                inputStyle={{ alignContent: "center" }}
                 onChangeText={(newWeight) =>
                   updateSets(
                     dayIndex,
@@ -286,14 +294,17 @@ function ViewPlanScreen() {
               />
             )}
             {!exercise.cardio && (
-              <Text style={{ color: theme.colors.black }}>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
                 {isMetric ? "kg" : "lbs"}
               </Text>
             )}
             {exercise.cardio && (
               <Input
                 keyboardType="numeric"
-                style={styles.input}
+                containerStyle={styles.inputContainer}
+                inputContainerStyle={styles.input}
+                textAlign={"center"}
+                inputStyle={{ alignContent: "center" }}
                 onChangeText={(newDuration) =>
                   updateSets(
                     dayIndex,
@@ -308,9 +319,10 @@ function ViewPlanScreen() {
             )}
             <Button
               type="clear"
-              title="Delete Set"
               onPress={() => handleDeleteSet(dayIndex, exerciseIndex, setIndex)}
-            />
+            >
+              <Icon name="minus" type="material-community" />
+            </Button>
           </View>
         ))}
       </View>
@@ -322,7 +334,8 @@ function ViewPlanScreen() {
     >
       <SafeAreaView style={{ flex: 1 }}>
         <Input
-          style={styles.nameInput}
+          containerStyle={styles.planNameInputContainer}
+          inputContainerStyle={styles.nameInput}
           onChangeText={(newName) => setNameAndSave(newName)}
           value={name}
         />
@@ -331,7 +344,8 @@ function ViewPlanScreen() {
             <View key={day.id}>
               <View style={{ flexDirection: "row" }}>
                 <Input
-                  style={styles.nameInput}
+                  containerStyle={styles.nameInputContainer}
+                  inputContainerStyle={styles.nameInput}
                   onChangeText={(newDayName) =>
                     updateDayName(dayIndex, newDayName)
                   }
@@ -355,7 +369,9 @@ function ViewPlanScreen() {
               {day.exercises &&
                 day.exercises.map((exercise, exerciseIndex) => (
                   <View key={exercise.id}>
-                    <View style={{ flexDirection: "row" }}>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
                       <Text
                         style={[styles.baseText, { color: theme.colors.black }]}
                       >
@@ -363,11 +379,12 @@ function ViewPlanScreen() {
                       </Text>
                       <Button
                         type="clear"
-                        title="Delete Exercise"
                         onPress={() =>
                           handleDeleteExercise(day.id, exercise.id)
                         }
-                      />
+                      >
+                        <Icon name="minus" type="material-community" />
+                      </Button>
                     </View>
                     {renderSetInputs(
                       exercise.sets,
@@ -377,15 +394,19 @@ function ViewPlanScreen() {
                     )}
                     <Button
                       size="sm"
-                      type="clear"
+                      type="outline"
+                      style={{ paddingRight: 10, paddingLeft: 10 }}
+                      buttonStyle={[styles.button, { borderWidth: 1 }]}
                       title="Add Set"
                       onPress={() => handleAddSet(day.id, exercise.id, days)}
                     />
                   </View>
                 ))}
               <Button
-                type="clear"
+                size="sm"
                 title="Add Exercise"
+                style={{ padding: 10 }}
+                buttonStyle={styles.button}
                 onPress={() =>
                   router.push({
                     pathname: "/(tabs)/(workout)/search",
@@ -398,8 +419,11 @@ function ViewPlanScreen() {
                 }
               />
               <Button
-                type="clear"
+                color="error"
+                size="sm"
                 title="Delete Day"
+                style={{ padding: 10, paddingTop: 0 }}
+                buttonStyle={styles.button}
                 onPress={() => handleDeleteDay(day.id)}
               />
             </View>
@@ -421,6 +445,10 @@ const styles = StyleSheet.create({
   baseText: {
     fontSize: 20,
   },
+  gridText: {
+    fontSize: 20,
+    paddingRight: 35,
+  },
   titleText: {
     fontSize: 24,
     fontWeight: "bold",
@@ -428,12 +456,19 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 50,
   },
-  input: { width: 50 },
-  nameInput: {},
+  button: {
+    borderRadius: 10,
+  },
+  inputContainer: { width: 75, height: 30 },
+  input: { borderWidth: 2, borderRadius: 10, height: 30, borderBottomWidth: 2 },
+  planNameInputContainer: {},
+  nameInputContainer: { width: 300 },
+  nameInput: { borderWidth: 2, borderRadius: 10, borderBottomWidth: 2 },
   setRow: {
+    alignContent: "space-around",
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 8,
+    marginVertical: 5,
   },
 });
 export default ViewPlanScreen;

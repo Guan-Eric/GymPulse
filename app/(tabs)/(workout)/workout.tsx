@@ -318,10 +318,11 @@ function WorkoutScreen() {
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
         <Text style={styles.titleText}>
-          {Math.floor(time / 60)}:{time % 60}
+          {String(Math.floor(time / 60)).padStart(2, "0")}:
+          {String(Math.floor(time % 60)).padStart(2, "0")}
         </Text>
         <Button title="End Workout" onPress={handleEndWorkout} />
-        <Text style={styles.baseText}>{day.name}</Text>
+        <Text style={styles.baseText}>{day?.name}</Text>
         <TextInput
           style={styles.input}
           onChangeText={(newName) => setNameAndSave(newName)}
@@ -329,7 +330,7 @@ function WorkoutScreen() {
         />
         <ScrollView>
           <View>
-            {day.exercises &&
+            {day?.exercises &&
               day.exercises.map((exercise, exerciseIndex) => (
                 <View key={exercise.id}>
                   <Text style={styles.baseText}>{exercise.name}</Text>
