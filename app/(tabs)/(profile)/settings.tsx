@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { replaceTheme } from "tamagui";
+import { StyleSheet } from "react-native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useThemeMode, useTheme, CheckBox } from "@rneui/themed";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+import config from "../../../tamagui.config";
+import { View, Button, Checkbox } from "tamagui";
+import { Check } from "@tamagui/lucide-icons";
 
 function SettingScreen() {
-  const { theme } = useTheme();
-  const { mode, setMode } = useThemeMode();
   const [isDark, setIsDark] = useState();
   const [isMetric, setIsMetric] = useState();
   useEffect(() => {
@@ -23,7 +24,11 @@ function SettingScreen() {
     fetchUserFromFirestore();
   }, []);
   const setDarkMode = async (value) => {
-    setMode(value ? "dark" : "light");
+    const newTheme = value ? config.themes.dark : config.themes.light;
+    replaceTheme({
+      name: "current",
+      theme: newTheme,
+    });
     setIsDark(value);
     const userDocRef = doc(
       FIRESTORE_DB,
@@ -45,43 +50,36 @@ function SettingScreen() {
   };
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <View backgroundColor="$bg" style={styles.container}>
       <SafeAreaView>
-        <CheckBox
-          checked={isDark == true}
-          onPress={() => setDarkMode(true)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Dark Theme"}
-        />
-        <CheckBox
-          checked={isDark == false}
-          onPress={() => setDarkMode(false)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Light Theme"}
-        />
-        <CheckBox
-          checked={isMetric == true}
-          onPress={() => setMetricMode(true)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Metric Units"}
-        />
-        <CheckBox
-          checked={isMetric == false}
-          onPress={() => setMetricMode(false)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Imperial Units"}
-        />
-        <Button onPress={() => FIREBASE_AUTH.signOut()} title="Log Out" />
+        <Checkbox checked={isDark} onPress={() => setDarkMode(!isDark)}>
+          <Checkbox.Indicator>
+            <Check />
+          </Checkbox.Indicator>
+        </Checkbox>
+        <Checkbox checked={!isDark} onPress={() => setDarkMode(!isDark)}>
+          <Checkbox.Indicator>
+            <Check />
+          </Checkbox.Indicator>
+        </Checkbox>
+        <Checkbox checked={isMetric} onPress={() => setMetricMode(!isMetric)}>
+          <Checkbox.Indicator>
+            <Check />
+          </Checkbox.Indicator>
+        </Checkbox>
+        <Checkbox
+          size="$4"
+          checked={!isMetric}
+          onPress={() => setMetricMode(!isMetric)}
+        >
+          <Checkbox.Indicator>
+            <Check />
+          </Checkbox.Indicator>
+        </Checkbox>
+
+        <Button size={4} onPress={() => FIREBASE_AUTH.signOut()}>
+          Log Out
+        </Button>
       </SafeAreaView>
     </View>
   );
@@ -93,17 +91,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     flexDirection: "column",
-  },
-  baseText: {
-    fontSize: 20,
-  },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  logoText: {
-    fontFamily: "Roboto_700Bold",
-    fontSize: 50,
   },
   input: {
     height: 40,

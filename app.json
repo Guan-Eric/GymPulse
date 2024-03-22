@@ -12,9 +12,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#181818"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -27,12 +25,7 @@
     "web": {
       "favicon": "./assets/newLogo.png"
     },
-    "plugins": [
-      [
-        "expo-font"
-      ],
-      "expo-router"
-    ],
+    "plugins": [["expo-font"], "expo-router"],
     "extra": {
       "eas": {
         "projectId": "0ca3bc1d-ffa0-46b9-986f-7c478192a465"

@@ -28,7 +28,6 @@ import { Post, User } from "../../../components/types";
 import { router } from "expo-router";
 
 function UserScreen() {
-  const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(true);
@@ -65,7 +64,7 @@ function UserScreen() {
     fetchUserAndUserPostsFirestore();
   }, []);
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1 }}>
       <SafeAreaView>
         <Button
           style={{
@@ -90,15 +89,9 @@ function UserScreen() {
               style={{ width: 40, height: 40 }}
               source={require("../../../assets/profile.png")}
             />
-            <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {user?.name}
-            </Text>
+            <Text style={styles.userName}>{user?.name}</Text>
           </View>
-          {user?.bio != "" ? (
-            <Text style={[styles.bio, { color: theme.colors.black }]}>
-              {user?.bio}
-            </Text>
-          ) : null}
+          {user?.bio != "" ? <Text style={styles.bio}>{user?.bio}</Text> : null}
           <FlatList
             numColumns={3}
             horizontal={false}

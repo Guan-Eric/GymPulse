@@ -1,18 +1,17 @@
 import { Tabs } from "expo-router";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useTheme } from "@rneui/themed";
+import config from "../../tamagui.config";
 
 function TabLayout() {
-  const { theme } = useTheme();
   return (
     <Tabs
       initialRouteName="(home)"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
+        tabBarActiveTintColor: config.tokens.color.primary.toString(),
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: config.themes.dark.bg.toString(),
         },
       }}
     >

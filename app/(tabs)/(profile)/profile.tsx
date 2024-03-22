@@ -28,7 +28,6 @@ import { Post, User } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 
 function ViewProfileScreen() {
-  const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [following, setFollowing] = useState<Boolean>();
@@ -92,7 +91,7 @@ function ViewProfileScreen() {
     }
   };
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1 }}>
       <SafeAreaView>
         <View>
           <View
@@ -107,9 +106,7 @@ function ViewProfileScreen() {
               style={{ width: 40, height: 40 }}
               source={require("../../../assets/profile.png")}
             />
-            <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {user?.name}
-            </Text>
+            <Text style={styles.userName}>{user?.name}</Text>
 
             {following ? (
               <Button size="sm" title="Unfollow" onPress={toggleFollow} />
@@ -117,11 +114,7 @@ function ViewProfileScreen() {
               <Button size="sm" title="Follow" onPress={toggleFollow} />
             )}
           </View>
-          {user?.bio != "" ? (
-            <Text style={[styles.bio, { color: theme.colors.black }]}>
-              {user?.bio}
-            </Text>
-          ) : null}
+          {user?.bio != "" ? <Text style={styles.bio}>{user?.bio}</Text> : null}
           <FlatList
             numColumns={3}
             horizontal={false}

@@ -52,20 +52,16 @@ const styles = StyleSheet.create({
   sloganText: {
     fontSize: 20,
     color: "white",
-    fontFamily: "Lato_700Bold",
   },
   logoText: {
     fontSize: 64,
-    fontFamily: "Roboto_700Bold",
     color: "#3490de",
   },
   baseText: {
-    fontFamily: "Lato_400Regular",
     color: "gray",
     fontSize: 15,
   },
   signUpButton: {
-    fontFamily: "Lato_700Bold",
     borderRadius: 15,
     width: 200,
   },

@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   baseText: {
-    fontFamily: "Lato_400Regular",
     color: "gray",
     fontSize: 15,
   },
@@ -93,10 +92,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 40,
     color: "white",
-    fontFamily: "Lato_700Bold",
   },
   signUpButton: {
-    fontFamily: "Lato_700Bold",
     borderRadius: 15,
     alignSelf: "center",
     width: 200,
@@ -107,7 +104,6 @@ const styles = StyleSheet.create({
   input: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Lato_400Regular",
     fontSize: 20,
   },
 });

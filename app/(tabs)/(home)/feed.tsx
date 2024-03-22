@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  View,
-  Pressable,
-  Image,
-  Text,
-  StyleSheet,
-} from "react-native";
+import { FlatList, Pressable, Image, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
-import { CheckBox, Icon, useTheme, Button } from "@rneui/themed";
+import { CheckBox, Icon, Button } from "@rneui/themed";
+import { Text, View } from "tamagui";
 import {
   collection,
   getCountFromServer,
   setDoc,
-  addDoc,
   doc,
   query,
   getDocs,
@@ -27,9 +20,9 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post } from "../../../components/types";
 import { router } from "expo-router";
+import config from "../../../tamagui.config";
 
 function FeedScreen() {
-  const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -158,7 +151,7 @@ function FeedScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View backgroundColor="$bg" style={{ flex: 1 }}>
       <SafeAreaView>
         <View>
           <Button type="clear" onPress={() => router.push("/(camera)/camera")}>
@@ -184,7 +177,7 @@ function FeedScreen() {
                   style={{ width: 40, height: 40 }}
                   source={require("../../../assets/profile.png")}
                 />
-                <Text style={[styles.userName, { color: theme.colors.black }]}>
+                <Text color="$color" fontFamily="$lato" style={styles.userName}>
                   {item.userName}
                 </Text>
               </Pressable>
@@ -254,7 +247,12 @@ function FeedScreen() {
                 </Pressable>
               </View>
 
-              <Text style={[styles.caption, { color: theme.colors.black }]}>
+              <Text
+                style={[
+                  styles.caption,
+                  { color: config.themes.dark.color.toString() },
+                ]}
+              >
                 {item.caption}
               </Text>
             </View>
@@ -266,13 +264,11 @@ function FeedScreen() {
 }
 const styles = StyleSheet.create({
   userName: {
-    fontFamily: "Lato_700Bold",
     fontSize: 16,
     paddingLeft: 10,
   },
   caption: {
     textAlign: "justify",
-    fontFamily: "Lato_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
     fontSize: 14,
