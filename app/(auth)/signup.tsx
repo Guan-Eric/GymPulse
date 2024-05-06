@@ -5,6 +5,7 @@ import { Button, Input } from "@rneui/themed";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { router } from "expo-router";
+import { register } from "../../backend/auth";
 
 function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
@@ -14,14 +15,7 @@ function SignUpScreen() {
 
   const signUp = async () => {
     setLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      console.error(error);
-      alert("Sign up failed: " + error.message);
-    } finally {
-      setLoading(false);
-    }
+    if (register(email, password)) setLoading(false);
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

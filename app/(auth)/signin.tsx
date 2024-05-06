@@ -12,6 +12,7 @@ import { StyleSheet } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { router } from "expo-router";
+import { logIn } from "../../backend/auth";
 
 function SignInScreen() {
   const [email, onChangeEmail] = useState("");
@@ -21,14 +22,7 @@ function SignInScreen() {
 
   const signIn = async () => {
     setLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      console.error(error);
-      alert("Sign in failed: " + error.message);
-    } finally {
-      setLoading(false);
-    }
+    if(logIn(email, password)) setLoading(false);    
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

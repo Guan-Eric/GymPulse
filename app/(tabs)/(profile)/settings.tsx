@@ -4,6 +4,7 @@ import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useThemeMode, useTheme, CheckBox } from "@rneui/themed";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { logOut } from "../../../backend/auth";
 
 function SettingScreen() {
   const { theme } = useTheme();
@@ -81,7 +82,7 @@ function SettingScreen() {
           uncheckedIcon="radiobox-blank"
           title={"Imperial Units"}
         />
-        <Button onPress={() => FIREBASE_AUTH.signOut()} title="Log Out" />
+        <Button onPress={() => logOut()} title="Log Out" />
       </SafeAreaView>
     </View>
   );

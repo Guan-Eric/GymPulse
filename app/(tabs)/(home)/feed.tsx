@@ -27,91 +27,24 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post } from "../../../components/types";
 import { router } from "expo-router";
+import { getFeed } from "../../../backend/post";
 
 function FeedScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    const fetchFeedFromFirestore = async () => {
+    const fetchFeed = async () => {
       try {
-        const userDocRef = doc(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}`
-        );
-        const userDocSnapshot = await getDoc(userDocRef);
-
-        if (!userDocSnapshot.exists()) {
-          await setDoc(userDocRef, {
-            name: "",
-            email: FIREBASE_AUTH.currentUser.email,
-            darkMode: true,
-            metricUnits: false,
-            bio: "",
-            id: FIREBASE_AUTH.currentUser.uid,
-          });
-        } else {
-          const userFollowingCollection = collection(
-            doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`),
-            "Following"
-          );
-
-          const userFollowingSnapshot = await getDocs(userFollowingCollection);
-          const data = userFollowingSnapshot.docs.map((doc) => doc.id);
-          if (data.length > 0) {
-            const followingUserPostsQuery = query(
-              collectionGroup(FIRESTORE_DB, "Posts"),
-              orderBy("date", "desc"),
-              where("userId", "in", data)
-            );
-
-            const followingUserPostsSnapshot = await getDocs(
-              followingUserPostsQuery
-            );
-
-            const followingPosts = await Promise.all(
-              followingUserPostsSnapshot.docs.map(async (document) => {
-                const postData = document.data();
-                const userDocRef = doc(
-                  FIRESTORE_DB,
-                  `Users/${postData.userId}`
-                );
-                const userDocSnapshot = await getDoc(userDocRef);
-                const userLikeDocRef = doc(
-                  FIRESTORE_DB,
-                  `Users/${postData.userId}/Posts/${postData.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
-                );
-                const numLikesCollection = collection(
-                  FIRESTORE_DB,
-                  `Users/${postData.userId}/Posts/${postData.id}/Likes/`
-                );
-                const numLikesSnapshot = await getCountFromServer(
-                  numLikesCollection
-                );
-                const userLikeSnapshot = await getDoc(userLikeDocRef);
-                if (userDocSnapshot.exists()) {
-                  const userData = userDocSnapshot.data();
-
-                  return {
-                    ...postData,
-                    userName: userData.name,
-                    like: userLikeSnapshot.exists(),
-                    numLikes: numLikesSnapshot.data().count,
-                  };
-                }
-                return postData;
-              })
-            );
-            setPosts(followingPosts as Post[]);
-          }
-        }
+        const feed = await getFeed();
+        setPosts(feed);
       } catch (error) {
         console.error("Error fetching feed:", error);
       }
     };
-    fetchFeedFromFirestore();
+    fetchFeed();
   }, []);
-
+  
   const toggleLike = async (post) => {
     try {
       const likeRef = doc(
