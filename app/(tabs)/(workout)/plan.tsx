@@ -41,8 +41,8 @@ function ViewPlanScreen() {
 
   const handleSavePlan = async () => {
     const planDocRef = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
-    updateDoc(planDocRef, { name: name });
-    for (const day of days) {
+    updateDoc(planDocRef, { name: plan.name });
+    for (const day of plan.days) {
       const dayDocRef = doc(planDocRef, `Days/${day.id}`);
       await updateDoc(dayDocRef, { name: day.name });
 
@@ -55,6 +55,7 @@ function ViewPlanScreen() {
       }
     }
   };
+  
   const handleAddDay = async () => {
     try {
       const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
@@ -66,14 +67,17 @@ function ViewPlanScreen() {
       const dayDoc = doc(daysCollection, daysDocRef.id);
       await updateDoc(dayDoc, { id: daysDocRef.id });
       const newDayDoc = await getDoc(doc(daysCollection, daysDocRef.id));
-      const newDayData = newDayDoc.data();
-
-      setDays((prevDays) => [...prevDays, newDayData] as Day[]);
+      const newDayData = newDayDoc.data() as Day;
+  
+      setPlan((prevPlan) => ({
+        ...prevPlan,
+        days: [...(prevPlan?.days || []), newDayData],
+      }));
       setIsDirty(true);
     } catch (error) {
       console.error("Error adding new day:", error);
     }
-  };
+  };  
 
   const handleAddSet = async (dayId, exerciseId, days) => {
     const exerciseDoc = doc(
@@ -86,7 +90,7 @@ function ViewPlanScreen() {
       const currentSets = exerciseDocSnap.data().sets || [];
       const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
       await updateDoc(exerciseDoc, { sets: newSets });
-      const updatedDays = days.map((day) =>
+      const updatedPlan = days.map((day) =>
         day.id === dayId
           ? {
               ...day,
@@ -96,7 +100,7 @@ function ViewPlanScreen() {
             }
           : day
       );
-      setDays(updatedDays);
+      setPlan(updatedPlan);
       setIsDirty(true);
     }
   };
@@ -109,17 +113,21 @@ function ViewPlanScreen() {
       );
       const exercisesCollectionRef = collection(dayDocRef, "Exercise");
       const exercisesQuerySnapshot = await getDocs(exercisesCollectionRef);
-
+  
       exercisesQuerySnapshot.forEach(async (exerciseDoc) => {
         await deleteDoc(exerciseDoc.ref);
       });
       await deleteDoc(dayDocRef);
-      setDays((prevDays) => prevDays.filter((day) => day.id !== dayId));
+      setPlan((prevPlan) => ({
+        ...prevPlan,
+        days: prevPlan?.days.filter((day) => day.id !== dayId),
+      }));
       setIsDirty(true);
     } catch (error) {
       console.error("Error deleting day:", error);
     }
   };
+  
   const handleDeleteExercise = async (dayId, exerciseId) => {
     try {
       const exerciseDocRef = doc(
@@ -127,8 +135,9 @@ function ViewPlanScreen() {
         `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       await deleteDoc(exerciseDocRef);
-      setDays((prevDays) =>
-        prevDays.map((prevDay) =>
+      setPlan((prevPlan) => ({
+        ...prevPlan,
+        days: prevPlan?.days.map((prevDay) =>
           prevDay.id === dayId
             ? {
                 ...prevDay,
@@ -137,16 +146,18 @@ function ViewPlanScreen() {
                 ),
               }
             : prevDay
-        )
-      );
+        ),
+      }));
       setIsDirty(true);
     } catch (error) {
       console.error("Error deleting exercise:", error);
     }
   };
+  
   const handleDeleteSet = (dayIndex, exerciseIndex, setIndex) => {
-    setDays((prevDays) =>
-      prevDays.map((prevDay, dIndex) =>
+    setPlan((prevPlan) => ({
+      ...prevPlan,
+      days: prevPlan?.days.map((prevDay, dIndex) =>
         dIndex === dayIndex
           ? {
               ...prevDay,
@@ -162,13 +173,15 @@ function ViewPlanScreen() {
               ),
             }
           : prevDay
-      )
-    );
+      ),
+    }));
     setIsDirty(true);
   };
+  
   const updateSets = (dayIndex, exerciseIndex, setIndex, property, value) => {
-    setDays((prevDays) =>
-      prevDays.map((prevDay, dIndex) =>
+    setPlan((prevPlan) => ({
+      ...prevPlan,
+      days: prevPlan?.days.map((prevDay, dIndex) =>
         dIndex === dayIndex
           ? {
               ...prevDay,
@@ -186,18 +199,21 @@ function ViewPlanScreen() {
               ),
             }
           : prevDay
-      )
-    );
+      ),
+    }));
     setIsDirty(true);
   };
+  
   const updateDayName = (dayIndex, newName) => {
-    setDays((days) =>
-      days.map((day, index) =>
+    setPlan((prevPlan) => ({
+      ...prevPlan,
+      days: prevPlan?.days.map((day, index) =>
         index === dayIndex ? { ...day, name: newName } : day
-      )
-    );
+      ),
+    }));
     setIsDirty(true);
-  };
+  };  
+
   const renderSetInputs = (sets, exerciseIndex, dayIndex, exercise) => {
     return (
       <View>

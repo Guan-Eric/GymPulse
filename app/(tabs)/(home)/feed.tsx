@@ -8,76 +8,28 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { CheckBox, Icon, useTheme, Button } from "@rneui/themed";
-import {
-  collection,
-  getCountFromServer,
-  setDoc,
-  addDoc,
-  doc,
-  query,
-  getDocs,
-  getDoc,
-  orderBy,
-  collectionGroup,
-  where,
-  deleteDoc,
-} from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
 import { Post } from "../../../components/types";
 import { router } from "expo-router";
-import { getFeed } from "../../../backend/post";
+import { getFeed, toggleLike } from "../../../backend/post";
 
 function FeedScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    const fetchFeed = async () => {
+    async function fetchFeed() {
       try {
         const feed = await getFeed();
         setPosts(feed);
       } catch (error) {
         console.error("Error fetching feed:", error);
       }
-    };
+    }
     fetchFeed();
   }, []);
-  
-  const toggleLike = async (post) => {
-    try {
-      const likeRef = doc(
-        FIRESTORE_DB,
-        `Users/${post.userId}/Posts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
-      );
-
-      if (post.like) {
-        setPosts(
-          posts.map((p) =>
-            p.id === post.id
-              ? { ...p, like: !p.like, numLikes: p.numLikes - 1 }
-              : p
-          )
-        );
-        await deleteDoc(likeRef);
-      } else {
-        setPosts(
-          posts.map((p) =>
-            p.id === post.id
-              ? { ...p, like: !p.like, numLikes: p.numLikes + 1 }
-              : p
-          )
-        );
-        await setDoc(likeRef, {});
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
-      setPosts(
-        posts.map((p) => (p.id === post.id ? { ...p, like: !p.like } : p))
-      );
-    }
-  };
 
   const navigateProfile = (id) => {
     if (id == FIREBASE_AUTH.currentUser.uid) {
@@ -169,7 +121,10 @@ function FeedScreen() {
                       type="material-community"
                     />
                   }
-                  onPress={() => toggleLike(item)}
+                  onPress={async () => {
+                    const updatedPost = await toggleLike(item);
+                    setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
+                  }}
                 />
                 <Pressable
                   style={{ paddingRight: 30 }}

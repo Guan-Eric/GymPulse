@@ -30,6 +30,7 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
+import { addComment, getUserPost, getUserPostComments, toggleLike } from "../../../backend/post";
 
 function ViewPostScreen() {
   const { theme } = useTheme();
@@ -40,96 +41,16 @@ function ViewPostScreen() {
   const { userId, postId } = useLocalSearchParams();
 
   useEffect(() => {
-    const fetchUserAndUserPostFirestore = async () => {
-      try {
-        const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
-        const userDocSnapshot = await getDoc(userDocRef);
-
-        const userPostDocRef = doc(
-          FIRESTORE_DB,
-          `Users/${userId}/Posts/${postId}`
-        );
-        const userPostSnapshot = await getDoc(userPostDocRef);
-
-        const userLikeDocRef = doc(
-          FIRESTORE_DB,
-          `Users/${userId}/Posts/${postId}/Likes/${FIREBASE_AUTH.currentUser.uid}`
-        );
-        const userLikeSnapshot = await getDoc(userLikeDocRef);
-
-        const numLikesCollection = collection(
-          FIRESTORE_DB,
-          `Users/${userId}/Posts/${postId}/Likes/`
-        );
-        const numLikesSnapshot = await getCountFromServer(numLikesCollection);
-
-        const postCommentsCollection = collection(
-          FIRESTORE_DB,
-          `Users/${userId}/Posts/${postId}/Comments/`
-        );
-        const commentsQueryRef = query(
-          postCommentsCollection,
-          orderBy("date", "desc")
-        );
-        const fetchUserNamePromises = [];
-        const commentsQuerySnapshot = await getDocs(commentsQueryRef);
-        commentsQuerySnapshot.forEach((doc) => {
-          const promise = fetchCommentUserName(doc.data().userId).then(
-            (userName) => {
-              return {
-                userName: userName,
-                comment: doc.data().comment,
-              };
-            }
-          );
-          fetchUserNamePromises.push(promise);
-        });
-
-        // Wait for all promises to resolve
-        const comments = await Promise.all(fetchUserNamePromises);
-        setComments(comments);
-        if (userDocSnapshot.exists()) {
-          setPost({
-            userId: userPostSnapshot.data().userId,
-            id: userPostSnapshot.data().id,
-            caption: userPostSnapshot.data().caption,
-            url: userPostSnapshot.data().url,
-            userName: userDocSnapshot.data().name,
-            like: userLikeSnapshot.exists(),
-            numLikes: numLikesSnapshot.data().count,
-          });
+    async function fetchUserPost() {
+        try {
+          setPost(await getUserPost(userId as string, postId as string));
+          setComments(await getUserPostComments(userId as string, postId as string));
+        } catch (error) {
+          console.error("Error fetching feed:", error);
         }
-      } catch (error) {
-        console.error("Error fetching user and userPosts:", error);
       }
-    };
-    const fetchCommentUserName = async (userId) => {
-      const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
-      const userDocSnapshot = await getDoc(userDocRef);
-      return userDocSnapshot.data().name;
-    };
-    fetchUserAndUserPostFirestore();
-  }, []);
-
-  const toggleLike = async (post) => {
-    try {
-      const likeRef = doc(
-        FIRESTORE_DB,
-        `Users/${post.userId}/Posts/${post.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
-      );
-
-      if (post.like) {
-        setPost({ ...post, like: !post.like, numLikes: post.numLikes - 1 });
-        await deleteDoc(likeRef);
-      } else {
-        setPost({ ...post, like: !post.like, numLikes: post.numLikes + 1 });
-        await setDoc(likeRef, {});
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
-      setPost({ ...post, like: !post.like });
-    }
-  };
+      fetchUserPost();
+    }, []);
 
   const navigateProfile = () => {
     if (post.userId == FIREBASE_AUTH.currentUser.uid) {
@@ -142,34 +63,6 @@ function ViewPostScreen() {
     }
   };
 
-  const postComment = async () => {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const dateDay = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
-    try {
-      const commentCollectionRef = collection(
-        FIRESTORE_DB,
-        `Users/${post.userId}/Posts/${post.id}/Comments/`
-      );
-      const commentDocRef = await addDoc(commentCollectionRef, {
-        comment: comment,
-        userId: post.userId,
-        date: formattedDateTime,
-      });
-      const commentDoc = doc(commentCollectionRef, commentDocRef.id);
-      await updateDoc(commentDoc, {
-        id: commentDocRef.id,
-      });
-      setComment("");
-      setComments([...comments, comment]);
-    } catch (error) {
-      console.error("Error posting comment:", error);
-    }
-  };
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
@@ -259,7 +152,11 @@ function ViewPostScreen() {
             <Button
               disabled={comment == ""}
               title="Post"
-              onPress={postComment}
+              onPress={() => {
+                addComment(comment, post);
+                setComment("");
+                setComments([...comments, comment]);
+              }}
             />
           </View>
         </ScrollView>
