@@ -12,13 +12,13 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import { Day } from "../../../components/types";
+import { Day, Plan } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button } from "@rneui/themed";
+import { getPlan, savePlan } from "../../../backend/plan";
 
 function ViewPlanScreen() {
-  const [name, setName] = useState("");
-  const [days, setDays] = useState<Day[]>([]);
+  const [plan, setPlan] = useState<Plan>();
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
   const { userId, planId } = useLocalSearchParams();
@@ -29,47 +29,16 @@ function ViewPlanScreen() {
       handleSavePlan();
       setIsDirty(false);
     }
-  }, [name, days, isDirty]);
+  }, [plan.name, plan.days, isDirty]);
 
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
-      try {
-        const userDoc = await getDoc(doc(FIRESTORE_DB, `Users/${userId}`));
-        const userData = userDoc.data();
-        setIsMetric(userData.metricUnits);
-        const planDoc = await getDoc(
-          doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`)
-        );
-        const planData = planDoc.data();
-        setName(planData.name);
-
-        const daysCollection = collection(planDoc.ref, "Days");
-        const daysSnapshot = await getDocs(daysCollection);
-        const daysData = [];
-
-        for (const dayDoc of daysSnapshot.docs) {
-          const dayData = dayDoc.data();
-
-          const exercisesCollection = collection(dayDoc.ref, "Exercise");
-          const exercisesSnapshot = await getDocs(exercisesCollection);
-          const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
-            exerciseDoc.data()
-          );
-          dayData.exercises = exercisesData;
-          daysData.push(dayData);
-        }
-        setDays(daysData);
-      } catch (error) {
-        console.error("Error fetching plan data:", error);
-      }
-    };
+      setPlan(await getPlan(planId as string));
+    }
 
     fetchPlanFromFirestore();
   }, []);
-  const setNameAndSave = (newName) => {
-    setName(newName);
-    setIsDirty(true);
-  };
+
   const handleSavePlan = async () => {
     const planDocRef = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
     updateDoc(planDocRef, { name: name });
@@ -323,11 +292,11 @@ function ViewPlanScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         <Input
           style={styles.nameInput}
-          onChangeText={(newName) => setNameAndSave(newName)}
-          value={name}
+          onChangeText={() => handleSavePlan()}
+          value={plan?.name}
         />
         <ScrollView>
-          {days.map((day, dayIndex) => (
+          {plan?.days.map((day, dayIndex) => (
             <View key={day.id}>
               <View style={{ flexDirection: "row" }}>
                 <Input
@@ -379,7 +348,7 @@ function ViewPlanScreen() {
                       size="sm"
                       type="clear"
                       title="Add Set"
-                      onPress={() => handleAddSet(day.id, exercise.id, days)}
+                      onPress={() => handleAddSet(day.id, exercise.id, plan?.days)}
                     />
                   </View>
                 ))}

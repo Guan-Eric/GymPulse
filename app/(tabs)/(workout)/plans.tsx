@@ -17,6 +17,7 @@ import {
 import { Plan } from "../../../components/types";
 import { router } from "expo-router";
 import { useTheme, Button, Icon } from "@rneui/themed";
+import { getPlans } from "../../../backend/plan";
 
 function PlanScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -24,29 +25,12 @@ function PlanScreen() {
   const { theme } = useTheme();
 
   useEffect(() => {
-    const fetchPlansFromFirestore = async () => {
-      try {
-        setUserId(FIREBASE_AUTH.currentUser.uid);
-        const userDocRef = doc(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}`
-        );
-
-        const plansCollectionRef = collection(userDocRef, "Plans");
-
-        const unsubscribe = onSnapshot(plansCollectionRef, (snapshot) => {
-          const data = snapshot.docs.map((doc) => doc.data());
-          setPlans(data as Plan[]);
-        });
-
-        return () => unsubscribe();
-      } catch (error) {
-        console.error("Error fetching plans from Firestore:", error);
-      }
+    const fetchData = async () => {
+      setPlans(await getPlans());
     };
-
-    fetchPlansFromFirestore();
+    fetchData();
   }, []);
+  
 
   const handleCreatePlan = async () => {
     try {
