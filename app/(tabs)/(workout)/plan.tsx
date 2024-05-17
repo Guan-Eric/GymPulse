@@ -15,7 +15,7 @@ import {
 import { Day, Plan } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button } from "@rneui/themed";
-import { getPlan, savePlan } from "../../../backend/plan";
+import { addDay, addSet, deleteDay, deleteExercise, deleteSet, getPlan, savePlan, updateDay, updateSet } from "../../../backend/plan";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -29,7 +29,7 @@ function ViewPlanScreen() {
       handleSavePlan();
       setIsDirty(false);
     }
-  }, [plan.name, plan.days, isDirty]);
+  }, [plan, isDirty]);
 
   useEffect(() => {
     const fetchPlanFromFirestore = async () => {
@@ -57,161 +57,31 @@ function ViewPlanScreen() {
   };
   
   const handleAddDay = async () => {
-    try {
-      const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
-      const daysCollection = collection(planDoc, "Days");
-      const daysDocRef = await addDoc(daysCollection, {
-        name: "New Day",
-        planId: planId,
-      });
-      const dayDoc = doc(daysCollection, daysDocRef.id);
-      await updateDoc(dayDoc, { id: daysDocRef.id });
-      const newDayDoc = await getDoc(doc(daysCollection, daysDocRef.id));
-      const newDayData = newDayDoc.data() as Day;
-  
-      setPlan((prevPlan) => ({
-        ...prevPlan,
-        days: [...(prevPlan?.days || []), newDayData],
-      }));
-      setIsDirty(true);
-    } catch (error) {
-      console.error("Error adding new day:", error);
-    }
+    setPlan(await addDay(plan));
   };  
 
   const handleAddSet = async (dayId, exerciseId, days) => {
-    const exerciseDoc = doc(
-      FIRESTORE_DB,
-      `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
-    );
-    const exerciseDocSnap = await getDoc(exerciseDoc);
-
-    if (exerciseDocSnap.exists()) {
-      const currentSets = exerciseDocSnap.data().sets || [];
-      const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
-      await updateDoc(exerciseDoc, { sets: newSets });
-      const updatedPlan = days.map((day) =>
-        day.id === dayId
-          ? {
-              ...day,
-              exercises: day.exercises.map((ex) =>
-                ex.id === exerciseId ? { ...ex, sets: newSets } : ex
-              ),
-            }
-          : day
-      );
-      setPlan(updatedPlan);
-      setIsDirty(true);
-    }
+    setPlan(await addSet(plan, dayId, exerciseId, days));
   };
 
   const handleDeleteDay = async (dayId) => {
-    try {
-      const dayDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${userId}/Plans/${planId}/Days/${dayId}`
-      );
-      const exercisesCollectionRef = collection(dayDocRef, "Exercise");
-      const exercisesQuerySnapshot = await getDocs(exercisesCollectionRef);
-  
-      exercisesQuerySnapshot.forEach(async (exerciseDoc) => {
-        await deleteDoc(exerciseDoc.ref);
-      });
-      await deleteDoc(dayDocRef);
-      setPlan((prevPlan) => ({
-        ...prevPlan,
-        days: prevPlan?.days.filter((day) => day.id !== dayId),
-      }));
-      setIsDirty(true);
-    } catch (error) {
-      console.error("Error deleting day:", error);
-    }
+    setPlan(await deleteDay(plan, dayId))
   };
   
   const handleDeleteExercise = async (dayId, exerciseId) => {
-    try {
-      const exerciseDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
-      );
-      await deleteDoc(exerciseDocRef);
-      setPlan((prevPlan) => ({
-        ...prevPlan,
-        days: prevPlan?.days.map((prevDay) =>
-          prevDay.id === dayId
-            ? {
-                ...prevDay,
-                exercises: prevDay.exercises.filter(
-                  (exercise) => exercise.id !== exerciseId
-                ),
-              }
-            : prevDay
-        ),
-      }));
-      setIsDirty(true);
-    } catch (error) {
-      console.error("Error deleting exercise:", error);
-    }
+      setPlan(await deleteExercise(plan, dayId, exerciseId));
   };
   
   const handleDeleteSet = (dayIndex, exerciseIndex, setIndex) => {
-    setPlan((prevPlan) => ({
-      ...prevPlan,
-      days: prevPlan?.days.map((prevDay, dIndex) =>
-        dIndex === dayIndex
-          ? {
-              ...prevDay,
-              exercises: prevDay.exercises.map((prevExercise, eIndex) =>
-                eIndex === exerciseIndex
-                  ? {
-                      ...prevExercise,
-                      sets: prevExercise.sets.filter(
-                        (set, sIndex) => sIndex !== setIndex
-                      ),
-                    }
-                  : prevExercise
-              ),
-            }
-          : prevDay
-      ),
-    }));
-    setIsDirty(true);
+    setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
   };
   
   const updateSets = (dayIndex, exerciseIndex, setIndex, property, value) => {
-    setPlan((prevPlan) => ({
-      ...prevPlan,
-      days: prevPlan?.days.map((prevDay, dIndex) =>
-        dIndex === dayIndex
-          ? {
-              ...prevDay,
-              exercises: prevDay.exercises.map((prevExercise, eIndex) =>
-                eIndex === exerciseIndex
-                  ? {
-                      ...prevExercise,
-                      sets: prevExercise.sets.map((prevSet, sIndex) =>
-                        sIndex === setIndex
-                          ? { ...prevSet, [property]: value }
-                          : prevSet
-                      ),
-                    }
-                  : prevExercise
-              ),
-            }
-          : prevDay
-      ),
-    }));
-    setIsDirty(true);
+    setPlan(updateSet(plan, dayIndex, exerciseIndex, setIndex, property, value));
   };
   
   const updateDayName = (dayIndex, newName) => {
-    setPlan((prevPlan) => ({
-      ...prevPlan,
-      days: prevPlan?.days.map((day, index) =>
-        index === dayIndex ? { ...day, name: newName } : day
-      ),
-    }));
-    setIsDirty(true);
+    setPlan(updateDay(plan, dayIndex, newName));
   };  
 
   const renderSetInputs = (sets, exerciseIndex, dayIndex, exercise) => {

@@ -5,6 +5,8 @@ import {
   getDocs,
   updateDoc,
   getDoc,
+  addDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { Day, Exercise, Plan } from "../components/types";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
@@ -94,30 +96,160 @@ export async function savePlan(days: Day[], planId: string) {
   }
 }
 
-export async function addDay() {
-  // Function code remains unchanged
+export async function addDay(plan: Plan): Promise<Plan> {
+  try {
+    const planDoc = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
+    );
+    const daysCollection = collection(planDoc, "Days");
+    const daysDocRef = await addDoc(daysCollection, {
+      name: "New Day",
+      planId: plan.id,
+    });
+    const dayDoc = doc(daysCollection, daysDocRef.id);
+    await updateDoc(dayDoc, { id: daysDocRef.id });
+    const newDayDoc = await getDoc(doc(daysCollection, daysDocRef.id));
+    const newDayData = newDayDoc.data() as Day;
+
+    return { ...plan, days: [...(plan?.days || []), newDayData] };
+  } catch (error) {
+    console.error("Error adding new day:", error);
+  }
 }
 
-export async function addSet(dayId, exerciseId, days) {
-  // Function code remains unchanged
+export async function addSet(plan: Plan, dayId, exerciseId, days) {
+  const exerciseDoc = doc(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${dayId}/Exercise/${exerciseId}`
+  );
+  const exerciseDocSnap = await getDoc(exerciseDoc);
+
+  if (exerciseDocSnap.exists()) {
+    const currentSets = exerciseDocSnap.data().sets || [];
+    const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
+    await updateDoc(exerciseDoc, { sets: newSets });
+    const updatedPlan = days.map((day) =>
+      day.id === dayId
+        ? {
+            ...day,
+            exercises: day.exercises.map((ex) =>
+              ex.id === exerciseId ? { ...ex, sets: newSets } : ex
+            ),
+          }
+        : day
+    );
+    return updatedPlan;
+  }
 }
 
-export async function deleteDay(dayId) {
-  // Function code remains unchanged
+export async function deleteDay(plan: Plan, dayId): Promise<Plan> {
+  try {
+    const dayDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${dayId}`
+    );
+    const exercisesCollectionRef = collection(dayDocRef, "Exercise");
+    const exercisesQuerySnapshot = await getDocs(exercisesCollectionRef);
+
+    exercisesQuerySnapshot.forEach(async (exerciseDoc) => {
+      await deleteDoc(exerciseDoc.ref);
+    });
+    await deleteDoc(dayDocRef);
+    return {
+      ...plan,
+      days: plan.days.filter((day) => day.id !== dayId),
+    };
+  } catch (error) {
+    console.error("Error deleting day:", error);
+  }
 }
 
-export async function deleteExercise(dayId, exerciseId) {
-  // Function code remains unchanged
+export async function deleteExercise(plan: Plan, dayId, exerciseId) {
+  try {
+    const exerciseDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${dayId}/Exercise/${exerciseId}`
+    );
+    await deleteDoc(exerciseDocRef);
+    return {
+      ...plan,
+      days: plan?.days.map((prevDay) =>
+        prevDay.id === dayId
+          ? {
+              ...prevDay,
+              exercises: prevDay.exercises.filter(
+                (exercise) => exercise.id !== exerciseId
+              ),
+            }
+          : prevDay
+      ),
+    };
+  } catch (error) {
+    console.error("Error deleting exercise:", error);
+  }
 }
 
-export function deleteSet(dayIndex, exerciseIndex, setIndex) {
-  // Function code remains unchanged
+export function deleteSet(plan: Plan, dayIndex, exerciseIndex, setIndex): Plan {
+  return {
+    ...plan,
+    days: plan?.days.map((prevDay, dIndex) =>
+      dIndex === dayIndex
+        ? {
+            ...prevDay,
+            exercises: prevDay.exercises.map((prevExercise, eIndex) =>
+              eIndex === exerciseIndex
+                ? {
+                    ...prevExercise,
+                    sets: prevExercise.sets.filter(
+                      (_set, sIndex) => sIndex !== setIndex
+                    ),
+                  }
+                : prevExercise
+            ),
+          }
+        : prevDay
+    ),
+  };
 }
 
-export function updateSet(dayIndex, exerciseIndex, setIndex, property, value) {
-  // Function code remains unchanged
+export function updateSet(
+  plan: Plan,
+  dayIndex,
+  exerciseIndex,
+  setIndex,
+  property,
+  value
+) {
+  return {
+    ...plan,
+    days: plan?.days.map((prevDay, dIndex) =>
+      dIndex === dayIndex
+        ? {
+            ...prevDay,
+            exercises: prevDay.exercises.map((prevExercise, eIndex) =>
+              eIndex === exerciseIndex
+                ? {
+                    ...prevExercise,
+                    sets: prevExercise.sets.map((prevSet, sIndex) =>
+                      sIndex === setIndex
+                        ? { ...prevSet, [property]: value }
+                        : prevSet
+                    ),
+                  }
+                : prevExercise
+            ),
+          }
+        : prevDay
+    ),
+  };
 }
 
-export function updateDay(dayIndex, newName) {
-  // Function code remains unchanged
+export function updateDay(plan: Plan, dayIndex, newName) {
+  return {
+    ...plan,
+    days: plan?.days.map((day, index) =>
+      index === dayIndex ? { ...day, name: newName } : day
+    ),
+  };
 }
