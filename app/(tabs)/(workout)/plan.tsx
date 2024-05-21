@@ -21,7 +21,7 @@ function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
-  const { userId, planId } = useLocalSearchParams();
+  const { planId } = useLocalSearchParams();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -87,7 +87,7 @@ function ViewPlanScreen() {
           )}
           {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
         </View>
-        {sets.map((set: { reps: { toString: () => string; }; weight_duration: number; }, setIndex: number) => (
+        {sets?.map((set: { reps: { toString: () => string; }; weight_duration: number; }, setIndex: number) => (
           <View key={setIndex} style={styles.setRow}>
             <Text
               style={[styles.baseText, { color: theme.colors.black }]}
@@ -169,7 +169,7 @@ function ViewPlanScreen() {
           value={plan?.name}
         />
         <ScrollView>
-          {plan?.days.map((day, dayIndex) => (
+          {plan?.days?.map((day, dayIndex) => (
             <View key={day.id}>
               <View style={{ flexDirection: "row" }}>
                 <Input
@@ -186,7 +186,6 @@ function ViewPlanScreen() {
                     router.push({
                       pathname: "/(tabs)/(workout)/workout",
                       params: {
-                        userId: userId,
                         planId: planId,
                         dayId: day.id,
                       },
@@ -195,7 +194,7 @@ function ViewPlanScreen() {
                 />
               </View>
               {day.exercises &&
-                day.exercises.map((exercise, exerciseIndex) => (
+                day.exercises?.map((exercise, exerciseIndex) => (
                   <View key={exercise.id}>
                     <View style={{ flexDirection: "row" }}>
                       <Text
@@ -232,7 +231,6 @@ function ViewPlanScreen() {
                   router.push({
                     pathname: "/(tabs)/(workout)/search",
                     params: {
-                      userId: userId,
                       planId: planId,
                       dayId: day.id,
                     },

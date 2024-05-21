@@ -25,7 +25,7 @@ function ExerciseScreen() {
     const fetchImages = async () => {
       try {
         const exerciseDoc = await getDoc(
-          doc(FIRESTORE_DB, `Exercise/${exerciseId}`)
+          doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
         );
         setExercise(exerciseDoc.data() as Exercise);
         const image1Ref = ref(FIREBASE_STR, `assets/${exerciseId}_0.jpg`);
@@ -44,10 +44,10 @@ function ExerciseScreen() {
     fetchImages();
   }, []);
 
-  const instructions = exercise.instructions.map((item, index) => (
+  const instructions = exercise?.instructions.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
-  const secondaryMuscles = exercise.secondaryMuscles.map((item, index) => (
+  const secondaryMuscles = exercise?.secondaryMuscles.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
 

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { FIREBASE_STR } from "../../../firebaseConfig";
 import {
@@ -27,16 +27,17 @@ import { Exercise } from "../../../components/types";
 
 function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
-  const { exerciseId, userId, planId, dayId } = useLocalSearchParams();
+  const { exerciseId, planId, dayId } = useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
 
   useEffect(() => {
     const fetchExercise = async () => {
       try {
         const exerciseDoc = await getDoc(
-          doc(FIRESTORE_DB, `Exercise/${exerciseId}`)
+          doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
         );
         setExercise(exerciseDoc.data() as Exercise);
+        
         const image1Ref = ref(FIREBASE_STR, `assets/${exerciseId}_0.jpg`);
         const url1 = await getDownloadURL(image1Ref);
         const image2Ref = ref(FIREBASE_STR, `assets/${exerciseId}_1.jpg`);
@@ -52,16 +53,16 @@ function AddExerciseScreen() {
 
     fetchExercise();
   }, []);
-  const instructions = exercise.instructions.map((item, index) => (
+  const instructions = exercise?.instructions.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
-  const secondaryMuscles = exercise.secondaryMuscles.map((item, index) => (
+  const secondaryMuscles = exercise?.secondaryMuscles.map((item, index) => (
     <Text key={index}>{item}</Text>
   ));
   const handleAddExercise = async () => {
     const dayDoc = doc(
       FIRESTORE_DB,
-      `Users/${userId}/Plans/${planId}/Days/${dayId}`
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
     );
     const exerciseCollection = collection(dayDoc, "Exercise");
     const exerciseDocRef = await addDoc(exerciseCollection, {
@@ -94,14 +95,14 @@ function AddExerciseScreen() {
           )}
         />
         <ScrollView>
-          <Text>{exercise.name}</Text>
+          <Text>{exercise?.name}</Text>
           <Button title="Add Exercise" onPress={handleAddExercise} />
           <Text>Equipment</Text>
-          <Text>{exercise.equipment}</Text>
+          <Text>{exercise?.equipment}</Text>
           <Text>Secondary Muscles</Text>
           {secondaryMuscles}
           <Text>Level</Text>
-          <Text>{exercise.level}</Text>
+          <Text>{exercise?.level}</Text>
           <Text>Instructions</Text>
           {instructions}
         </ScrollView>

@@ -21,7 +21,6 @@ import { getPlans } from "../../../backend/plan";
 
 function PlanScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [userId, setUserId] = useState("");
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -35,13 +34,13 @@ function PlanScreen() {
   const handleCreatePlan = async () => {
     try {
       const docRef = await addDoc(
-        collection(FIRESTORE_DB, `Users/${userId}/Plans`),
+        collection(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}/Plans`),
         {
           name: "New Plan",
-          userId: userId,
+          userId: FIREBASE_AUTH.currentUser.uid,
         }
       );
-      const planDoc = doc(FIRESTORE_DB, `Users/${userId}/Plans/${docRef.id}`);
+      const planDoc = doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${docRef.id}`);
       await updateDoc(planDoc, { id: docRef.id });
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -81,7 +80,6 @@ function PlanScreen() {
                   router.push({
                     pathname: "/(tabs)/(workout)/plan",
                     params: {
-                      userId: userId,
                       planId: item.id,
                     },
                   })

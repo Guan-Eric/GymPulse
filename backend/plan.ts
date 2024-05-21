@@ -129,16 +129,19 @@ export async function addSet(plan: Plan, dayId, exerciseId, days) {
     const currentSets = exerciseDocSnap.data().sets || [];
     const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
     await updateDoc(exerciseDoc, { sets: newSets });
-    const updatedPlan = days.map((day) =>
-      day.id === dayId
-        ? {
-            ...day,
-            exercises: day.exercises.map((ex) =>
-              ex.id === exerciseId ? { ...ex, sets: newSets } : ex
-            ),
-          }
-        : day
-    );
+    const updatedPlan = {
+      ...plan,
+      days: days.map((day) =>
+        day.id === dayId
+          ? {
+              ...day,
+              exercises: day.exercises.map((ex) =>
+                ex.id === exerciseId ? { ...ex, sets: newSets } : ex
+              ),
+            }
+          : day
+      ),
+    };
     return updatedPlan;
   }
 }

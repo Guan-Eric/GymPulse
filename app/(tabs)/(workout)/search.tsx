@@ -20,7 +20,7 @@ function SearchExerciseScreen() {
   const { mode, setMode } = useThemeMode();
   const [search, setSearch] = useState("");
   const [exercises, setExecercises] = useState<Exercise[]>([]);
-  const { userId, planId, dayId } = useLocalSearchParams();
+  const { planId, dayId } = useLocalSearchParams();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -69,7 +69,6 @@ function SearchExerciseScreen() {
                   pathname: "/(tabs)/(workout)/add",
                   params: {
                     exerciseId: item.id,
-                    userId: userId,
                     dayId: dayId,
                     planId: planId,
                   },
