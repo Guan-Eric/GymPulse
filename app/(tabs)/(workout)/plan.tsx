@@ -12,7 +12,7 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import { Day, Plan } from "../../../components/types";
+import { Day, Exercise, Plan } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button } from "@rneui/themed";
 import { addDay, addSet, deleteDay, deleteExercise, deleteSet, getPlan, savePlan, updateDay, updateSet } from "../../../backend/plan";
@@ -40,51 +40,38 @@ function ViewPlanScreen() {
   }, []);
 
   const handleSavePlan = async () => {
-    const planDocRef = doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}`);
-    updateDoc(planDocRef, { name: plan.name });
-    for (const day of plan.days) {
-      const dayDocRef = doc(planDocRef, `Days/${day.id}`);
-      await updateDoc(dayDocRef, { name: day.name });
-
-      for (const exercise of day.exercises) {
-        const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
-        await updateDoc(exerciseDocRef, {
-          name: exercise.name,
-          sets: exercise.sets,
-        });
-      }
-    }
+    savePlan(plan);
   };
   
   const handleAddDay = async () => {
     setPlan(await addDay(plan));
   };  
 
-  const handleAddSet = async (dayId, exerciseId, days) => {
+  const handleAddSet = async (dayId: string, exerciseId: string, days: Day[]) => {
     setPlan(await addSet(plan, dayId, exerciseId, days));
   };
 
-  const handleDeleteDay = async (dayId) => {
+  const handleDeleteDay = async (dayId: string) => {
     setPlan(await deleteDay(plan, dayId))
   };
   
-  const handleDeleteExercise = async (dayId, exerciseId) => {
+  const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
       setPlan(await deleteExercise(plan, dayId, exerciseId));
   };
   
-  const handleDeleteSet = (dayIndex, exerciseIndex, setIndex) => {
+  const handleDeleteSet = (dayIndex: any, exerciseIndex: any, setIndex: number) => {
     setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
   };
   
-  const updateSets = (dayIndex, exerciseIndex, setIndex, property, value) => {
+  const updateSets = (dayIndex: any, exerciseIndex: any, setIndex: number, property: string, value: string | number) => {
     setPlan(updateSet(plan, dayIndex, exerciseIndex, setIndex, property, value));
   };
   
-  const updateDayName = (dayIndex, newName) => {
+  const updateDayName = (dayIndex: number, newName: string) => {
     setPlan(updateDay(plan, dayIndex, newName));
   };  
 
-  const renderSetInputs = (sets, exerciseIndex, dayIndex, exercise) => {
+  const renderSetInputs = (sets: any[], exerciseIndex: number, dayIndex: number, exercise: Exercise) => {
     return (
       <View>
         <View style={styles.setRow}>
@@ -100,7 +87,7 @@ function ViewPlanScreen() {
           )}
           {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
         </View>
-        {sets.map((set, setIndex) => (
+        {sets.map((set: { reps: { toString: () => string; }; weight_duration: number; }, setIndex: number) => (
           <View key={setIndex} style={styles.setRow}>
             <Text
               style={[styles.baseText, { color: theme.colors.black }]}
