@@ -3,9 +3,15 @@ import { View, Pressable, Image, Text, StyleSheet } from "react-native";
 import { CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { router } from "expo-router";
-import { toggleLike } from "../../../backend/post";
 
-const PostItem = ({ item, theme, navigateProfile, setPosts, posts }) => {
+const PostItem = ({
+  post,
+  theme,
+  navigateProfile,
+  onToggleLike,
+  renderComments,
+  showCommentIcon,
+}) => {
   return (
     <View style={{ paddingBottom: 20 }}>
       <Pressable
@@ -15,14 +21,14 @@ const PostItem = ({ item, theme, navigateProfile, setPosts, posts }) => {
           paddingBottom: 5,
           paddingLeft: 30,
         }}
-        onPress={() => navigateProfile(item.userId)}
+        onPress={() => navigateProfile(post.userId)}
       >
         <Image
           style={{ width: 40, height: 40 }}
-          source={require("../../../assets/profile.png")}
+          source={require("../assets/profile.png")}
         />
         <Text style={[styles.userName, { color: theme.colors.black }]}>
-          {item.userName}
+          {post.userName}
         </Text>
       </Pressable>
       <Pressable
@@ -30,14 +36,14 @@ const PostItem = ({ item, theme, navigateProfile, setPosts, posts }) => {
           router.push({
             pathname: "/(tabs)/(home)/post",
             params: {
-              postId: item.id,
-              userId: item.userId,
+              postId: post.id,
+              userId: post.userId,
             },
           })
         }
       >
         <Image
-          source={{ uri: item.url }}
+          source={{ uri: post.url }}
           style={{
             alignSelf: "center",
             borderRadius: 15,
@@ -56,8 +62,8 @@ const PostItem = ({ item, theme, navigateProfile, setPosts, posts }) => {
         }}
       >
         <CheckBox
-          title={item.numLikes.toString()}
-          checked={item.like}
+          title={post.numLikes.toString()}
+          checked={post.like}
           checkedIcon={
             <Icon
               size={28}
@@ -67,36 +73,31 @@ const PostItem = ({ item, theme, navigateProfile, setPosts, posts }) => {
             />
           }
           uncheckedIcon={
-            <Icon
-              size={28}
-              name="arm-flex-outline"
-              type="material-community"
-            />
+            <Icon size={28} name="arm-flex-outline" type="material-community" />
           }
-          onPress={async () => {
-            const updatedPost = await toggleLike(item);
-            setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
-          }}
+          onPress={onToggleLike}
         />
-        <Pressable
-          style={{ paddingRight: 30 }}
-          onPress={() =>
-            router.push({
-              pathname: "/(tabs)/(home)/post",
-              params: {
-                postId: item.id,
-                userId: item.userId,
-              },
-            })
-          }
-        >
-          <Icon name="comment-outline" type="material-community" />
-        </Pressable>
+        {showCommentIcon && (
+          <Pressable
+            style={{ paddingRight: 30 }}
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/(home)/post",
+                params: {
+                  postId: post.id,
+                  userId: post.userId,
+                },
+              })
+            }
+          >
+            <Icon name="comment-outline" type="material-community" />
+          </Pressable>
+        )}
       </View>
-
       <Text style={[styles.caption, { color: theme.colors.black }]}>
-        {item.caption}
+        {post.caption}
       </Text>
+      {renderComments && renderComments()}
     </View>
   );
 };
