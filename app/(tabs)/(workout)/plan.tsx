@@ -1,119 +1,315 @@
-import React from "react";
-import { View, Pressable, Image, Text, StyleSheet } from "react-native";
-import { CheckBox, Icon } from "@rneui/themed";
-import { ScreenWidth } from "@rneui/base";
-import { router } from "expo-router";
-import { toggleLike } from "../../../backend/post";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, ScrollView } from "react-native";
+import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Day, Exercise, Plan } from "../../../components/types";
+import { router, useLocalSearchParams } from "expo-router";
+import { Input, useTheme, Button } from "@rneui/themed";
+import {
+  addDay,
+  addSet,
+  deleteDay,
+  deleteExercise,
+  deleteSet,
+  getPlan,
+  savePlan,
+  updateDay,
+  updateSet,
+} from "../../../backend/plan";
 
-const PostItem = ({ item, theme, navigateProfile, setPosts, posts }) => {
-  return (
-    <View style={{ paddingBottom: 20 }}>
-      <Pressable
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingBottom: 5,
-          paddingLeft: 30,
-        }}
-        onPress={() => navigateProfile(item.userId)}
-      >
-        <Image
-          style={{ width: 40, height: 40 }}
-          source={require("../../../assets/profile.png")}
-        />
-        <Text style={[styles.userName, { color: theme.colors.black }]}>
-          {item.userName}
-        </Text>
-      </Pressable>
-      <Pressable
-        onPress={() =>
-          router.push({
-            pathname: "/(tabs)/(home)/post",
-            params: {
-              postId: item.id,
-              userId: item.userId,
-            },
-          })
-        }
-      >
-        <Image
-          source={{ uri: item.url }}
-          style={{
-            alignSelf: "center",
-            borderRadius: 15,
-            width: 0.93 * ScreenWidth,
-            height: 0.93 * ScreenWidth * 1.25,
-            resizeMode: "cover",
-          }}
-        />
-      </Pressable>
-      <View
-        style={{
-          paddingLeft: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <CheckBox
-          title={item.numLikes.toString()}
-          checked={item.like}
-          checkedIcon={
-            <Icon
-              size={28}
-              name="arm-flex"
-              type="material-community"
-              color="#ffde34"
-            />
-          }
-          uncheckedIcon={
-            <Icon
-              size={28}
-              name="arm-flex-outline"
-              type="material-community"
-            />
-          }
-          onPress={async () => {
-            const updatedPost = await toggleLike(item);
-            setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
-          }}
-        />
-        <Pressable
-          style={{ paddingRight: 30 }}
-          onPress={() =>
-            router.push({
-              pathname: "/(tabs)/(home)/post",
-              params: {
-                postId: item.id,
-                userId: item.userId,
-              },
-            })
-          }
-        >
-          <Icon name="comment-outline" type="material-community" />
-        </Pressable>
+function ViewPlanScreen() {
+  const [plan, setPlan] = useState<Plan>();
+  const [isDirty, setIsDirty] = useState(false);
+  const [isMetric, setIsMetric] = useState();
+  const { planId } = useLocalSearchParams();
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    if (isDirty) {
+      handleSavePlan();
+      setIsDirty(false);
+    }
+  }, [plan, isDirty]);
+
+  useEffect(() => {
+    const fetchPlanFromFirestore = async () => {
+      setPlan(await getPlan(planId as string));
+    };
+
+    fetchPlanFromFirestore();
+  }, []);
+
+  const handleSavePlan = async () => {
+    savePlan(plan);
+  };
+
+  const handleAddDay = async () => {
+    setPlan(await addDay(plan));
+  };
+
+  const handleAddSet = async (
+    dayId: string,
+    exerciseId: string,
+    days: Day[]
+  ) => {
+    setPlan(await addSet(plan, dayId, exerciseId, days));
+  };
+
+  const handleDeleteDay = async (dayId: string) => {
+    setPlan(await deleteDay(plan, dayId));
+  };
+
+  const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
+    setPlan(await deleteExercise(plan, dayId, exerciseId));
+  };
+
+  const handleDeleteSet = (
+    dayIndex: any,
+    exerciseIndex: any,
+    setIndex: number
+  ) => {
+    setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
+  };
+
+  const updateSets = (
+    dayIndex: any,
+    exerciseIndex: any,
+    setIndex: number,
+    property: string,
+    value: string | number
+  ) => {
+    setPlan(
+      updateSet(plan, dayIndex, exerciseIndex, setIndex, property, value)
+    );
+  };
+
+  const updateDayName = (dayIndex: number, newName: string) => {
+    setPlan(updateDay(plan, dayIndex, newName));
+  };
+
+  const renderSetInputs = (
+    sets: any[],
+    exerciseIndex: number,
+    dayIndex: number,
+    exercise: Exercise
+  ) => {
+    return (
+      <View>
+        <View style={styles.setRow}>
+          {!exercise.cardio && (
+            <View style={styles.setRow}>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                Reps
+              </Text>
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                Weight
+              </Text>
+            </View>
+          )}
+          {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
+        </View>
+        {sets?.map(
+          (
+            set: { reps: { toString: () => string }; weight_duration: number },
+            setIndex: number
+          ) => (
+            <View key={setIndex} style={styles.setRow}>
+              <Text
+                style={[styles.baseText, { color: theme.colors.black }]}
+              >{`Set ${setIndex + 1}`}</Text>
+              {!exercise.cardio && (
+                <Input
+                  keyboardType="numeric"
+                  style={styles.input}
+                  onChangeText={(newReps) =>
+                    updateSets(
+                      dayIndex,
+                      exerciseIndex,
+                      setIndex,
+                      "reps",
+                      newReps
+                    )
+                  }
+                  value={set.reps.toString()}
+                />
+              )}
+              {!exercise.cardio && (
+                <Text style={{ color: theme.colors.black }}>x</Text>
+              )}
+              {!exercise.cardio && (
+                <Input
+                  keyboardType="numeric"
+                  style={styles.input}
+                  onChangeText={(newWeight) =>
+                    updateSets(
+                      dayIndex,
+                      exerciseIndex,
+                      setIndex,
+                      "weight_duration",
+                      isMetric
+                        ? parseFloat(newWeight) * 2.205
+                        : parseFloat(newWeight)
+                    )
+                  }
+                  value={
+                    isMetric
+                      ? Math.floor(set.weight_duration / 2.205).toString()
+                      : Math.floor(set.weight_duration).toString()
+                  }
+                />
+              )}
+              {!exercise.cardio && (
+                <Text style={{ color: theme.colors.black }}>
+                  {isMetric ? "kg" : "lbs"}
+                </Text>
+              )}
+              {exercise.cardio && (
+                <Input
+                  keyboardType="numeric"
+                  style={styles.input}
+                  onChangeText={(newDuration) =>
+                    updateSets(
+                      dayIndex,
+                      exerciseIndex,
+                      setIndex,
+                      "weight_duration",
+                      newDuration
+                    )
+                  }
+                  value={set.weight_duration.toString()}
+                />
+              )}
+              <Button
+                type="clear"
+                title="Delete Set"
+                onPress={() =>
+                  handleDeleteSet(dayIndex, exerciseIndex, setIndex)
+                }
+              />
+            </View>
+          )
+        )}
       </View>
-
-      <Text style={[styles.caption, { color: theme.colors.black }]}>
-        {item.caption}
-      </Text>
+    );
+  };
+  return (
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <Input
+          style={styles.nameInput}
+          onChangeText={() => handleSavePlan()}
+          value={plan?.name}
+        />
+        <ScrollView>
+          {plan?.days?.map((day, dayIndex) => (
+            <View key={day.id}>
+              <View style={{ flexDirection: "row" }}>
+                <Input
+                  style={styles.nameInput}
+                  onChangeText={(newDayName) =>
+                    updateDayName(dayIndex, newDayName)
+                  }
+                  value={day.name}
+                />
+                <Button
+                  title="Start Workout"
+                  type="clear"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(tabs)/(workout)/workout",
+                      params: {
+                        planId: planId,
+                        dayId: day.id,
+                      },
+                    })
+                  }
+                />
+              </View>
+              {day.exercises &&
+                day.exercises?.map((exercise, exerciseIndex) => (
+                  <View key={exercise.id}>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={[styles.baseText, { color: theme.colors.black }]}
+                      >
+                        {exercise.name}
+                      </Text>
+                      <Button
+                        type="clear"
+                        title="Delete Exercise"
+                        onPress={() =>
+                          handleDeleteExercise(day.id, exercise.id)
+                        }
+                      />
+                    </View>
+                    {renderSetInputs(
+                      exercise.sets,
+                      exerciseIndex,
+                      dayIndex,
+                      exercise
+                    )}
+                    <Button
+                      size="sm"
+                      type="clear"
+                      title="Add Set"
+                      onPress={() =>
+                        handleAddSet(day.id, exercise.id, plan?.days)
+                      }
+                    />
+                  </View>
+                ))}
+              <Button
+                type="clear"
+                title="Add Exercise"
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/(workout)/search",
+                    params: {
+                      planId: planId,
+                      dayId: day.id,
+                    },
+                  })
+                }
+              />
+              <Button
+                type="clear"
+                title="Delete Day"
+                onPress={() => handleDeleteDay(day.id)}
+              />
+            </View>
+          ))}
+          <Button type="clear" title="Add Day" onPress={handleAddDay} />
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
-};
-
+}
 const styles = StyleSheet.create({
-  userName: {
-    fontFamily: "Lato_700Bold",
-    fontSize: 16,
-    paddingLeft: 10,
+  container: {
+    flex: 1,
   },
-  caption: {
-    textAlign: "justify",
-    fontFamily: "Lato_400Regular",
-    paddingLeft: 25,
-    paddingRight: 25,
-    fontSize: 14,
+  content: {
+    flex: 1,
+    flexDirection: "column",
+  },
+  baseText: {
+    fontSize: 20,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  logoText: {
+    fontSize: 50,
+  },
+  input: { width: 50 },
+  nameInput: {},
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 8,
   },
 });
-
-export default PostItem;
+export default ViewPlanScreen;

@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-} from "react-native";
+import { Button, View, StyleSheet, ScrollView, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Input } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { Post } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
-import { addComment, getUserPost, getUserPostComments, toggleLike } from "../../../backend/post";
+import {
+  addComment,
+  getUserPost,
+  getUserPostComments,
+  toggleLike,
+} from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 function ViewPostScreen() {
   const { theme } = useTheme();
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState<{ userName: string, comment: string }[]>([]);
+  const [comments, setComments] = useState<
+    { userName: string; comment: string }[]
+  >([]);
   const [post, setPost] = useState<Post>();
 
   const { userId, postId } = useLocalSearchParams();
@@ -27,7 +28,9 @@ function ViewPostScreen() {
     async function fetchUserPost() {
       try {
         setPost(await getUserPost(userId as string, postId as string));
-        setComments(await getUserPostComments(userId as string, postId as string));
+        setComments(
+          await getUserPostComments(userId as string, postId as string)
+        );
       } catch (error) {
         console.error("Error fetching feed:", error);
       }
@@ -47,10 +50,7 @@ function ViewPostScreen() {
   };
 
   const handleToggleLike = async () => {
-    if (post) {
-      const updatedPost = await toggleLike(post);
-      setPost(updatedPost);
-    }
+    setPost(await toggleLike(post));
   };
 
   const handleAddComment = async () => {
@@ -75,16 +75,32 @@ function ViewPostScreen() {
               renderComments={() => (
                 <>
                   {comments.map((item, index) => (
-                    <View key={index} style={{ flexDirection: "row", paddingLeft: 15 }}>
-                      <Text style={[styles.commentUserName, { color: theme.colors.black }]}>
+                    <View
+                      key={index}
+                      style={{ flexDirection: "row", paddingLeft: 15 }}
+                    >
+                      <Text
+                        style={[
+                          styles.commentUserName,
+                          { color: theme.colors.black },
+                        ]}
+                      >
                         {item.userName}
                       </Text>
-                      <Text style={[styles.comment, { color: theme.colors.black }]}>
+                      <Text
+                        style={[styles.comment, { color: theme.colors.black }]}
+                      >
                         {item.comment}
                       </Text>
                     </View>
                   ))}
-                  <View style={{ flexDirection: "row", paddingLeft: 15, paddingRight: 25 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      paddingLeft: 15,
+                      paddingRight: 25,
+                    }}
+                  >
                     <Input
                       containerStyle={{ width: 300 }}
                       onChangeText={setComment}

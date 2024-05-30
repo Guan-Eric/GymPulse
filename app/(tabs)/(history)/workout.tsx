@@ -84,15 +84,15 @@ function ViewWorkoutScreen() {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
-        <Text>{workout.name}</Text>
-        <Text>{workout.date}</Text>
+        <Text>{workout?.name}</Text>
+        <Text>{workout?.date}</Text>
         <Text style={styles.titleText}>
-          {Math.floor(workout.duration / 60)}m {workout.duration % 60}s
+          {Math.floor(workout?.duration / 60)}m {workout?.duration % 60}s
         </Text>
         <ScrollView>
           <View>
-            {workout.exercises &&
-              workout.exercises.map((exercise) => (
+            {workout?.exercises &&
+              workout?.exercises.map((exercise) => (
                 <View key={exercise.id}>
                   <Text style={styles.baseText}>{exercise.name}</Text>
                   {renderSetInputs(exercise.sets, exercise)}

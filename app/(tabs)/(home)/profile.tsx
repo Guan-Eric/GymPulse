@@ -25,12 +25,18 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
+import {
+  getUser,
+  getUserFollowing,
+  getUserPosts,
+  toggleFollow,
+} from "../../../backend/user";
 
 function ViewProfileScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
-  const [following, setFollowing] = useState<Boolean>();
+  const [following, setFollowing] = useState<boolean>();
   const [loading, setLoading] = useState(true);
 
   const { userId } = useLocalSearchParams();
@@ -41,29 +47,9 @@ function ViewProfileScreen() {
     setLoading(true);
     const fetchUserAndUserPostsFirestore = async () => {
       try {
-        const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
-        const userDocSnapshot = await getDoc(userDocRef);
-        const userData = userDocSnapshot.data() as User;
-        setUser(userData);
-
-        const followingDocRef = doc(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
-        );
-        const followingSnapshot = await getDoc(followingDocRef);
-        setFollowing(followingSnapshot.exists() as Boolean);
-
-        const userPostsCollection = collection(
-          FIRESTORE_DB,
-          `Users/${userId}/Posts`
-        );
-        const queryRef = query(userPostsCollection, orderBy("date", "desc"));
-        const querySnapshot = await getDocs(queryRef);
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          data.push(doc.data());
-        });
-        setPosts(data);
+        setUser(await getUser(userId as string));
+        setFollowing(await getUserFollowing(userId as string));
+        setPosts(await getUserPosts(userId as string));
       } catch (error) {
         console.error("Error fetching user and userPosts:", error);
       } finally {
@@ -73,23 +59,10 @@ function ViewProfileScreen() {
     fetchUserAndUserPostsFirestore();
   }, []);
 
-  const toggleFollow = async () => {
-    try {
-      const followingDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
-      );
-      setFollowing(!following);
-      if (following) {
-        await deleteDoc(followingDocRef);
-      } else {
-        await setDoc(followingDocRef, {});
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
-      setFollowing(!following);
-    }
+  const handleToggleFollow = async () => {
+    setFollowing(await toggleFollow(userId as string, following));
   };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
@@ -111,9 +84,9 @@ function ViewProfileScreen() {
             </Text>
 
             {following ? (
-              <Button size="sm" title="Unfollow" onPress={toggleFollow} />
+              <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
             ) : (
-              <Button size="sm" title="Follow" onPress={toggleFollow} />
+              <Button size="sm" title="Follow" onPress={handleToggleFollow} />
             )}
           </View>
           {user?.bio != "" ? (

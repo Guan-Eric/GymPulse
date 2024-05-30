@@ -1,6 +1,15 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+} from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
-import { User } from "../components/types";
+import { Post, User } from "../components/types";
 
 export async function addUser() {
   try {
@@ -28,5 +37,46 @@ export async function getUser(userId: string): Promise<User> {
     return userDocSnapshot.data() as User;
   } catch (error) {
     console.error("Error fetching user:", error);
+  }
+}
+
+export async function getUserPosts(userId: string): Promise<Post[]> {
+  const userPostsCollection = collection(FIRESTORE_DB, `Users/${userId}/Posts`);
+  const queryRef = query(userPostsCollection, orderBy("date", "desc"));
+  const querySnapshot = await getDocs(queryRef);
+  const data = [];
+  querySnapshot.forEach((doc) => {
+    data.push(doc.data());
+  });
+  return data;
+}
+
+export async function getUserFollowing(userId: string): Promise<boolean> {
+  const followingDocRef = doc(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
+  );
+  const followingSnapshot = await getDoc(followingDocRef);
+  return followingSnapshot.exists();
+}
+
+export async function toggleFollow(
+  userId: string,
+  following: boolean
+): Promise<boolean> {
+  try {
+    const followingDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
+    );
+    if (following) {
+      await deleteDoc(followingDocRef);
+    } else {
+      await setDoc(followingDocRef, {});
+    }
+    return !following;
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    return !following;
   }
 }

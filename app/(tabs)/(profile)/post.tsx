@@ -30,7 +30,12 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
-import { addComment, getUserPost, getUserPostComments, toggleLike } from "../../../backend/post";
+import {
+  addComment,
+  getUserPost,
+  getUserPostComments,
+  toggleLike,
+} from "../../../backend/post";
 
 function ViewPostScreen() {
   const { theme } = useTheme();
@@ -42,24 +47,38 @@ function ViewPostScreen() {
 
   useEffect(() => {
     async function fetchUserPost() {
-        try {
-          setPost(await getUserPost(userId as string, postId as string));
-          setComments(await getUserPostComments(userId as string, postId as string));
-        } catch (error) {
-          console.error("Error fetching feed:", error);
-        }
+      try {
+        setPost(await getUserPost(userId as string, postId as string));
+        setComments(
+          await getUserPostComments(userId as string, postId as string)
+        );
+      } catch (error) {
+        console.error("Error fetching feed:", error);
       }
-      fetchUserPost();
-    }, []);
+    }
+    fetchUserPost();
+  }, []);
 
   const navigateProfile = () => {
     if (post.userId == FIREBASE_AUTH.currentUser.uid) {
       router.push("/(tabs)/(profile)/user");
     } else {
       router.push({
-        pathname: "/(tabs)/(home)/profile",
+        pathname: "/(tabs)/(profile)/profile",
         params: { userId: post.userId },
       });
+    }
+  };
+
+  const handleToggleLike = async () => {
+    setPost(await toggleLike(post));
+  };
+
+  const handleAddComment = async () => {
+    if (post && comment) {
+      await addComment(comment, post);
+      setComments([...comments, { userName: "Current user", comment }]);
+      setComment("");
     }
   };
 
@@ -117,7 +136,7 @@ function ViewPostScreen() {
                   type="material-community"
                 />
               }
-              onPress={() => toggleLike(post)}
+              onPress={handleToggleLike}
             />
           </View>
           <Text style={[styles.caption, { color: theme.colors.black }]}>
@@ -152,11 +171,7 @@ function ViewPostScreen() {
             <Button
               disabled={comment == ""}
               title="Post"
-              onPress={() => {
-                addComment(comment, post);
-                setComment("");
-                setComments([...comments, comment]);
-              }}
+              onPress={handleAddComment}
             />
           </View>
         </ScrollView>

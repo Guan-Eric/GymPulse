@@ -26,6 +26,8 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router } from "expo-router";
+import { getUser, getUserPosts } from "../../../backend/user";
+import { getUserPost } from "../../../backend/post";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -38,24 +40,8 @@ function UserScreen() {
     setLoading(true);
     const fetchUserAndUserPostsFirestore = async () => {
       try {
-        const userDocRef = doc(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}`
-        );
-        const userDocSnapshot = await getDoc(userDocRef);
-        setUser(userDocSnapshot.data() as User);
-
-        const userPostsCollection = collection(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}/Posts`
-        );
-        const queryRef = query(userPostsCollection, orderBy("date", "desc"));
-        const querySnapshot = await getDocs(queryRef);
-        const data = [];
-        querySnapshot.forEach((doc) => {
-          data.push(doc.data());
-        });
-        setPosts(data);
+        setUser(await getUser(FIREBASE_AUTH.currentUser.uid));
+        setPosts(await getUserPosts(FIREBASE_AUTH.currentUser.uid));
       } catch (error) {
         console.error("Error fetching user and userPosts:", error);
       } finally {

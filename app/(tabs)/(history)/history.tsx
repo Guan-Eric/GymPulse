@@ -26,12 +26,10 @@ import { router } from "expo-router";
 
 function WorkoutHistoryScreen() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     const fetchWorkoutsFromFirestore = async () => {
       try {
-        setUserId(FIREBASE_AUTH.currentUser.uid);
         const userDocRef = doc(
           FIRESTORE_DB,
           `Users/${FIREBASE_AUTH.currentUser.uid}`

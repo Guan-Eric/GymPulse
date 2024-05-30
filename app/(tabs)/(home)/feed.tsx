@@ -37,7 +37,7 @@ const FeedScreen: React.FC = () => {
 
   const handleToggleLike = async (post: Post) => {
     const updatedPost = await toggleLike(post);
-    setPosts(posts.map(p => p.id === updatedPost.id ? updatedPost : p));
+    setPosts(posts.map((p) => (p.id === updatedPost.id ? updatedPost : p)));
   };
 
   return (
@@ -68,9 +68,5 @@ const FeedScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  // Other styles if needed
-});
 
 export default FeedScreen;
