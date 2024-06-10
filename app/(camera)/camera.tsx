@@ -1,49 +1,33 @@
-import { Camera, CameraCapturedPicture, CameraType } from "expo-camera";
+import React, { useState } from "react";
+import { Button, Icon } from "@rneui/themed"; // Assuming you're using Button and Icon components from a library like react-native-elements
+import { Camera, CameraType, CameraView } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
-import { useState } from "react";
-import { Button, Icon } from "@rneui/themed";
-import { StyleSheet, Text, View } from "react-native";
-import { ScreenWidth } from "@rneui/base";
+import { View, Text, StyleSheet } from "react-native";
 import { router } from "expo-router";
 
 function CameraScreen() {
-  const [type, setType] = useState<CameraType>(CameraType.back);
-  const [camera, setCamera] = useState<Camera | null>();
-  const [permission, requestPermission] = Camera.useCameraPermissions();
-  if (!permission) {
-    return <View />;
-  }
+  const [camera, setCamera] = useState<CameraView>(null);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [type, setType] = useState<CameraType>("back");
 
-  if (!permission.granted) {
-    return (
-      <View style={styles.permissionContainer}>
-        <Text style={styles.permissionText}>
-          We need your permission to use the camera
-        </Text>
-        <Button title="Grant Permission" onPress={requestPermission} />
-      </View>
-    );
-  }
+  const getPermission = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    setHasPermission(status === "granted");
+  };
 
   const takePicture = async () => {
     if (camera) {
-      let result: CameraCapturedPicture | null = await camera.takePictureAsync(
-        null
+      let photo = await camera.takePictureAsync();
+      let editedImage = await manipulateAsync(
+        photo.uri,
+        [{ resize: { width: photo.width, height: photo.height } }],
+        { compress: 1, format: SaveFormat.PNG, base64: false }
       );
-      if (result != null) {
-        let editedImage = await manipulateAsync(
-          result.uri,
-          [{ resize: { width: ScreenWidth, height: ScreenWidth * 1.25 } }],
-          { compress: 1, format: SaveFormat.PNG, base64: false }
-        );
-        if (editedImage) {
-          router.push({
-            pathname: "/(camera)/create",
-            params: { image: result.uri },
-          });
-        }
-      }
+      router.push({
+        pathname: "/(camera)/create",
+        params: { image: editedImage.uri },
+      });
     }
   };
 
@@ -63,63 +47,59 @@ function CameraScreen() {
     }
   };
 
+  React.useEffect(() => {
+    getPermission();
+  }, []);
+
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return (
+      <View>
+        <Text>No access to camera</Text>
+        <Button onPress={getPermission} title="Grant Permission" />
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={(ref) => setCamera(ref)}>
+    <View style={{ flex: 1 }}>
+      <CameraView
+        style={{ flex: 1, justifyContent: "flex-end" }}
+        facing={type}
+        ref={(ref) => setCamera(ref)}
+      >
         <View style={styles.buttonContainer}>
-          <Button type="clear" onPress={pickImage}>
-            <Icon size={40} name="image-outline" type="material-community" />
-          </Button>
-          <Button type="clear" onPress={takePicture}>
-            <Icon size={75} name="circle-slice-8" type="material-community" />
-          </Button>
           <Button
             type="clear"
+            icon={<Icon name="image-outline" type="material-community" />}
+            onPress={pickImage}
+          />
+          <Button
+            type="clear"
+            icon={<Icon name="circle-slice-8" type="material-community" />}
+            onPress={takePicture}
+          />
+          <Button
+            type="clear"
+            icon={<Icon name="camera-flip-outline" type="material-community" />}
             onPress={() => {
-              setType(
-                type === CameraType.back ? CameraType.front : CameraType.back
-              );
+              setType(type === "back" ? "front" : "back");
             }}
-          >
-            <Icon
-              size={40}
-              name="camera-flip-outline"
-              type="material-community"
-            />
-          </Button>
+          />
         </View>
-      </Camera>
+      </CameraView>
     </View>
   );
 }
 
-export default CameraScreen;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  camera: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
   buttonContainer: {
-    alignItems: "center",
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-    paddingRight: 30,
-    paddingLeft: 30,
-  },
-  permissionContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  permissionText: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
+    justifyContent: "space-around",
+    paddingBottom: 20,
   },
 });
+
+export default CameraScreen;
