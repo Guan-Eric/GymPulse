@@ -8,20 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { useTheme, Button } from "@rneui/themed";
-import {
-  collection,
-  onSnapshot,
-  setDoc,
-  query,
-  orderBy,
-  deleteDoc,
-  doc,
-  updateDoc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
