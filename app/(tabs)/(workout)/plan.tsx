@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, TextInput, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Day, Exercise, Plan } from "../../../components/types";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button } from "@rneui/themed";
 import {
   addDay,
@@ -23,7 +23,9 @@ function ViewPlanScreen() {
   const [isMetric, setIsMetric] = useState();
   const { planId } = useLocalSearchParams();
   const { theme } = useTheme();
-
+  const fetchPlanFromFirestore = async () => {
+    setPlan(await getPlan(planId as string));
+  };
   useEffect(() => {
     if (isDirty) {
       handleSavePlan();
@@ -31,11 +33,13 @@ function ViewPlanScreen() {
     }
   }, [plan, isDirty]);
 
-  useEffect(() => {
-    const fetchPlanFromFirestore = async () => {
-      setPlan(await getPlan(planId as string));
-    };
+  useFocusEffect(
+    useCallback(() => {
+      fetchPlanFromFirestore();
+    }, [])
+  );
 
+  useEffect(() => {
     fetchPlanFromFirestore();
   }, []);
 
