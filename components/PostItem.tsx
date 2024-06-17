@@ -31,6 +31,7 @@ const PostItem = ({
           {post.userName}
         </Text>
       </Pressable>
+      <Text>{post.title}</Text>
       <Pressable
         onPress={() =>
           router.push({

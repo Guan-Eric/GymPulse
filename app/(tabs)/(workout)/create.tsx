@@ -4,7 +4,7 @@ import {
   FIREBASE_AUTH,
   FIRESTORE_DB,
   FIREBASE_STR,
-} from "../../firebaseConfig";
+} from "../../../firebaseConfig";
 import {
   Keyboard,
   TouchableWithoutFeedback,
@@ -12,27 +12,36 @@ import {
   Image,
   StyleSheet,
   ScrollView,
+  Pressable,
+  Text,
 } from "react-native";
-import {
-  collection,
-  onSnapshot,
-  setDoc,
-  addDoc,
-  doc,
-  updateDoc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { ScreenWidth } from "@rneui/base";
+import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
+  const [title, setTitle] = useState("");
   const { theme } = useTheme();
-  const { image } = useLocalSearchParams();
+  const [image, setImage] = useState("");
+  const { workoutId } = useLocalSearchParams();
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 5],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   const createPost = async () => {
     const currentDate = new Date();
@@ -51,9 +60,11 @@ function CreatePostScreen() {
 
       const userPostsCollection = collection(postDocRef, "Posts");
       const userPostsDocRef = await addDoc(userPostsCollection, {
+        title: title,
         caption: caption,
         date: formattedDateTime,
         userId: FIREBASE_AUTH.currentUser.uid,
+        workoutId: workoutId as string,
       });
       const response = await fetch(image as string);
       const blob = await response.blob();
@@ -86,17 +97,29 @@ function CreatePostScreen() {
             backgroundColor: theme.colors.background,
           }}
         >
+          <Input
+            inputContainerStyle={styles.caption}
+            maxLength={50}
+            onChangeText={(text) => setCaption(text)}
+            placeholder="Write Title here"
+          />
           <ScrollView>
-            <Image
-              source={{ uri: image as string }}
-              style={{
-                alignSelf: "center",
-                borderRadius: 20,
-                width: 0.9 * ScreenWidth,
-                height: 0.9 * ScreenWidth * 1.25,
-                resizeMode: "cover",
-              }}
-            />
+            {image != "" ? (
+              <Image
+                source={{ uri: image as string }}
+                style={{
+                  alignSelf: "center",
+                  borderRadius: 20,
+                  width: 0.9 * ScreenWidth,
+                  height: 0.9 * ScreenWidth * 1.25,
+                  resizeMode: "cover",
+                }}
+              />
+            ) : (
+              <Pressable onPress={pickImage}>
+                <Text>Add Photo</Text>
+              </Pressable>
+            )}
             <View
               style={{
                 paddingTop: 20,

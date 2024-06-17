@@ -43,11 +43,6 @@ const FeedScreen: React.FC = () => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
-        <View>
-          <Button type="clear" onPress={() => router.push("/(camera)/camera")}>
-            <Icon name="camera-outline" type="material-community" />
-          </Button>
-        </View>
         <FlatList
           numColumns={1}
           horizontal={false}

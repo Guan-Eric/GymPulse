@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +13,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { Day } from "../../../components/types";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 
 function WorkoutScreen() {
   const currentDate = new Date();
@@ -41,6 +41,29 @@ function WorkoutScreen() {
     setRunning(true);
   };
 
+  const fetchDayFromFirestore = async () => {
+    try {
+      const userDoc = await getDoc(doc(FIRESTORE_DB, `Users/${userId}`));
+      const userData = userDoc.data();
+      setIsMetric(userData.metricUnits);
+      const dayDoc = await getDoc(
+        doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}/Days/${dayId}`)
+      );
+      const dayData = dayDoc.data();
+      setName(dayData.name);
+
+      const exercisesCollection = collection(dayDoc.ref, "Exercise");
+      const exercisesSnapshot = await getDocs(exercisesCollection);
+      const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
+        exerciseDoc.data()
+      );
+      dayData.exercises = exercisesData;
+
+      setDay(dayData as Day);
+    } catch (error) {
+      console.error("Error fetching day data:", error);
+    }
+  };
   useEffect(() => {
     if (isDirty) {
       handleSaveDay();
@@ -48,31 +71,13 @@ function WorkoutScreen() {
     }
   }, [name, day, isDirty]);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchDayFromFirestore();
+    }, [])
+  );
+
   useEffect(() => {
-    const fetchDayFromFirestore = async () => {
-      try {
-        const userDoc = await getDoc(doc(FIRESTORE_DB, `Users/${userId}`));
-        const userData = userDoc.data();
-        setIsMetric(userData.metricUnits);
-        const dayDoc = await getDoc(
-          doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}/Days/${dayId}`)
-        );
-        const dayData = dayDoc.data();
-        setName(dayData.name);
-
-        const exercisesCollection = collection(dayDoc.ref, "Exercise");
-        const exercisesSnapshot = await getDocs(exercisesCollection);
-        const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
-          exerciseDoc.data()
-        );
-        dayData.exercises = exercisesData;
-
-        setDay(dayData as Day);
-      } catch (error) {
-        console.error("Error fetching day data:", error);
-      }
-    };
-
     fetchDayFromFirestore();
     startStopwatch();
   }, []);
@@ -165,6 +170,7 @@ function WorkoutScreen() {
   };
 
   const handleSaveWorkout = async () => {
+    let workoutId: string;
     try {
       const docRef = await addDoc(
         collection(FIRESTORE_DB, `Users/${userId}/Workouts`),
@@ -180,7 +186,8 @@ function WorkoutScreen() {
         FIRESTORE_DB,
         `Users/${userId}/Workouts/${docRef.id}`
       );
-      await updateDoc(workoutDoc, { id: docRef.id });
+      workoutId = docRef.id;
+      await updateDoc(workoutDoc, { id: workoutId });
 
       for (const exercise of day.exercises) {
         const exerciseDocRef = await addDoc(
@@ -203,7 +210,12 @@ function WorkoutScreen() {
     } catch (error) {
       console.error("Error saving workout:", error);
     } finally {
-      router.back();
+      router.push({
+        pathname: "/(tabs)/(workout)/create",
+        params: {
+          workoutId: workoutId,
+        },
+      });
     }
   };
 
@@ -321,7 +333,7 @@ function WorkoutScreen() {
           {Math.floor(time / 60)}:{time % 60}
         </Text>
         <Button title="End Workout" onPress={handleEndWorkout} />
-        <Text style={styles.baseText}>{day.name}</Text>
+        <Text style={styles.baseText}>{day?.name}</Text>
         <TextInput
           style={styles.input}
           onChangeText={(newName) => setNameAndSave(newName)}
@@ -329,8 +341,8 @@ function WorkoutScreen() {
         />
         <ScrollView>
           <View>
-            {day.exercises &&
-              day.exercises.map((exercise, exerciseIndex) => (
+            {day?.exercises &&
+              day?.exercises.map((exercise, exerciseIndex) => (
                 <View key={exercise.id}>
                   <Text style={styles.baseText}>{exercise.name}</Text>
                   <Button

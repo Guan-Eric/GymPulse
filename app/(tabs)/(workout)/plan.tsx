@@ -211,6 +211,8 @@ function ViewPlanScreen() {
             <View key={day.id}>
               <View style={{ flexDirection: "row" }}>
                 <Input
+                  containerStyle={styles.nameInput}
+                  inputContainerStyle={styles.nameInput}
                   style={styles.nameInput}
                   onChangeText={(newDayName) =>
                     updateDayName(dayIndex, newDayName)
@@ -309,7 +311,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
   },
   input: { width: 50 },
-  nameInput: {},
+  nameInput: { width: 50 },
   setRow: {
     flexDirection: "row",
     alignItems: "center",
