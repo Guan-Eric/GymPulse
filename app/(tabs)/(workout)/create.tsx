@@ -64,7 +64,7 @@ function CreatePostScreen() {
         caption: caption,
         date: formattedDateTime,
         userId: FIREBASE_AUTH.currentUser.uid,
-        workoutId: workoutId as string,
+        workoutId: workoutId,
       });
       const response = await fetch(image as string);
       const blob = await response.blob();
@@ -100,7 +100,7 @@ function CreatePostScreen() {
           <Input
             inputContainerStyle={styles.caption}
             maxLength={50}
-            onChangeText={(text) => setCaption(text)}
+            onChangeText={(text) => setTitle(text)}
             placeholder="Write Title here"
           />
           <ScrollView>

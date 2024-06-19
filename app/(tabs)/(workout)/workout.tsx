@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import {
   updateDoc,
   getDoc,
@@ -23,10 +23,9 @@ function WorkoutScreen() {
   const hours = String(currentDate.getHours()).padStart(2, "0");
   const minutes = String(currentDate.getMinutes()).padStart(2, "0");
   const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
-  const [name, setName] = useState("");
   const [day, setDay] = useState<Day>();
   const [isDirty, setIsDirty] = useState(false);
-  const [isMetric, setIsMetric] = useState();
+  const [isMetric, setIsMetric] = useState(false);
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef(null);
@@ -43,33 +42,35 @@ function WorkoutScreen() {
 
   const fetchDayFromFirestore = async () => {
     try {
-      const userDoc = await getDoc(doc(FIRESTORE_DB, `Users/${userId}`));
-      const userData = userDoc.data();
-      setIsMetric(userData.metricUnits);
+      const userDoc = await getDoc(
+        doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
+      );
+      setIsMetric(userDoc.data().metricUnits);
       const dayDoc = await getDoc(
-        doc(FIRESTORE_DB, `Users/${userId}/Plans/${planId}/Days/${dayId}`)
+        doc(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
+        )
       );
       const dayData = dayDoc.data();
-      setName(dayData.name);
-
       const exercisesCollection = collection(dayDoc.ref, "Exercise");
       const exercisesSnapshot = await getDocs(exercisesCollection);
       const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
         exerciseDoc.data()
       );
       dayData.exercises = exercisesData;
-
       setDay(dayData as Day);
     } catch (error) {
       console.error("Error fetching day data:", error);
     }
   };
+
   useEffect(() => {
     if (isDirty) {
       handleSaveDay();
       setIsDirty(false);
     }
-  }, [name, day, isDirty]);
+  }, [day, isDirty]);
 
   useFocusEffect(
     useCallback(() => {
@@ -82,15 +83,15 @@ function WorkoutScreen() {
     startStopwatch();
   }, []);
   const setNameAndSave = (newName) => {
-    setName(newName);
+    setDay({ ...day, name: newName });
     setIsDirty(true);
   };
   const handleSaveDay = async () => {
     const dayDocRef = doc(
       FIRESTORE_DB,
-      `Users/${userId}/Plans/${planId}/Days/${dayId}`
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
     );
-    updateDoc(dayDocRef, { name: name });
+    updateDoc(dayDocRef, { name: day.name });
 
     for (const exercise of day.exercises) {
       const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
@@ -105,7 +106,7 @@ function WorkoutScreen() {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       const exerciseDocSnap = await getDoc(exerciseDocRef);
 
@@ -125,12 +126,11 @@ function WorkoutScreen() {
     }
   };
 
-  // Function to delete an exercise
-  const handleDeleteExercise = async (dayId, exerciseId) => {
+  const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       await deleteDoc(exerciseDocRef);
 
@@ -144,12 +144,15 @@ function WorkoutScreen() {
     }
   };
 
-  // Function to delete a set
-  const handleDeleteSet = async (dayId, exerciseId, setIndex) => {
+  const handleDeleteSet = async (
+    dayId: string,
+    exerciseId: string,
+    setIndex: number
+  ) => {
     try {
       const exerciseDocRef = doc(
         FIRESTORE_DB,
-        `Users/${userId}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
       );
       const exerciseDocSnap = await getDoc(exerciseDocRef);
 
@@ -170,30 +173,31 @@ function WorkoutScreen() {
   };
 
   const handleSaveWorkout = async () => {
-    let workoutId: string;
     try {
       const docRef = await addDoc(
-        collection(FIRESTORE_DB, `Users/${userId}/Workouts`),
+        collection(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts`
+        ),
         {
-          name: name,
+          name: day.name,
           date: formattedDateTime,
           duration: time,
-          userId: userId,
+          userId: FIREBASE_AUTH.currentUser.uid,
         }
       );
 
       const workoutDoc = doc(
         FIRESTORE_DB,
-        `Users/${userId}/Workouts/${docRef.id}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${docRef.id}`
       );
-      workoutId = docRef.id;
-      await updateDoc(workoutDoc, { id: workoutId });
+      await updateDoc(workoutDoc, { id: docRef.id });
 
       for (const exercise of day.exercises) {
         const exerciseDocRef = await addDoc(
           collection(
             FIRESTORE_DB,
-            `Users/${userId}/Workouts/${docRef.id}/Exercise`
+            `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${docRef.id}/Exercise`
           ),
           {
             name: exercise.name,
@@ -203,19 +207,19 @@ function WorkoutScreen() {
         );
         const exerciseDoc = doc(
           FIRESTORE_DB,
-          `Users/${userId}/Workouts/${docRef.id}/Exercise/${exerciseDocRef.id}`
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${docRef.id}/Exercise/${exerciseDocRef.id}`
         );
         await updateDoc(exerciseDoc, { id: exerciseDocRef.id });
       }
-    } catch (error) {
-      console.error("Error saving workout:", error);
-    } finally {
+      console.log(docRef.id);
       router.push({
         pathname: "/(tabs)/(workout)/create",
         params: {
-          workoutId: workoutId,
+          workoutId: docRef.id,
         },
       });
+    } catch (error) {
+      console.error("Error saving workout:", error);
     }
   };
 
@@ -337,7 +341,7 @@ function WorkoutScreen() {
         <TextInput
           style={styles.input}
           onChangeText={(newName) => setNameAndSave(newName)}
-          value={name}
+          value={day?.name}
         />
         <ScrollView>
           <View>
@@ -362,7 +366,7 @@ function WorkoutScreen() {
                 router.push({
                   pathname: "/(tabs)/(workout)/search",
                   params: {
-                    userId: userId,
+                    userId: FIREBASE_AUTH.currentUser.uid,
                     dayId: dayId,
                     planId: planId,
                   },

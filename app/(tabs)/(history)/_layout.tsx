@@ -1,7 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
 
-function HistoryStackLayout(props) {
+function HistoryStackLayout() {
   return (
     <Stack initialRouteName="history">
       <Stack.Screen name="history" options={{ headerShown: false }} />

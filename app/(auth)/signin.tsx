@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { Button, Input } from "@rneui/themed";
 import { StyleSheet } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { router } from "expo-router";
 import { logIn } from "../../backend/auth";
@@ -18,11 +17,10 @@ function SignInScreen() {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const auth = FIREBASE_AUTH;
 
   const signIn = async () => {
     setLoading(true);
-    if(logIn(email, password)) setLoading(false);    
+    if (logIn(email, password)) setLoading(false);
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

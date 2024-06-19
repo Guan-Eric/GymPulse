@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, SafeAreaView, Text, Image } from "react-native";
 import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Button, Input } from "@rneui/themed";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { router } from "expo-router";
 import { register } from "../../backend/auth";
@@ -11,7 +10,6 @@ function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const auth = FIREBASE_AUTH;
 
   const signUp = async () => {
     setLoading(true);
