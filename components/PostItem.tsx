@@ -11,31 +11,34 @@ const PostItem = ({
   onToggleLike,
   renderComments,
   showCommentIcon,
+  showUser,
+  tab,
 }) => {
   return (
     <View style={{ paddingBottom: 20 }}>
-      <Pressable
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingBottom: 5,
-          paddingLeft: 30,
-        }}
-        onPress={() => navigateProfile(post.userId)}
-      >
-        <Image
-          style={{ width: 40, height: 40 }}
-          source={require("../assets/profile.png")}
-        />
-        <Text style={[styles.userName, { color: theme.colors.black }]}>
-          {post.userName}
-        </Text>
-      </Pressable>
-      <Text>{post.title}</Text>
+      {showUser ? (
+        <Pressable
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingBottom: 5,
+            paddingLeft: 30,
+          }}
+          onPress={() => navigateProfile(post.userId)}
+        >
+          <Image
+            style={{ width: 40, height: 40 }}
+            source={require("../assets/profile.png")}
+          />
+          <Text style={[styles.userName, { color: theme.colors.black }]}>
+            {post.userName}
+          </Text>
+        </Pressable>
+      ) : null}
       <Pressable
         onPress={() =>
           router.push({
-            pathname: "/(tabs)/(home)/post",
+            pathname: "/(tabs)/" + tab + "/post",
             params: {
               postId: post.id,
               userId: post.userId,
@@ -43,6 +46,7 @@ const PostItem = ({
           })
         }
       >
+        <Text>{post.title}</Text>
         <Image
           source={{ uri: post.url }}
           style={{
@@ -83,7 +87,7 @@ const PostItem = ({
             style={{ paddingRight: 30 }}
             onPress={() =>
               router.push({
-                pathname: "/(tabs)/(home)/post",
+                pathname: "/(tabs)/" + tab + "/post",
                 params: {
                   postId: post.id,
                   userId: post.userId,

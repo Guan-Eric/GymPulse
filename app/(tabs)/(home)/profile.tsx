@@ -12,12 +12,9 @@ import { useTheme, Button } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  getUser,
-  getUserFollowing,
-  getUserPosts,
-  toggleFollow,
-} from "../../../backend/user";
+import { getUser, getUserFollowing, toggleFollow } from "../../../backend/user";
+import { getUserPosts } from "../../../backend/post";
+import PostItem from "../../../components/PostItem";
 
 function ViewProfileScreen() {
   const { theme } = useTheme();
@@ -82,31 +79,22 @@ function ViewProfileScreen() {
             </Text>
           ) : null}
           <FlatList
-            numColumns={3}
+            numColumns={1}
             horizontal={false}
             data={posts}
             renderItem={({ item }) => (
-              <Pressable
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(home)/post",
-                    params: {
-                      postId: item.id,
-                      userId: item.userId,
-                    },
-                  })
-                }
-              >
-                <Image
-                  source={{ uri: item.url }}
-                  style={{
-                    width: imageWidth,
-                    height: imageWidth,
-                    resizeMode: "cover",
-                  }}
-                />
-              </Pressable>
+              <PostItem
+                post={item}
+                theme={theme}
+                navigateProfile={null}
+                onToggleLike={null}
+                renderComments={false}
+                showCommentIcon={true}
+                showUser={false}
+                tab={"(home)"}
+              />
             )}
+            keyExtractor={(item) => item.id}
           />
         </View>
       </SafeAreaView>

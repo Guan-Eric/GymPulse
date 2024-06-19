@@ -26,8 +26,9 @@ import {
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router } from "expo-router";
-import { getUser, getUserPosts } from "../../../backend/user";
-import { getUserPost } from "../../../backend/post";
+import { getUser } from "../../../backend/user";
+import { getUserPosts } from "../../../backend/post";
+import PostItem from "../../../components/PostItem";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -50,6 +51,7 @@ function UserScreen() {
     };
     fetchUserAndUserPostsFirestore();
   }, []);
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
@@ -86,28 +88,22 @@ function UserScreen() {
             </Text>
           ) : null}
           <FlatList
-            numColumns={3}
+            numColumns={1}
             horizontal={false}
             data={posts}
             renderItem={({ item }) => (
-              <Pressable
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(profile)/post",
-                    params: { userId: user.id },
-                  })
-                }
-              >
-                <Image
-                  source={{ uri: item.url }}
-                  style={{
-                    width: imageWidth,
-                    height: imageWidth,
-                    resizeMode: "cover",
-                  }}
-                />
-              </Pressable>
+              <PostItem
+                post={item}
+                theme={theme}
+                navigateProfile={null}
+                onToggleLike={null}
+                renderComments={false}
+                showCommentIcon={true}
+                showUser={false}
+                tab={"(profile)"}
+              />
             )}
+            keyExtractor={(item) => item.id}
           />
         </View>
       </SafeAreaView>

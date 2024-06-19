@@ -55,6 +55,8 @@ const FeedScreen: React.FC = () => {
               onToggleLike={() => handleToggleLike(item)}
               renderComments={false}
               showCommentIcon={true}
+              showUser={true}
+              tab={"(home)"}
             />
           )}
           keyExtractor={(item) => item.id}

@@ -40,17 +40,6 @@ export async function getUser(userId: string): Promise<User> {
   }
 }
 
-export async function getUserPosts(userId: string): Promise<Post[]> {
-  const userPostsCollection = collection(FIRESTORE_DB, `Users/${userId}/Posts`);
-  const queryRef = query(userPostsCollection, orderBy("date", "desc"));
-  const querySnapshot = await getDocs(queryRef);
-  const data = [];
-  querySnapshot.forEach((doc) => {
-    data.push(doc.data());
-  });
-  return data;
-}
-
 export async function getUserFollowing(userId: string): Promise<boolean> {
   const followingDocRef = doc(
     FIRESTORE_DB,

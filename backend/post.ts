@@ -154,11 +154,35 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
     );
     const queryRef = query(userPostsCollection, orderBy("date", "desc"));
     const querySnapshot = await getDocs(queryRef);
-    const data = [];
-    querySnapshot.forEach((doc) => {
-      data.push(doc.data());
-    });
-    return data;
+    const followingPosts = await Promise.all(
+      querySnapshot.docs.map(async (document) => {
+        const postData = document.data();
+        const userDocRef = doc(FIRESTORE_DB, `Users/${postData.userId}`);
+        const userDocSnapshot = await getDoc(userDocRef);
+        const userLikeDocRef = doc(
+          FIRESTORE_DB,
+          `Users/${postData.userId}/Posts/${postData.id}/Likes/${FIREBASE_AUTH.currentUser.uid}`
+        );
+        const numLikesCollection = collection(
+          FIRESTORE_DB,
+          `Users/${postData.userId}/Posts/${postData.id}/Likes/`
+        );
+        const numLikesSnapshot = await getCountFromServer(numLikesCollection);
+        const userLikeSnapshot = await getDoc(userLikeDocRef);
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data();
+
+          return {
+            ...postData,
+            userName: userData.name,
+            like: userLikeSnapshot.exists(),
+            numLikes: numLikesSnapshot.data().count,
+          };
+        }
+        return postData;
+      })
+    );
+    return followingPosts as Post[];
   } catch (error) {
     console.error("Error fetching userPosts:", error);
   }
