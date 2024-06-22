@@ -72,6 +72,8 @@ function ViewPostScreen() {
               navigateProfile={navigateProfile}
               onToggleLike={handleToggleLike}
               showCommentIcon={false}
+              showUser={true}
+              tab={"(home)"}
               renderComments={() => (
                 <>
                   {comments.map((item, index) => (
