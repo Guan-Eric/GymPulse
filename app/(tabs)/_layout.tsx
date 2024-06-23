@@ -36,15 +36,6 @@ function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(history)"
-        options={{
-          title: "History",
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="history" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="(profile)"
         options={{
           title: "Profile",
