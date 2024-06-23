@@ -12,6 +12,8 @@ export interface Post {
   userName: string;
   like: boolean;
   numLikes: number;
+  workoutId: string;
+  date: string;
 }
 
 export interface Plan {

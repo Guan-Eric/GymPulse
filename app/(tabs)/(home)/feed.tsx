@@ -57,6 +57,7 @@ const FeedScreen: React.FC = () => {
               showCommentIcon={true}
               showUser={true}
               tab={"(home)"}
+              viewPost={false}
             />
           )}
           keyExtractor={(item) => item.id}

@@ -53,35 +53,26 @@ export async function getUserPost(
   try {
     const userPostDocRef = doc(FIRESTORE_DB, `Users/${userId}/Posts/${postId}`);
     const userPostSnapshot = await getDoc(userPostDocRef);
-
     const userLikeDocRef = doc(
       FIRESTORE_DB,
       `Users/${userId}/Posts/${postId}/Likes/${FIREBASE_AUTH.currentUser.uid}`
     );
-    const userLikeSnapshot = await getDoc(userLikeDocRef);
 
+    const userLikeSnapshot = await getDoc(userLikeDocRef);
     const numLikesCollection = collection(
       FIRESTORE_DB,
       `Users/${userId}/Posts/${postId}/Likes/`
     );
+
     const numLikesSnapshot = await getCountFromServer(numLikesCollection);
-
-    const post = {
-      userId: userPostSnapshot.data().userId,
-      id: userPostSnapshot.data().id,
-      caption: userPostSnapshot.data().caption,
-      url: userPostSnapshot.data().url,
-      like: userLikeSnapshot.exists(),
-      numLikes: numLikesSnapshot.data().count,
-    };
-
     const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
     const userDocSnapshot = await getDoc(userDocRef);
-
     const userName = userDocSnapshot.data().name;
 
     const userPost = {
-      ...post,
+      ...userPostSnapshot.data(),
+      like: userLikeSnapshot.exists(),
+      numLikes: numLikesSnapshot.data().count,
       userName: userName,
     };
     return userPost;

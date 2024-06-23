@@ -92,6 +92,7 @@ function ViewProfileScreen() {
                 showCommentIcon={true}
                 showUser={false}
                 tab={"(home)"}
+                viewPost={false}
               />
             )}
             keyExtractor={(item) => item.id}

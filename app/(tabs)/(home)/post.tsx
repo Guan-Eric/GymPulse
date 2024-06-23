@@ -74,6 +74,7 @@ function ViewPostScreen() {
               showCommentIcon={false}
               showUser={true}
               tab={"(home)"}
+              viewPost={true}
               renderComments={() => (
                 <>
                   {comments.map((item, index) => (

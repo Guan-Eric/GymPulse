@@ -4,6 +4,7 @@ import { CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { router } from "expo-router";
 import TruncatedText from "./TruncatedText";
+import { format } from "date-fns";
 
 const PostItem = ({
   post,
@@ -14,7 +15,12 @@ const PostItem = ({
   showCommentIcon,
   showUser,
   tab,
+  viewPost,
 }) => {
+  const formattedDate = format(
+    new Date(post.date),
+    "MMMM do, yyyy 'at' h:mm a"
+  );
   return (
     <View style={{ paddingBottom: 20 }}>
       {showUser ? (
@@ -31,20 +37,28 @@ const PostItem = ({
             style={{ width: 40, height: 40 }}
             source={require("../assets/profile.png")}
           />
-          <Text style={[styles.userName, { color: theme.colors.black }]}>
-            {post.userName}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={[styles.userName, { color: theme.colors.black }]}>
+              {post.userName}
+            </Text>
+            <Text style={[styles.workoutText, { color: "gray" }]}>
+              did a workout on {formattedDate}
+            </Text>
+          </View>
         </Pressable>
       ) : null}
       <Pressable
-        onPress={() =>
-          router.push({
-            pathname: "/(tabs)/" + tab + "/post",
-            params: {
-              postId: post.id,
-              userId: post.userId,
-            },
-          })
+        onPress={
+          !viewPost
+            ? () =>
+                router.push({
+                  pathname: "/(tabs)/" + tab + "/post",
+                  params: {
+                    postId: post.id,
+                    userId: post.userId,
+                  },
+                })
+            : null
         }
       >
         <Text>{post.title}</Text>
@@ -62,7 +76,8 @@ const PostItem = ({
       </Pressable>
       <View
         style={{
-          paddingLeft: 10,
+          paddingLeft: 30,
+          paddingRight: 25,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
@@ -111,6 +126,11 @@ const styles = StyleSheet.create({
   userName: {
     fontFamily: "Lato_700Bold",
     fontSize: 16,
+    paddingLeft: 10,
+  },
+  workoutText: {
+    fontFamily: "Lato_400Regular",
+    fontSize: 14,
     paddingLeft: 10,
   },
   caption: {

@@ -36,6 +36,7 @@ import {
   getUserPostComments,
   toggleLike,
 } from "../../../backend/post";
+import PostItem from "../../../components/PostItem";
 
 function ViewPostScreen() {
   const { theme } = useTheme();
@@ -86,94 +87,62 @@ function ViewPostScreen() {
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
         <ScrollView>
-          <Pressable
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingBottom: 5,
-              paddingLeft: 30,
-            }}
-            onPress={() => navigateProfile()}
-          >
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../../assets/profile.png")}
+          {post && (
+            <PostItem
+              post={post}
+              theme={theme}
+              navigateProfile={navigateProfile}
+              onToggleLike={handleToggleLike}
+              showCommentIcon={false}
+              showUser={true}
+              tab={"(profile)"}
+              viewPost={true}
+              renderComments={() => (
+                <>
+                  {comments.map((item, index) => (
+                    <View
+                      key={index}
+                      style={{ flexDirection: "row", paddingLeft: 15 }}
+                    >
+                      <Text
+                        style={[
+                          styles.commentUserName,
+                          { color: theme.colors.black },
+                        ]}
+                      >
+                        {item.userName}
+                      </Text>
+                      <Text
+                        style={[styles.comment, { color: theme.colors.black }]}
+                      >
+                        {item.comment}
+                      </Text>
+                    </View>
+                  ))}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      paddingLeft: 15,
+                      paddingRight: 25,
+                    }}
+                  >
+                    <Input
+                      containerStyle={{ width: 300 }}
+                      onChangeText={setComment}
+                      value={comment}
+                      placeholder="Comment here"
+                      autoCapitalize="none"
+                    />
+                    <Button
+                      disabled={comment === ""}
+                      title="Post"
+                      onPress={handleAddComment}
+                    />
+                  </View>
+                </>
+              )}
             />
-            <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {post?.userName}
-            </Text>
-          </Pressable>
-          <Image
-            source={{ uri: post?.url }}
-            style={{
-              alignSelf: "center",
-              borderRadius: 15,
-              width: 0.93 * ScreenWidth,
-              height: 0.93 * ScreenWidth * 1.25,
-              resizeMode: "cover",
-            }}
-          />
-          <View
-            style={{
-              paddingLeft: 10,
-            }}
-          >
-            <CheckBox
-              title={post?.numLikes?.toString()}
-              checked={post?.like}
-              checkedIcon={
-                <Icon
-                  size={28}
-                  name="arm-flex"
-                  type="material-community"
-                  color="#ffde34"
-                />
-              }
-              uncheckedIcon={
-                <Icon
-                  size={28}
-                  name="arm-flex-outline"
-                  type="material-community"
-                />
-              }
-              onPress={handleToggleLike}
-            />
-          </View>
-          <Text style={[styles.caption, { color: theme.colors.black }]}>
-            {post?.caption}
-          </Text>
-          {comments?.map((item) => (
-            <View style={{ flexDirection: "row" }}>
-              <Text
-                style={[styles.commentUserName, { color: theme.colors.black }]}
-              >
-                {item.userName}
-              </Text>
-              <Text style={[styles.comment, { color: theme.colors.black }]}>
-                {item.comment}
-              </Text>
-            </View>
-          ))}
-          <View
-            style={{
-              flexDirection: "row",
-              paddingLeft: 15,
-              paddingRight: 25,
-            }}
-          >
-            <Input
-              containerStyle={{ width: 300 }}
-              onChangeText={(comment) => setComment(comment)}
-              value={comment}
-              placeholder="Comment here"
-              autoCapitalize="none"
-            />
-            <Button
-              disabled={comment == ""}
-              title="Post"
-              onPress={handleAddComment}
-            />
-          </View>
+          )}
         </ScrollView>
       </SafeAreaView>
     </View>
