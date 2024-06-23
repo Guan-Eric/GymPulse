@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Pressable, Image, Text, StyleSheet } from "react-native";
 import { CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { router } from "expo-router";
+import TruncatedText from "./TruncatedText";
 
 const PostItem = ({
   post,
@@ -47,6 +48,7 @@ const PostItem = ({
         }
       >
         <Text>{post.title}</Text>
+        <TruncatedText theme={theme}>{post.caption}</TruncatedText>
         <Image
           source={{ uri: post.url }}
           style={{
@@ -99,9 +101,7 @@ const PostItem = ({
           </Pressable>
         )}
       </View>
-      <Text style={[styles.caption, { color: theme.colors.black }]}>
-        {post.caption}
-      </Text>
+
       {renderComments && renderComments()}
     </View>
   );
@@ -116,8 +116,9 @@ const styles = StyleSheet.create({
   caption: {
     textAlign: "justify",
     fontFamily: "Lato_400Regular",
-    paddingLeft: 25,
-    paddingRight: 25,
+    paddingLeft: 40,
+    paddingRight: 40,
+    paddingBottom: 15,
     fontSize: 14,
   },
 });
