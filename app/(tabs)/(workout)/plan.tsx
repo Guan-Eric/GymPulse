@@ -271,10 +271,11 @@ function ViewPlanScreen() {
                 title="Add Exercise"
                 onPress={() =>
                   router.push({
-                    pathname: "/(tabs)/(workout)/search",
+                    pathname: "/(tabs)/(workout)/exercises",
                     params: {
                       planId: planId,
                       dayId: day.id,
+                      route: "add",
                     },
                   })
                 }

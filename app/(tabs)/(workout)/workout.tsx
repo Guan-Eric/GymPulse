@@ -364,11 +364,11 @@ function WorkoutScreen() {
               title="Add Exercise"
               onPress={() =>
                 router.push({
-                  pathname: "/(tabs)/(workout)/search",
+                  pathname: "/(tabs)/(workout)/exercises",
                   params: {
-                    userId: FIREBASE_AUTH.currentUser.uid,
                     dayId: dayId,
                     planId: planId,
+                    route: "add",
                   },
                 })
               }

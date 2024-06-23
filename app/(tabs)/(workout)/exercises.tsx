@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Text,
@@ -31,6 +31,8 @@ function ExerciseListScreen() {
     { name: "Abductors", key: "16" },
     { name: "Traps", key: "17" },
   ]);
+
+  const { route } = useLocalSearchParams();
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
@@ -45,7 +47,7 @@ function ExerciseListScreen() {
                 onPress={() =>
                   router.push({
                     pathname: "/(tabs)/(workout)/bodypart",
-                    params: { bodypart: item.name },
+                    params: { bodypart: item.name, route: route },
                   })
                 }
               >
