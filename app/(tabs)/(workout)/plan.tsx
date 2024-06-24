@@ -16,6 +16,7 @@ import {
   updateDay,
   updateSet,
 } from "../../../backend/plan";
+import ExerciseSetCard from "../../../components/ExerciseSetCard";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -91,111 +92,6 @@ function ViewPlanScreen() {
     setPlan(updateDay(plan, dayIndex, newName));
   };
 
-  const renderSetInputs = (
-    sets: any[],
-    exerciseIndex: number,
-    dayIndex: number,
-    exercise: Exercise
-  ) => {
-    return (
-      <View>
-        <View style={styles.setRow}>
-          {!exercise.cardio && (
-            <View style={styles.setRow}>
-              <Text style={[styles.baseText, { color: theme.colors.black }]}>
-                Reps
-              </Text>
-              <Text style={[styles.baseText, { color: theme.colors.black }]}>
-                Weight
-              </Text>
-            </View>
-          )}
-          {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
-        </View>
-        {sets?.map(
-          (
-            set: { reps: { toString: () => string }; weight_duration: number },
-            setIndex: number
-          ) => (
-            <View key={setIndex} style={styles.setRow}>
-              <Text
-                style={[styles.baseText, { color: theme.colors.black }]}
-              >{`Set ${setIndex + 1}`}</Text>
-              {!exercise.cardio && (
-                <Input
-                  keyboardType="numeric"
-                  style={styles.input}
-                  onChangeText={(newReps) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "reps",
-                      newReps
-                    )
-                  }
-                  value={set.reps.toString()}
-                />
-              )}
-              {!exercise.cardio && (
-                <Text style={{ color: theme.colors.black }}>x</Text>
-              )}
-              {!exercise.cardio && (
-                <Input
-                  keyboardType="numeric"
-                  style={styles.input}
-                  onChangeText={(newWeight) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "weight_duration",
-                      isMetric
-                        ? parseFloat(newWeight) * 2.205
-                        : parseFloat(newWeight)
-                    )
-                  }
-                  value={
-                    isMetric
-                      ? Math.floor(set.weight_duration / 2.205).toString()
-                      : Math.floor(set.weight_duration).toString()
-                  }
-                />
-              )}
-              {!exercise.cardio && (
-                <Text style={{ color: theme.colors.black }}>
-                  {isMetric ? "kg" : "lbs"}
-                </Text>
-              )}
-              {exercise.cardio && (
-                <Input
-                  keyboardType="numeric"
-                  style={styles.input}
-                  onChangeText={(newDuration) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "weight_duration",
-                      newDuration
-                    )
-                  }
-                  value={set.weight_duration.toString()}
-                />
-              )}
-              <Button
-                type="clear"
-                title="Delete Set"
-                onPress={() =>
-                  handleDeleteSet(dayIndex, exerciseIndex, setIndex)
-                }
-              />
-            </View>
-          )
-        )}
-      </View>
-    );
-  };
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -250,11 +146,15 @@ function ViewPlanScreen() {
                         }
                       />
                     </View>
-                    {renderSetInputs(
+                    {ExerciseSetCard(
                       exercise.sets,
                       exerciseIndex,
                       dayIndex,
-                      exercise
+                      exercise,
+                      theme,
+                      isMetric,
+                      updateSets,
+                      handleDeleteSet
                     )}
                     <Button
                       size="sm"
