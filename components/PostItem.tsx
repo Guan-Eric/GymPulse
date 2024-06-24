@@ -37,7 +37,7 @@ const PostItem = ({
             style={{ width: 40, height: 40 }}
             source={require("../assets/profile.png")}
           />
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flexDirection: "column" }}>
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {post.userName}
             </Text>
@@ -76,7 +76,7 @@ const PostItem = ({
       </Pressable>
       <View
         style={{
-          paddingLeft: 30,
+          paddingLeft: 10,
           paddingRight: 25,
           flexDirection: "row",
           alignItems: "center",
@@ -101,7 +101,7 @@ const PostItem = ({
         />
         {showCommentIcon && (
           <Pressable
-            style={{ paddingRight: 30 }}
+            style={{ paddingRight: 10 }}
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/" + tab + "/post",
@@ -130,14 +130,14 @@ const styles = StyleSheet.create({
   },
   workoutText: {
     fontFamily: "Lato_400Regular",
-    fontSize: 14,
+    fontSize: 12,
     paddingLeft: 10,
   },
   caption: {
     textAlign: "justify",
     fontFamily: "Lato_400Regular",
-    paddingLeft: 40,
-    paddingRight: 40,
+    paddingLeft: 15,
+    paddingRight: 15,
     paddingBottom: 15,
     fontSize: 14,
   },

@@ -21,7 +21,7 @@ const TruncatedText = ({ theme, children }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <Text
         style={[styles.caption, { color: theme.colors.black }]}
         numberOfLines={isExpanded ? undefined : 3}
@@ -54,14 +54,11 @@ const TruncatedText = ({ theme, children }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
   caption: {
     textAlign: "justify",
     fontFamily: "Lato_400Regular",
-    paddingLeft: 40,
-    paddingRight: 40,
+    paddingLeft: 25,
+    paddingRight: 25,
     paddingBottom: 15,
     fontSize: 14,
   },

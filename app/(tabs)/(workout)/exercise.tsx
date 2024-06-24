@@ -73,13 +73,13 @@ function ExerciseScreen() {
         />
 
         <ScrollView>
-          <Text>{exercise.name}</Text>
+          <Text>{exercise?.name}</Text>
           <Text>Equipment</Text>
-          <Text>{exercise.equipment}</Text>
+          <Text>{exercise?.equipment}</Text>
           <Text>Secondary Muscles</Text>
           {secondaryMuscles}
           <Text>Level</Text>
-          <Text>{exercise.level}</Text>
+          <Text>{exercise?.level}</Text>
           <Text>Instructions</Text>
           {instructions}
         </ScrollView>

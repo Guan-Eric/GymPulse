@@ -22,10 +22,19 @@ export async function getPlans(): Promise<Plan[]> {
     const querySnapshot = await getDocs(plansCollectionRef);
 
     const plans: Plan[] = [];
-    querySnapshot.forEach((doc) => {
-      plans.push(doc.data() as Plan);
-    });
+    for (const docSnapshot of querySnapshot.docs) {
+      const plan: Plan = docSnapshot.data() as Plan;
+      const daysCollection = collection(docSnapshot.ref, "Days");
+      const daysSnapshot = await getDocs(daysCollection);
+      const daysData = [] as Day[];
 
+      for (const dayDoc of daysSnapshot.docs) {
+        const dayData = dayDoc.data() as Day;
+        daysData.push(dayData);
+      }
+      plan.days = daysData;
+      plans.push(plan as Plan);
+    }
     return plans;
   } catch (error) {
     console.error("Error fetching plans from Firestore:", error);

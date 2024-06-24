@@ -50,54 +50,52 @@ function ViewProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingBottom: 5,
-              paddingLeft: 10,
-            }}
-          >
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../../assets/profile.png")}
-            />
-            <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {user?.name}
-            </Text>
-
-            {following ? (
-              <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
-            ) : (
-              <Button size="sm" title="Follow" onPress={handleToggleFollow} />
-            )}
-          </View>
-          {user?.bio != "" ? (
-            <Text style={[styles.bio, { color: theme.colors.black }]}>
-              {user?.bio}
-            </Text>
-          ) : null}
-          <FlatList
-            numColumns={1}
-            horizontal={false}
-            data={posts}
-            renderItem={({ item }) => (
-              <PostItem
-                post={item}
-                theme={theme}
-                navigateProfile={null}
-                onToggleLike={null}
-                renderComments={false}
-                showCommentIcon={true}
-                showUser={false}
-                tab={"(home)"}
-                viewPost={false}
-              />
-            )}
-            keyExtractor={(item) => item.id}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingBottom: 5,
+            paddingLeft: 10,
+          }}
+        >
+          <Image
+            style={{ width: 40, height: 40 }}
+            source={require("../../../assets/profile.png")}
           />
+          <Text style={[styles.userName, { color: theme.colors.black }]}>
+            {user?.name}
+          </Text>
+
+          {following ? (
+            <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
+          ) : (
+            <Button size="sm" title="Follow" onPress={handleToggleFollow} />
+          )}
         </View>
+        {user?.bio != "" ? (
+          <Text style={[styles.bio, { color: theme.colors.black }]}>
+            {user?.bio}
+          </Text>
+        ) : null}
+        <FlatList
+          numColumns={1}
+          horizontal={false}
+          data={posts}
+          renderItem={({ item }) => (
+            <PostItem
+              post={item}
+              theme={theme}
+              navigateProfile={null}
+              onToggleLike={null}
+              renderComments={false}
+              showCommentIcon={true}
+              showUser={false}
+              tab={"(home)"}
+              viewPost={false}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+        />
       </SafeAreaView>
     </View>
   );

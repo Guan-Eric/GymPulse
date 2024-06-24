@@ -18,8 +18,29 @@ import { Plan } from "../../../components/types";
 import { router } from "expo-router";
 import { useTheme, Button, Icon } from "@rneui/themed";
 import { getPlans } from "../../../backend/plan";
+import PlanCard from "../../../components/PlanCard";
+import EmptyPlanCard from "../../../components/EmptyPlanCard";
 
 function PlanScreen() {
+  const [bodyPart, setBodyPart] = useState([
+    { name: "Chest", key: "1" },
+    { name: "Middle Back", key: "2" },
+    { name: "Lower Back", key: "3" },
+    { name: "Triceps", key: "4" },
+    { name: "Biceps", key: "5" },
+    { name: "Shoulders", key: "6" },
+    { name: "Quadriceps", key: "7" },
+    { name: "Hamstrings", key: "8" },
+    { name: "Glutes", key: "9" },
+    { name: "Neck", key: "10" },
+    { name: "Abdominals", key: "11" },
+    { name: "Lats", key: "12" },
+    { name: "Calves", key: "13" },
+    { name: "Forearms", key: "14" },
+    { name: "Adductors", key: "15" },
+    { name: "Abductors", key: "16" },
+    { name: "Traps", key: "17" },
+  ]);
   const [plans, setPlans] = useState<Plan[]>([]);
   const { theme } = useTheme();
 
@@ -29,18 +50,23 @@ function PlanScreen() {
     };
     fetchData();
   }, []);
-  
 
   const handleCreatePlan = async () => {
     try {
       const docRef = await addDoc(
-        collection(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}/Plans`),
+        collection(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Plans`
+        ),
         {
           name: "New Plan",
           userId: FIREBASE_AUTH.currentUser.uid,
         }
       );
-      const planDoc = doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${docRef.id}`);
+      const planDoc = doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${docRef.id}`
+      );
       await updateDoc(planDoc, { id: docRef.id });
     } catch (error) {
       console.error("Error adding document: ", error);
@@ -51,59 +77,46 @@ function PlanScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={styles.container}>
-        <View
-          style={{
-            alignItems: "center",
-            flexDirection: "row",
-            alignContent: "space-between",
-          }}
-        >
-          <Text style={[styles.titleText, { color: theme.colors.black }]}>
-            Your Plans
-          </Text>
-          <Button type="clear" onPress={handleCreatePlan}>
-            <Icon
-              color={theme.colors.primary}
-              name="plus"
-              type="material-community"
-            />
-          </Button>
-        </View>
         <ScrollView>
-          {plans.length == 0 ? (
-            <Text>No plans available. Create a new plan!</Text>
-          ) : (
-            plans.map((item) => (
-              <Pressable
-                key={item.name}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/plan",
-                    params: {
-                      planId: item.id,
-                    },
-                  })
-                }
-              >
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    alignContent: "space-between",
-                  }}
-                >
-                  <Text
-                    style={[styles.baseText, { color: theme.colors.black }]}
-                  >
-                    {item.name}
-                  </Text>
-                  <Button type="clear">
-                    <Icon name="minus" type="material-community" />
-                  </Button>
-                </View>
-              </Pressable>
-            ))
-          )}
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              alignContent: "space-between",
+            }}
+          >
+            <Text style={[styles.titleText, { color: theme.colors.black }]}>
+              Your Plans
+            </Text>
+          </View>
+          <View style={styles.planContainer}>
+            {plans.length == 0
+              ? null
+              : plans.map((item) => (
+                  <View key={item.id} style={styles.cardWrapper}>
+                    <PlanCard plan={item} theme={theme} />
+                  </View>
+                ))}
+            <EmptyPlanCard onPress={handleCreatePlan} />
+          </View>
+          <Text style={[styles.titleText, { color: theme.colors.black }]}>
+            View Exercises
+          </Text>
+          {bodyPart.map((item) => (
+            <Pressable
+              key={item.key}
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/(workout)/bodypart",
+                  params: { bodypart: item.name, route: "exercise" },
+                })
+              }
+            >
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                {item.name}
+              </Text>
+            </Pressable>
+          ))}
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -140,6 +153,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 8,
+  },
+  planContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+  },
+  cardWrapper: {
+    width: "48%",
+    marginBottom: 20,
   },
 });
 export default PlanScreen;
