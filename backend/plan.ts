@@ -86,23 +86,12 @@ export async function getPlan(planId: string): Promise<Plan> {
 }
 
 export async function savePlan(plan: Plan) {
+  console.log(plan.name);
   const planDocRef = doc(
     FIRESTORE_DB,
     `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
   );
   updateDoc(planDocRef, { name: plan.name });
-  for (const day of plan.days) {
-    const dayDocRef = doc(planDocRef, `Days/${day.id}`);
-    await updateDoc(dayDocRef, { name: day.name });
-
-    for (const exercise of day.exercises) {
-      const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
-      await updateDoc(exerciseDocRef, {
-        name: exercise.name,
-        sets: exercise.sets,
-      });
-    }
-  }
 }
 
 export async function addDay(plan: Plan): Promise<Plan> {

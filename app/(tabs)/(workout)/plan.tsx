@@ -1,38 +1,27 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, TextInput, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Day, Exercise, Plan } from "../../../components/types";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { Plan } from "../../../components/types";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button } from "@rneui/themed";
-import {
-  addDay,
-  addSet,
-  deleteDay,
-  deleteExercise,
-  deleteSet,
-  getPlan,
-  savePlan,
-  updateDay,
-  updateSet,
-} from "../../../backend/plan";
-import ExerciseSetCard from "../../../components/ExerciseSetCard";
+import { addDay, getPlan, savePlan } from "../../../backend/plan";
+import DayCard from "../../../components/DayCard";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
-  const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState();
   const { planId } = useLocalSearchParams();
   const { theme } = useTheme();
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
   };
+
   useEffect(() => {
-    if (isDirty) {
-      handleSavePlan();
-      setIsDirty(false);
+    if (plan) {
+      savePlan(plan);
     }
-  }, [plan, isDirty]);
+  }, [plan]);
 
   useFocusEffect(
     useCallback(() => {
@@ -44,52 +33,12 @@ function ViewPlanScreen() {
     fetchPlanFromFirestore();
   }, []);
 
-  const handleSavePlan = async () => {
-    savePlan(plan);
+  const handleSaveName = (name: string) => {
+    setPlan({ ...plan, name: name });
   };
 
   const handleAddDay = async () => {
     setPlan(await addDay(plan));
-  };
-
-  const handleAddSet = async (
-    dayId: string,
-    exerciseId: string,
-    days: Day[]
-  ) => {
-    setPlan(await addSet(plan, dayId, exerciseId, days));
-  };
-
-  const handleDeleteDay = async (dayId: string) => {
-    setPlan(await deleteDay(plan, dayId));
-  };
-
-  const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
-    setPlan(await deleteExercise(plan, dayId, exerciseId));
-  };
-
-  const handleDeleteSet = (
-    dayIndex: any,
-    exerciseIndex: any,
-    setIndex: number
-  ) => {
-    setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
-  };
-
-  const updateSets = (
-    dayIndex: any,
-    exerciseIndex: any,
-    setIndex: number,
-    property: string,
-    value: string | number
-  ) => {
-    setPlan(
-      updateSet(plan, dayIndex, exerciseIndex, setIndex, property, value)
-    );
-  };
-
-  const updateDayName = (dayIndex: number, newName: string) => {
-    setPlan(updateDay(plan, dayIndex, newName));
   };
 
   return (
@@ -97,95 +46,21 @@ function ViewPlanScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <Input
-          style={styles.nameInput}
-          onChangeText={() => handleSavePlan()}
-          value={plan?.name}
-        />
         <ScrollView>
+          <Input
+            style={styles.nameInput}
+            onChangeText={(newName) => handleSaveName(newName)}
+            value={plan?.name}
+          />
           {plan?.days?.map((day, dayIndex) => (
-            <View key={day.id}>
-              <View style={{ flexDirection: "row" }}>
-                <Input
-                  containerStyle={styles.nameInput}
-                  inputContainerStyle={styles.nameInput}
-                  style={styles.nameInput}
-                  onChangeText={(newDayName) =>
-                    updateDayName(dayIndex, newDayName)
-                  }
-                  value={day.name}
-                />
-                <Button
-                  title="Start Workout"
-                  type="clear"
-                  onPress={() =>
-                    router.push({
-                      pathname: "/(tabs)/(workout)/workout",
-                      params: {
-                        planId: planId,
-                        dayId: day.id,
-                      },
-                    })
-                  }
-                />
-              </View>
-              {day.exercises &&
-                day.exercises?.map((exercise, exerciseIndex) => (
-                  <View key={exercise.id}>
-                    <View style={{ flexDirection: "row" }}>
-                      <Text
-                        style={[styles.baseText, { color: theme.colors.black }]}
-                      >
-                        {exercise.name}
-                      </Text>
-                      <Button
-                        type="clear"
-                        title="Delete Exercise"
-                        onPress={() =>
-                          handleDeleteExercise(day.id, exercise.id)
-                        }
-                      />
-                    </View>
-                    {ExerciseSetCard(
-                      exercise.sets,
-                      exerciseIndex,
-                      dayIndex,
-                      exercise,
-                      theme,
-                      isMetric,
-                      updateSets,
-                      handleDeleteSet
-                    )}
-                    <Button
-                      size="sm"
-                      type="clear"
-                      title="Add Set"
-                      onPress={() =>
-                        handleAddSet(day.id, exercise.id, plan?.days)
-                      }
-                    />
-                  </View>
-                ))}
-              <Button
-                type="clear"
-                title="Add Exercise"
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/exercises",
-                    params: {
-                      planId: planId,
-                      dayId: day.id,
-                      route: "add",
-                    },
-                  })
-                }
-              />
-              <Button
-                type="clear"
-                title="Delete Day"
-                onPress={() => handleDeleteDay(day.id)}
-              />
-            </View>
+            <DayCard
+              plan={plan}
+              day={day}
+              dayIndex={dayIndex}
+              theme={theme}
+              isMetric={isMetric}
+              setPlan={setPlan}
+            />
           ))}
           <Button type="clear" title="Add Day" onPress={handleAddDay} />
         </ScrollView>

@@ -1,28 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, Pressable, Appearance, ScrollView } from "react-native";
+import { Text, View, Pressable, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { FIRESTORE_DB } from "../../../firebaseConfig";
-import {
-  collection,
-  onSnapshot,
-  setDoc,
-  addDoc,
-  doc,
-  updateDoc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { Plan } from "../../../components/types";
 import { router } from "expo-router";
-import { useTheme, Button, Icon } from "@rneui/themed";
+import { useTheme } from "@rneui/themed";
 import { getPlans } from "../../../backend/plan";
 import PlanCard from "../../../components/PlanCard";
 import EmptyPlanCard from "../../../components/EmptyPlanCard";
+import BodyPartCard from "../../../components/BodyPartCard";
 
 function PlanScreen() {
-  const [bodyPart, setBodyPart] = useState([
+  const [bodyPart] = useState([
     { name: "Chest", key: "1" },
     { name: "Middle Back", key: "2" },
     { name: "Lower Back", key: "3" },
@@ -112,9 +104,7 @@ function PlanScreen() {
                 })
               }
             >
-              <Text style={[styles.baseText, { color: theme.colors.black }]}>
-                {item.name}
-              </Text>
+              <BodyPartCard bodypart={item.name} />
             </Pressable>
           ))}
         </ScrollView>

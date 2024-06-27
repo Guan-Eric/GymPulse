@@ -1,18 +1,12 @@
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  Appearance,
-  ScrollView,
-  Image,
-} from "react-native";
+import React, { useState } from "react";
+import { Text, View, Pressable, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BodyPartCard from "../../../components/BodyPartCard";
 
 function ExerciseListScreen() {
-  const [bodyPart, setBodyPart] = useState([
+  const [bodyPart] = useState([
     { name: "Chest", key: "1" },
     { name: "Middle Back", key: "2" },
     { name: "Lower Back", key: "3" },
@@ -51,7 +45,7 @@ function ExerciseListScreen() {
                   })
                 }
               >
-                <Text style={styles.baseText}>{item.name}</Text>
+                <BodyPartCard bodypart={item.name} />
               </Pressable>
             ))}
           </ScrollView>
