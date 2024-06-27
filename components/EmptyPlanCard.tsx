@@ -6,7 +6,7 @@ function EmptyPlanCard({ onPress }) {
   const { theme } = useTheme();
 
   return (
-    <Pressable onPress={onPress} style={styles.cardWrapper}>
+    <Pressable onPress={onPress}>
       <Card
         containerStyle={[
           styles.card,
@@ -28,10 +28,6 @@ function EmptyPlanCard({ onPress }) {
 }
 
 const styles = StyleSheet.create({
-  cardWrapper: {
-    width: "48%",
-    alignItems: "center",
-  },
   card: {
     borderRadius: 10,
     padding: 20,

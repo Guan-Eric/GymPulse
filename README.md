@@ -9,6 +9,7 @@ A fitness tracker app that helps users organize their workout plans and track th
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
 - [Contributing](#contributing)
+- [Attributions](#attributions)
 
 ## Features
 
@@ -52,3 +53,7 @@ Contributions are welcome! Please follow these guidelines when contributing:
 - Make your changes and ensure all tests pass.
 - Write clear and descriptive commit messages.
 - Submit a pull request with a detailed explanation of your changes.
+
+## Attributions
+
+- Icon by cube29 from [source](https://www.freepik.com/author/cube29)

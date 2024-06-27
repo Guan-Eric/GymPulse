@@ -53,6 +53,27 @@ export async function getMetric(): Promise<boolean> {
   }
 }
 
+export async function createPlan(): Promise<Plan> {
+  try {
+    const docRef = await addDoc(
+      collection(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}/Plans`),
+      {
+        name: "New Plan",
+        userId: FIREBASE_AUTH.currentUser.uid,
+      }
+    );
+    const planDoc = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${docRef.id}`
+    );
+    await updateDoc(planDoc, { id: docRef.id });
+    const plan = (await getDoc(planDoc)).data() as Plan;
+    return plan;
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+}
+
 export async function getPlan(planId: string): Promise<Plan> {
   try {
     const planDoc = await getDoc(
@@ -86,7 +107,6 @@ export async function getPlan(planId: string): Promise<Plan> {
 }
 
 export async function savePlan(plan: Plan) {
-  console.log(plan.name);
   const planDocRef = doc(
     FIRESTORE_DB,
     `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`

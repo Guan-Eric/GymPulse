@@ -4,6 +4,7 @@ import { Text, View, Pressable, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BodyPartCard from "../../../components/BodyPartCard";
+import { useTheme } from "@rneui/themed";
 
 function ExerciseListScreen() {
   const [bodyPart] = useState([
@@ -25,7 +26,7 @@ function ExerciseListScreen() {
     { name: "Abductors", key: "16" },
     { name: "Traps", key: "17" },
   ]);
-
+  const { theme } = useTheme();
   const { route } = useLocalSearchParams();
   return (
     <View style={styles.container}>
@@ -35,19 +36,22 @@ function ExerciseListScreen() {
           <ScrollView
             contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
           >
-            {bodyPart.map((item) => (
-              <Pressable
-                key={item.key}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/bodypart",
-                    params: { bodypart: item.name, route: route },
-                  })
-                }
-              >
-                <BodyPartCard bodypart={item.name} />
-              </Pressable>
-            ))}
+            <View style={styles.planContainer}>
+              {bodyPart.map((item) => (
+                <Pressable
+                  style={styles.cardWrapper}
+                  key={item.key}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(tabs)/(workout)/bodypart",
+                      params: { bodypart: item.name, route: route },
+                    })
+                  }
+                >
+                  <BodyPartCard bodypart={item.name} theme={theme} />
+                </Pressable>
+              ))}
+            </View>
           </ScrollView>
         </View>
       </SafeAreaView>
@@ -82,6 +86,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 8,
+  },
+  planContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+  },
+  cardWrapper: {
+    width: "48%",
+    marginBottom: 20,
   },
 });
 export default ExerciseListScreen;

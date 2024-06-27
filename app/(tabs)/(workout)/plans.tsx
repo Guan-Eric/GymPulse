@@ -8,7 +8,7 @@ import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { Plan } from "../../../components/types";
 import { router } from "expo-router";
 import { useTheme } from "@rneui/themed";
-import { getPlans } from "../../../backend/plan";
+import { createPlan, getPlans } from "../../../backend/plan";
 import PlanCard from "../../../components/PlanCard";
 import EmptyPlanCard from "../../../components/EmptyPlanCard";
 import BodyPartCard from "../../../components/BodyPartCard";
@@ -44,25 +44,8 @@ function PlanScreen() {
   }, []);
 
   const handleCreatePlan = async () => {
-    try {
-      const docRef = await addDoc(
-        collection(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}/Plans`
-        ),
-        {
-          name: "New Plan",
-          userId: FIREBASE_AUTH.currentUser.uid,
-        }
-      );
-      const planDoc = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${docRef.id}`
-      );
-      await updateDoc(planDoc, { id: docRef.id });
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
+    const newPlan = await createPlan();
+    setPlans((prevPlans) => [...prevPlans, newPlan]);
   };
   return (
     <View
@@ -89,24 +72,29 @@ function PlanScreen() {
                     <PlanCard plan={item} theme={theme} />
                   </View>
                 ))}
-            <EmptyPlanCard onPress={handleCreatePlan} />
+            <View style={styles.cardWrapper}>
+              <EmptyPlanCard onPress={handleCreatePlan} />
+            </View>
           </View>
           <Text style={[styles.titleText, { color: theme.colors.black }]}>
             View Exercises
           </Text>
-          {bodyPart.map((item) => (
-            <Pressable
-              key={item.key}
-              onPress={() =>
-                router.push({
-                  pathname: "/(tabs)/(workout)/bodypart",
-                  params: { bodypart: item.name, route: "exercise" },
-                })
-              }
-            >
-              <BodyPartCard bodypart={item.name} />
-            </Pressable>
-          ))}
+          <View style={styles.planContainer}>
+            {bodyPart.map((item) => (
+              <Pressable
+                style={styles.cardWrapper}
+                key={item.key}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/(workout)/bodypart",
+                    params: { bodypart: item.name, route: "exercise" },
+                  })
+                }
+              >
+                <BodyPartCard bodypart={item.name} theme={theme} />
+              </Pressable>
+            ))}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </View>

@@ -19,7 +19,7 @@ function PlanCard({ plan, theme }) {
       <Card
         containerStyle={[
           styles.card,
-          { backgroundColor: theme.colors.backgroundColor },
+          { backgroundColor: theme.colors.background },
         ]}
       >
         <Card.Title style={[styles.planName, { color: theme.colors.black }]}>
@@ -27,7 +27,7 @@ function PlanCard({ plan, theme }) {
         </Card.Title>
 
         <View style={styles.daysContainer}>
-          {plan.days.map((item) => (
+          {plan?.days?.map((item) => (
             <Text
               key={item.name}
               style={[styles.dayText, { color: theme.colors.black }]}
