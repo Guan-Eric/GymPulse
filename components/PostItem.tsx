@@ -62,7 +62,9 @@ const PostItem = ({
         }
       >
         <Text>{post.title}</Text>
-        <TruncatedText theme={theme}>{post.caption}</TruncatedText>
+        {post.caption ? (
+          <TruncatedText theme={theme}>{post.caption}</TruncatedText>
+        ) : null}
         <Image
           source={{ uri: post.url }}
           style={{

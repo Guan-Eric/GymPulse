@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Text, View, Pressable, FlatList } from "react-native";
+import { Text, View, Pressable, FlatList, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@rneui/themed";
@@ -46,74 +46,55 @@ function PlanScreen() {
     setPlans((prevPlans) => [...prevPlans, newPlan]);
   };
 
-  const renderPlanCard = useCallback(
-    ({ item }) => (
-      <View style={styles.cardWrapper}>
-        <PlanCard plan={item} theme={theme} />
-      </View>
-    ),
-    [theme]
-  );
-
-  const renderBodyPartCard = useCallback(
-    ({ item }) => (
-      <Pressable
-        style={styles.cardWrapper}
-        onPress={() =>
-          router.push({
-            pathname: "/(tabs)/(workout)/bodypart",
-            params: { bodypart: item.name, route: "exercise" },
-          })
-        }
-      >
-        <BodyPartCard bodypart={item.name} theme={theme} />
-      </Pressable>
-    ),
-    [theme]
-  );
-
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <SafeAreaView style={styles.container}>
-        <FlatList
-          ListHeaderComponent={
-            <>
-              <View
-                style={{
-                  alignItems: "center",
-                  flexDirection: "row",
-                  alignContent: "space-between",
-                }}
-              >
-                <Text style={[styles.titleText, { color: theme.colors.black }]}>
-                  Your Plans
-                </Text>
-              </View>
-              <FlatList
-                data={plans}
-                renderItem={renderPlanCard}
-                keyExtractor={(item) => item.id}
-                numColumns={2}
-                contentContainerStyle={styles.planContainer}
-                ListFooterComponent={
-                  <View style={styles.cardWrapper}>
-                    <EmptyPlanCard onPress={handleCreatePlan} />
+      <SafeAreaView style={[styles.container, { paddingBottom: -50 }]}>
+        <ScrollView>
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              alignContent: "space-between",
+            }}
+          >
+            <Text style={[styles.titleText, { color: theme.colors.black }]}>
+              Your Plans
+            </Text>
+          </View>
+          <View style={styles.planContainer}>
+            {plans.length == 0
+              ? null
+              : plans.map((item) => (
+                  <View key={item.id} style={styles.cardWrapper}>
+                    <PlanCard plan={item} theme={theme} />
                   </View>
+                ))}
+            <View style={styles.cardWrapper}>
+              <EmptyPlanCard onPress={handleCreatePlan} />
+            </View>
+          </View>
+          <Text style={[styles.titleText, { color: theme.colors.black }]}>
+            View Exercises
+          </Text>
+          <View style={styles.planContainer}>
+            {bodyParts.map((item) => (
+              <Pressable
+                style={styles.cardWrapper}
+                key={item.key}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/(workout)/bodypart",
+                    params: { bodypart: item.name, route: "exercise" },
+                  })
                 }
-              />
-              <Text style={[styles.titleText, { color: theme.colors.black }]}>
-                View Exercises
-              </Text>
-            </>
-          }
-          data={bodyParts}
-          renderItem={renderBodyPartCard}
-          keyExtractor={(item) => item.key}
-          numColumns={2}
-          contentContainerStyle={styles.planContainer}
-        />
+              >
+                <BodyPartCard bodypart={item.name} theme={theme} />
+              </Pressable>
+            ))}
+          </View>
+        </ScrollView>
       </SafeAreaView>
     </View>
   );
@@ -160,9 +141,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   cardWrapper: {
-    width: "50%",
+    width: "48%",
     marginBottom: 20,
   },
 });
-
 export default PlanScreen;

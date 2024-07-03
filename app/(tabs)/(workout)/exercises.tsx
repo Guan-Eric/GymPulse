@@ -29,9 +29,13 @@ function ExerciseListScreen() {
   const { theme } = useTheme();
   const { route, planId, dayId } = useLocalSearchParams();
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView style={styles.container}>
-        <Text style={styles.titleText}>Exercise</Text>
+        <Text style={[styles.titleText, { color: theme.colors.black }]}>
+          Body Part
+        </Text>
         <View>
           <ScrollView
             contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}

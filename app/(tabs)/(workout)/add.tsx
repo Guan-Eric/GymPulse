@@ -74,14 +74,15 @@ function AddExerciseScreen() {
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });
     router.back();
     router.back();
+    router.back();
   };
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ paddingBottom: 70 }}>
         {exercise && (
           <View>
-            <ExerciseCard exercise={exercise} imageUrls={imageUrls} />
             <Button title="Add Exercise" onPress={handleAddExercise} />
+            <ExerciseCard exercise={exercise} imageUrls={imageUrls} />
           </View>
         )}
       </SafeAreaView>

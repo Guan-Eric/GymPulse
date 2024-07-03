@@ -73,13 +73,12 @@ function BodyPartScreen() {
         </Text>
         <FlatList
           data={exercises}
-          
           renderItem={({ item }) => (
             <Pressable
               onPress={() =>
                 router.push({
                   pathname: "/(tabs)/(workout)/" + route,
-                  params: { exerciseId: item.id },
+                  params: { exerciseId: item.id, planId: planId, dayId: dayId },
                 })
               }
             >

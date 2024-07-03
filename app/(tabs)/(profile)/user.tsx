@@ -70,7 +70,7 @@ function UserScreen() {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              paddingBottom: 5,
+
               paddingLeft: 10,
             }}
           >
@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     paddingLeft: 25,
     paddingRight: 25,
     fontSize: 14,
-    paddingBottom: 15,
   },
 });
 

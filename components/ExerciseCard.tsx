@@ -11,18 +11,25 @@ import { Card, useTheme } from "@rneui/themed";
 import Carousel from "react-native-reanimated-carousel";
 
 const screenWidth = Dimensions.get("window").width;
-
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
 function ExerciseCard({ exercise, imageUrls }) {
   const { theme } = useTheme();
 
   const instructions = exercise?.instructions.map((item, index) => (
     <Text key={index} style={[styles.text, { color: theme.colors.black }]}>
-      {item}
+      {capitalizeFirstLetter(item)}
+    </Text>
+  ));
+  const primaryMuscles = exercise?.primaryMuscles.map((item, index) => (
+    <Text key={index} style={[styles.text, { color: theme.colors.black }]}>
+      {capitalizeFirstLetter(item)}
     </Text>
   ));
   const secondaryMuscles = exercise?.secondaryMuscles.map((item, index) => (
     <Text key={index} style={[styles.text, { color: theme.colors.black }]}>
-      {item}
+      {capitalizeFirstLetter(item)}
     </Text>
   ));
 
@@ -45,6 +52,7 @@ function ExerciseCard({ exercise, imageUrls }) {
     <View>
       <ScrollView>
         <Carousel
+          style={{ alignSelf: "center" }}
           data={imageUrls}
           renderItem={renderCarouselItem}
           width={screenWidth}
@@ -54,14 +62,18 @@ function ExerciseCard({ exercise, imageUrls }) {
         />
         <View style={styles.contentContainer}>
           <Text style={[styles.title, { color: theme.colors.primary }]}>
-            {exercise?.name}
+            {capitalizeFirstLetter(exercise?.name)}
           </Text>
           <Text style={[styles.heading, { color: theme.colors.black }]}>
             Equipment
           </Text>
           <Text style={[styles.text, { color: theme.colors.black }]}>
-            {exercise?.equipment}
+            {capitalizeFirstLetter(exercise?.equipment)}
           </Text>
+          <Text style={[styles.heading, { color: theme.colors.black }]}>
+            Primary Muscle
+          </Text>
+          {primaryMuscles}
           <Text style={[styles.heading, { color: theme.colors.black }]}>
             Secondary Muscles
           </Text>
@@ -70,7 +82,7 @@ function ExerciseCard({ exercise, imageUrls }) {
             Level
           </Text>
           <Text style={[styles.text, { color: theme.colors.black }]}>
-            {exercise?.level}
+            {capitalizeFirstLetter(exercise?.level)}
           </Text>
           <Text style={[styles.heading, { color: theme.colors.black }]}>
             Instructions

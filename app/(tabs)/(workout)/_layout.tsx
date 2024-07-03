@@ -7,6 +7,7 @@ function WorkoutStackLayout(props) {
       <Stack.Screen name="plans" options={{ headerShown: false }} />
       <Stack.Screen name="bodypart" options={{ headerShown: false }} />
       <Stack.Screen name="exercise" options={{ headerShown: false }} />
+      <Stack.Screen name="exercises" options={{ headerShown: false }} />
       <Stack.Screen name="plan" options={{ headerShown: false }} />
       <Stack.Screen name="add" options={{ headerShown: false }} />
       <Stack.Screen
