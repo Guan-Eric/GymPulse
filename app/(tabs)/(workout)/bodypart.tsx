@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   FlatList,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_STR } from "../../../firebaseConfig";
@@ -13,6 +14,9 @@ import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Exercise } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
+import { Card, useTheme } from "@rneui/themed";
+
+const screenWidth = Dimensions.get("window").width;
 
 function BodyPartScreen() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -57,38 +61,45 @@ function BodyPartScreen() {
     fetchExercisesFromFirestore();
   }, []);
 
+  const { theme } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView>
-        <Text style={styles.baseText}>{bodyPart}</Text>
+        <Text style={[styles.title, { color: theme.colors.black }]}>
+          {bodyPart}
+        </Text>
         <FlatList
           data={exercises}
-          renderItem={({ item }) => {
-            return (
-              <Pressable
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/" + route,
-                    params: {
-                      exerciseId: item.id,
-                      planId: planId,
-                      dayId: dayId,
-                    },
-                  })
-                }
+          
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/(workout)/" + route,
+                  params: { exerciseId: item.id },
+                })
+              }
+            >
+              <Card
+                containerStyle={[
+                  styles.card,
+                  { backgroundColor: theme.colors.background },
+                ]}
               >
                 <Image
                   source={{ uri: imageUrls[item.id] }}
-                  style={{
-                    width: 200,
-                    height: 200,
-                    resizeMode: "cover",
-                  }}
+                  style={styles.image}
                 />
-                <Text style={styles.baseText}>{item.name}</Text>
-              </Pressable>
-            );
-          }}
+                <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                  {item.name}
+                </Text>
+              </Card>
+            </Pressable>
+          )}
+          keyExtractor={(item) => item.id}
         />
       </SafeAreaView>
     </View>
@@ -100,8 +111,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   baseText: {
+    paddingTop: 20,
     fontSize: 20,
     textAlign: "center",
+  },
+  title: {
+    fontSize: 20,
+    textAlign: "center",
+  },
+  card: {
+    padding: 20,
+    borderRadius: 20,
+  },
+  image: {
+    borderRadius: 8,
+    width: screenWidth * 0.82,
+    height: screenWidth * 0.82 * 0.75,
+    alignSelf: "center",
+    resizeMode: "cover",
   },
 });
 

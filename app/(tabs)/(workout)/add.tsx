@@ -24,11 +24,15 @@ import {
 } from "firebase/firestore";
 import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
+import ExerciseCard from "../../../components/ExerciseCard";
+import { useTheme } from "@rneui/themed";
 
 function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
   const { exerciseId, planId, dayId } = useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
+
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchExercise = async () => {
@@ -37,7 +41,7 @@ function AddExerciseScreen() {
           doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
         );
         setExercise(exerciseDoc.data() as Exercise);
-        
+
         const image1Ref = ref(FIREBASE_STR, `assets/${exerciseId}_0.jpg`);
         const url1 = await getDownloadURL(image1Ref);
         const image2Ref = ref(FIREBASE_STR, `assets/${exerciseId}_1.jpg`);
@@ -53,12 +57,7 @@ function AddExerciseScreen() {
 
     fetchExercise();
   }, []);
-  const instructions = exercise?.instructions.map((item, index) => (
-    <Text key={index}>{item}</Text>
-  ));
-  const secondaryMuscles = exercise?.secondaryMuscles.map((item, index) => (
-    <Text key={index}>{item}</Text>
-  ));
+
   const handleAddExercise = async () => {
     const dayDoc = doc(
       FIRESTORE_DB,
@@ -77,67 +76,17 @@ function AddExerciseScreen() {
     router.back();
   };
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
-        <FlatList
-          horizontal={true}
-          data={imageUrls}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Image
-              source={{ uri: item.uri }}
-              style={{
-                resizeMode: "cover",
-                height: 150,
-                width: 150,
-              }}
-            />
-          )}
-        />
-        <ScrollView>
-          <Text>{exercise?.name}</Text>
-          <Button title="Add Exercise" onPress={handleAddExercise} />
-          <Text>Equipment</Text>
-          <Text>{exercise?.equipment}</Text>
-          <Text>Secondary Muscles</Text>
-          {secondaryMuscles}
-          <Text>Level</Text>
-          <Text>{exercise?.level}</Text>
-          <Text>Instructions</Text>
-          {instructions}
-        </ScrollView>
+        {exercise && (
+          <View>
+            <ExerciseCard exercise={exercise} imageUrls={imageUrls} />
+            <Button title="Add Exercise" onPress={handleAddExercise} />
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  baseText: {
-    fontSize: 20,
-  },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  logoText: {
-    fontSize: 50,
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
-  },
-});
+
 export default AddExerciseScreen;

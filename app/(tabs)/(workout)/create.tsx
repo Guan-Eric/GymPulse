@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   FIREBASE_AUTH,
   FIRESTORE_DB,
@@ -27,19 +26,20 @@ function CreatePostScreen() {
   const [caption, setCaption] = useState("");
   const [title, setTitle] = useState("");
   const { theme } = useTheme();
-  const [image, setImage] = useState("");
+  const [images, setImages] = useState([]);
   const { workoutId } = useLocalSearchParams();
 
-  const pickImage = async () => {
+  const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: true,
       allowsEditing: true,
       aspect: [4, 5],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImages(result.assets.map((asset) => asset.uri));
     }
   };
 
@@ -66,23 +66,30 @@ function CreatePostScreen() {
         userId: FIREBASE_AUTH.currentUser.uid,
         workoutId: workoutId,
       });
-      const response = await fetch(image as string);
-      const blob = await response.blob();
 
-      const imageRef = ref(FIREBASE_STR, `posts/${userPostsDocRef.id}`);
-      await uploadBytes(imageRef, blob);
-      const downloadUrl = await getDownloadURL(imageRef);
+      const downloadUrls = [];
+
+      for (let i = 0; i < images.length; i++) {
+        const response = await fetch(images[i]);
+        const blob = await response.blob();
+        const imageRef = ref(FIREBASE_STR, `posts/${userPostsDocRef.id}/${i}`);
+        await uploadBytes(imageRef, blob);
+        const downloadUrl = await getDownloadURL(imageRef);
+        downloadUrls.push(downloadUrl);
+      }
 
       const userPostsDoc = doc(userPostsCollection, userPostsDocRef.id);
       await updateDoc(userPostsDoc, {
         id: userPostsDocRef.id,
-        url: downloadUrl,
+        urls: downloadUrls,
       });
+
       router.push("/(tabs)/(home)/feed");
     } catch (error) {
       console.error("Error creating post:", error);
     }
   };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View
@@ -104,20 +111,24 @@ function CreatePostScreen() {
             placeholder="Write Title here"
           />
           <ScrollView>
-            {image != "" ? (
-              <Image
-                source={{ uri: image as string }}
-                style={{
-                  alignSelf: "center",
-                  borderRadius: 20,
-                  width: 0.9 * ScreenWidth,
-                  height: 0.9 * ScreenWidth * 1.25,
-                  resizeMode: "cover",
-                }}
-              />
+            {images.length > 0 ? (
+              images.map((imageUri, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: imageUri }}
+                  style={{
+                    alignSelf: "center",
+                    borderRadius: 20,
+                    width: 0.9 * ScreenWidth,
+                    height: 0.9 * ScreenWidth * 1.25,
+                    resizeMode: "cover",
+                    marginBottom: 10,
+                  }}
+                />
+              ))
             ) : (
-              <Pressable onPress={pickImage}>
-                <Text>Add Photo</Text>
+              <Pressable onPress={pickImages}>
+                <Text>Add Photos</Text>
               </Pressable>
             )}
             <View
@@ -156,6 +167,7 @@ function CreatePostScreen() {
     </TouchableWithoutFeedback>
   );
 }
+
 const styles = StyleSheet.create({
   postButton: {
     borderRadius: 10,
