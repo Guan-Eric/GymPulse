@@ -1,38 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, Pressable, ScrollView } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { Text, View, Pressable, FlatList } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIREBASE_AUTH } from "../../../firebaseConfig";
-import { FIRESTORE_DB } from "../../../firebaseConfig";
-import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
-import { Plan } from "../../../components/types";
-import { router } from "expo-router";
 import { useTheme } from "@rneui/themed";
 import { createPlan, getPlans } from "../../../backend/plan";
 import PlanCard from "../../../components/PlanCard";
 import EmptyPlanCard from "../../../components/EmptyPlanCard";
 import BodyPartCard from "../../../components/BodyPartCard";
+import { Plan } from "../../../components/types";
+import { router } from "expo-router";
+
+const bodyParts = [
+  { name: "Chest", key: "1" },
+  { name: "Middle Back", key: "2" },
+  { name: "Lower Back", key: "3" },
+  { name: "Triceps", key: "4" },
+  { name: "Biceps", key: "5" },
+  { name: "Shoulders", key: "6" },
+  { name: "Quadriceps", key: "7" },
+  { name: "Hamstrings", key: "8" },
+  { name: "Glutes", key: "9" },
+  { name: "Neck", key: "10" },
+  { name: "Abdominals", key: "11" },
+  { name: "Lats", key: "12" },
+  { name: "Calves", key: "13" },
+  { name: "Forearms", key: "14" },
+  { name: "Adductors", key: "15" },
+  { name: "Abductors", key: "16" },
+  { name: "Traps", key: "17" },
+];
 
 function PlanScreen() {
-  const [bodyPart] = useState([
-    { name: "Chest", key: "1" },
-    { name: "Middle Back", key: "2" },
-    { name: "Lower Back", key: "3" },
-    { name: "Triceps", key: "4" },
-    { name: "Biceps", key: "5" },
-    { name: "Shoulders", key: "6" },
-    { name: "Quadriceps", key: "7" },
-    { name: "Hamstrings", key: "8" },
-    { name: "Glutes", key: "9" },
-    { name: "Neck", key: "10" },
-    { name: "Abdominals", key: "11" },
-    { name: "Lats", key: "12" },
-    { name: "Calves", key: "13" },
-    { name: "Forearms", key: "14" },
-    { name: "Adductors", key: "15" },
-    { name: "Abductors", key: "16" },
-    { name: "Traps", key: "17" },
-  ]);
   const [plans, setPlans] = useState<Plan[]>([]);
   const { theme } = useTheme();
 
@@ -47,59 +45,80 @@ function PlanScreen() {
     const newPlan = await createPlan();
     setPlans((prevPlans) => [...prevPlans, newPlan]);
   };
+
+  const renderPlanCard = useCallback(
+    ({ item }) => (
+      <View style={styles.cardWrapper}>
+        <PlanCard plan={item} theme={theme} />
+      </View>
+    ),
+    [theme]
+  );
+
+  const renderBodyPartCard = useCallback(
+    ({ item }) => (
+      <Pressable
+        style={styles.cardWrapper}
+        onPress={() =>
+          router.push({
+            pathname: "/(tabs)/(workout)/bodypart",
+            params: { bodypart: item.name, route: "exercise" },
+          })
+        }
+      >
+        <BodyPartCard bodypart={item.name} theme={theme} />
+      </Pressable>
+    ),
+    [theme]
+  );
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={styles.container}>
-        <ScrollView>
-          <View
-            style={{
-              alignItems: "center",
-              flexDirection: "row",
-              alignContent: "space-between",
-            }}
-          >
-            <Text style={[styles.titleText, { color: theme.colors.black }]}>
-              Your Plans
-            </Text>
-          </View>
-          <View style={styles.planContainer}>
-            {plans.length == 0
-              ? null
-              : plans.map((item) => (
-                  <View key={item.id} style={styles.cardWrapper}>
-                    <PlanCard plan={item} theme={theme} />
-                  </View>
-                ))}
-            <View style={styles.cardWrapper}>
-              <EmptyPlanCard onPress={handleCreatePlan} />
-            </View>
-          </View>
-          <Text style={[styles.titleText, { color: theme.colors.black }]}>
-            View Exercises
-          </Text>
-          <View style={styles.planContainer}>
-            {bodyPart.map((item) => (
-              <Pressable
-                style={styles.cardWrapper}
-                key={item.key}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/bodypart",
-                    params: { bodypart: item.name, route: "exercise" },
-                  })
-                }
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <View
+                style={{
+                  alignItems: "center",
+                  flexDirection: "row",
+                  alignContent: "space-between",
+                }}
               >
-                <BodyPartCard bodypart={item.name} theme={theme} />
-              </Pressable>
-            ))}
-          </View>
-        </ScrollView>
+                <Text style={[styles.titleText, { color: theme.colors.black }]}>
+                  Your Plans
+                </Text>
+              </View>
+              <FlatList
+                data={plans}
+                renderItem={renderPlanCard}
+                keyExtractor={(item) => item.id}
+                numColumns={2}
+                contentContainerStyle={styles.planContainer}
+                ListFooterComponent={
+                  <View style={styles.cardWrapper}>
+                    <EmptyPlanCard onPress={handleCreatePlan} />
+                  </View>
+                }
+              />
+              <Text style={[styles.titleText, { color: theme.colors.black }]}>
+                View Exercises
+              </Text>
+            </>
+          }
+          data={bodyParts}
+          renderItem={renderBodyPartCard}
+          keyExtractor={(item) => item.key}
+          numColumns={2}
+          contentContainerStyle={styles.planContainer}
+        />
       </SafeAreaView>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -141,8 +160,9 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   cardWrapper: {
-    width: "48%",
+    width: "50%",
     marginBottom: 20,
   },
 });
+
 export default PlanScreen;

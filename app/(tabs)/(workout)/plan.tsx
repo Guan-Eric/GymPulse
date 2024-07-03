@@ -4,15 +4,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Plan } from "../../../components/types";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
-import { Input, useTheme, Button } from "@rneui/themed";
+import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { addDay, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
-  const [isMetric, setIsMetric] = useState();
+  const [isMetric, setIsMetric] = useState(true); // Set default as metric for now
   const { planId } = useLocalSearchParams();
   const { theme } = useTheme();
+
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
   };
@@ -34,7 +35,7 @@ function ViewPlanScreen() {
   }, []);
 
   const handleSaveName = (name: string) => {
-    setPlan({ ...plan, name: name });
+    setPlan({ ...plan, name });
   };
 
   const handleAddDay = async () => {
@@ -42,24 +43,26 @@ function ViewPlanScreen() {
   };
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <SafeAreaView style={{ paddingBottom: 50 }}>
+        <Input
+          containerStyle={styles.nameInput}
+          inputContainerStyle={styles.nameInput}
+          style={styles.nameInput}
+          onChangeText={handleSaveName}
+          value={plan?.name}
+        />
         <ScrollView>
-          <Input
-            style={styles.nameInput}
-            onChangeText={(newName) => handleSaveName(newName)}
-            value={plan?.name}
-          />
           {plan?.days?.map((day, dayIndex) => (
             <DayCard
+              key={day.id}
               plan={plan}
               day={day}
               dayIndex={dayIndex}
               theme={theme}
               isMetric={isMetric}
               setPlan={setPlan}
+              isWorkout={false}
             />
           ))}
           <Button type="clear" title="Add Day" onPress={handleAddDay} />
@@ -68,30 +71,16 @@ function ViewPlanScreen() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  baseText: {
-    fontSize: 20,
-  },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  logoText: {
-    fontSize: 50,
-  },
-  input: { width: 50 },
-  nameInput: { width: 50 },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
+  card: {
+    borderRadius: 8,
+    padding: 16,
     marginVertical: 8,
   },
+  nameInput: {
+    width: "100%",
+  },
 });
+
 export default ViewPlanScreen;

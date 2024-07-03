@@ -63,7 +63,7 @@ function ViewProfileScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ paddingBottom: 50 }}>
         <View>
           <View
             style={{

@@ -1,4 +1,4 @@
-import { Input, Button } from "@rneui/base";
+import { Input, Button, Card } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import { Day, Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
@@ -15,8 +15,8 @@ function ExerciseSetCard({
   setPlan,
 }) {
   const updateSets = (
-    dayIndex: any,
-    exerciseIndex: any,
+    dayIndex: number,
+    exerciseIndex: number,
     setIndex: number,
     property: string,
     value: string | number
@@ -25,6 +25,7 @@ function ExerciseSetCard({
       updateSet(plan, dayIndex, exerciseIndex, setIndex, property, value)
     );
   };
+
   const handleAddSet = async (
     dayId: string,
     exerciseId: string,
@@ -32,20 +33,27 @@ function ExerciseSetCard({
   ) => {
     setPlan(await addSet(plan, dayId, exerciseId, days));
   };
+
   const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
     setPlan(await deleteExercise(plan, dayId, exerciseId));
   };
+
   const handleDeleteSet = (
-    dayIndex: any,
-    exerciseIndex: any,
+    dayIndex: number,
+    exerciseIndex: number,
     setIndex: number
   ) => {
     setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
   };
 
   return (
-    <View key={exercise.id}>
-      <View style={{ flexDirection: "row" }}>
+    <Card
+      containerStyle={[
+        styles.card,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
+      <View style={styles.exerciseHeader}>
         <Text style={[styles.baseText, { color: theme.colors.black }]}>
           {exercise.name}
         </Text>
@@ -56,48 +64,37 @@ function ExerciseSetCard({
         />
       </View>
       <View>
-        <View style={styles.setRow}>
+        <View style={styles.setHeader}>
           {!exercise.cardio && (
-            <View style={styles.setRow}>
+            <>
               <Text style={[styles.baseText, { color: theme.colors.black }]}>
                 Reps
               </Text>
               <Text style={[styles.baseText, { color: theme.colors.black }]}>
                 Weight
               </Text>
-            </View>
+            </>
           )}
           {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
         </View>
-        {sets?.map(
-          (
-            set: { reps: { toString: () => string }; weight_duration: number },
-            setIndex: number
-          ) => (
-            <View key={setIndex} style={styles.setRow}>
-              <Text
-                style={[styles.baseText, { color: theme.colors.black }]}
-              >{`Set ${setIndex + 1}`}</Text>
-              {!exercise.cardio && (
-                <Input
-                  keyboardType="numeric"
-                  style={styles.input}
-                  onChangeText={(newReps) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "reps",
-                      newReps
-                    )
-                  }
-                  value={set.reps.toString()}
-                />
-              )}
-              {!exercise.cardio && (
+        {sets?.map((set, setIndex) => (
+          <View key={setIndex} style={styles.setRow}>
+            <Text style={[styles.baseText, { color: theme.colors.black }]}>
+              {`Set ${setIndex + 1}`}
+            </Text>
+            {!exercise.cardio && (
+              <Input
+                keyboardType="numeric"
+                style={styles.input}
+                onChangeText={(newReps) =>
+                  updateSets(dayIndex, exerciseIndex, setIndex, "reps", newReps)
+                }
+                value={set.reps.toString()}
+              />
+            )}
+            {!exercise.cardio && (
+              <>
                 <Text style={{ color: theme.colors.black }}>x</Text>
-              )}
-              {!exercise.cardio && (
                 <Input
                   keyboardType="numeric"
                   style={styles.input}
@@ -118,38 +115,34 @@ function ExerciseSetCard({
                       : Math.floor(set.weight_duration).toString()
                   }
                 />
-              )}
-              {!exercise.cardio && (
                 <Text style={{ color: theme.colors.black }}>
                   {isMetric ? "kg" : "lbs"}
                 </Text>
-              )}
-              {exercise.cardio && (
-                <Input
-                  keyboardType="numeric"
-                  style={styles.input}
-                  onChangeText={(newDuration) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "weight_duration",
-                      newDuration
-                    )
-                  }
-                  value={set.weight_duration.toString()}
-                />
-              )}
-              <Button
-                type="clear"
-                title="Delete Set"
-                onPress={() =>
-                  handleDeleteSet(dayIndex, exerciseIndex, setIndex)
+              </>
+            )}
+            {exercise.cardio && (
+              <Input
+                keyboardType="numeric"
+                style={styles.input}
+                onChangeText={(newDuration) =>
+                  updateSets(
+                    dayIndex,
+                    exerciseIndex,
+                    setIndex,
+                    "weight_duration",
+                    newDuration
+                  )
                 }
+                value={set?.weight_duration.toString()}
               />
-            </View>
-          )
-        )}
+            )}
+            <Button
+              type="clear"
+              title="Delete Set"
+              onPress={() => handleDeleteSet(dayIndex, exerciseIndex, setIndex)}
+            />
+          </View>
+        ))}
       </View>
       <Button
         size="sm"
@@ -157,34 +150,38 @@ function ExerciseSetCard({
         title="Add Set"
         onPress={() => handleAddSet(day.id, exercise.id, plan?.days)}
       />
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  card: {
+    borderRadius: 8,
+    padding: 16,
+    marginVertical: 8,
   },
-  content: {
-    flex: 1,
-    flexDirection: "column",
+  exerciseHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
   },
-  baseText: {
-    fontSize: 20,
+  setHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
   },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  logoText: {
-    fontSize: 50,
-  },
-  input: { width: 50 },
-  nameInput: { width: 50 },
   setRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 8,
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  baseText: {
+    fontSize: 18,
+  },
+  input: {
+    width: 60,
   },
 });
 

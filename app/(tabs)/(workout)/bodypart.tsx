@@ -17,7 +17,7 @@ import { router, useLocalSearchParams } from "expo-router";
 function BodyPartScreen() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [imageUrls, setImageUrls] = useState({});
-  const { bodypart, route } = useLocalSearchParams();
+  const { bodypart, route, planId, dayId } = useLocalSearchParams();
 
   const bodyPart = (bodypart as string).toLowerCase();
 
@@ -69,7 +69,11 @@ function BodyPartScreen() {
                 onPress={() =>
                   router.push({
                     pathname: "/(tabs)/(workout)/" + route,
-                    params: { exerciseId: item.id },
+                    params: {
+                      exerciseId: item.id,
+                      planId: planId,
+                      dayId: dayId,
+                    },
                   })
                 }
               >

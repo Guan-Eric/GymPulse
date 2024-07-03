@@ -1,44 +1,54 @@
-import { Input, Button } from "@rneui/themed";
+import { Input, Button, Card } from "@rneui/themed";
 import { router } from "expo-router";
 import { View, StyleSheet } from "react-native";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
 
-function DayCard({ plan, day, dayIndex, theme, isMetric, setPlan }) {
+function DayCard({ plan, day, dayIndex, theme, isMetric, setPlan, isWorkout }) {
   const handleDeleteDay = async (dayId: string) => {
     setPlan(await deleteDay(plan, dayId));
   };
+
   const updateDayName = (dayIndex: number, newName: string) => {
     setPlan(updateDay(plan, dayIndex, newName));
   };
 
   return (
-    <View key={day.id}>
-      <View style={{ flexDirection: "row" }}>
+    <Card
+      containerStyle={[
+        styles.card,
+        { backgroundColor: theme.colors.background },
+      ]}
+    >
+      <View style={styles.dayHeader}>
         <Input
           containerStyle={styles.nameInput}
           inputContainerStyle={styles.nameInput}
           style={styles.nameInput}
           onChangeText={(newDayName) => updateDayName(dayIndex, newDayName)}
-          value={day.name}
+          value={day?.name}
         />
-        <Button
-          title="Start Workout"
-          type="clear"
-          onPress={() =>
-            router.push({
-              pathname: "/(tabs)/(workout)/workout",
-              params: {
-                planId: plan.id,
-                dayId: day.id,
-              },
-            })
-          }
-        />
+        {isWorkout ? null : (
+          <Button
+            title="Start Workout"
+            type="clear"
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/(workout)/workout",
+                params: {
+                  planId: plan.id,
+                  dayId: day.id,
+                  dayIndex: dayIndex,
+                },
+              })
+            }
+          />
+        )}
       </View>
-      {day.exercises &&
-        day.exercises?.map((exercise, exerciseIndex) => (
+      {day?.exercises &&
+        day?.exercises?.map((exercise, exerciseIndex) => (
           <ExerciseSetCard
+            key={exercise.id}
             plan={plan}
             sets={exercise.sets}
             exerciseIndex={exerciseIndex}
@@ -69,34 +79,24 @@ function DayCard({ plan, day, dayIndex, theme, isMetric, setPlan }) {
         title="Delete Day"
         onPress={() => handleDeleteDay(day.id)}
       />
-    </View>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  baseText: {
-    fontSize: 20,
-  },
-  titleText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  logoText: {
-    fontSize: 50,
-  },
-  input: { width: 50 },
-  nameInput: { width: 50 },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
+  card: {
+    borderRadius: 8,
+    padding: 16,
     marginVertical: 8,
+  },
+  dayHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  nameInput: {
+    width: 200,
   },
 });
 

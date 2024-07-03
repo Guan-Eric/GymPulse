@@ -42,7 +42,7 @@ const FeedScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ paddingBottom: -50 }}>
         <FlatList
           numColumns={1}
           horizontal={false}

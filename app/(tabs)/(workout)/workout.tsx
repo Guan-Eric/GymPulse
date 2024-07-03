@@ -12,8 +12,12 @@ import {
   getDocs,
   deleteDoc,
 } from "firebase/firestore";
-import { Day } from "../../../components/types";
+import { Day, Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import DayCard from "../../../components/DayCard";
+import { useTheme } from "@rneui/themed";
+import { setDay } from "date-fns";
+import { getPlan } from "../../../backend/plan";
 
 function WorkoutScreen() {
   const currentDate = new Date();
@@ -23,14 +27,15 @@ function WorkoutScreen() {
   const hours = String(currentDate.getHours()).padStart(2, "0");
   const minutes = String(currentDate.getMinutes()).padStart(2, "0");
   const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
-  const [day, setDay] = useState<Day>();
+  const [plan, setPlan] = useState<Plan>();
   const [isDirty, setIsDirty] = useState(false);
   const [isMetric, setIsMetric] = useState(false);
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef(null);
   const startTimeRef = useRef(0);
-  const { userId, planId, dayId } = useLocalSearchParams();
+  const { dayIndex, planId, dayId } = useLocalSearchParams();
+  const { theme } = useTheme();
 
   const startStopwatch = () => {
     startTimeRef.current = Date.now() - time * 1000;
@@ -39,138 +44,20 @@ function WorkoutScreen() {
     }, 1000);
     setRunning(true);
   };
-
-  const fetchDayFromFirestore = async () => {
-    try {
-      const userDoc = await getDoc(
-        doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
-      );
-      setIsMetric(userDoc.data().metricUnits);
-      const dayDoc = await getDoc(
-        doc(
-          FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
-        )
-      );
-      const dayData = dayDoc.data();
-      const exercisesCollection = collection(dayDoc.ref, "Exercise");
-      const exercisesSnapshot = await getDocs(exercisesCollection);
-      const exercisesData = exercisesSnapshot.docs.map((exerciseDoc) =>
-        exerciseDoc.data()
-      );
-      dayData.exercises = exercisesData;
-      setDay(dayData as Day);
-    } catch (error) {
-      console.error("Error fetching day data:", error);
-    }
+  const fetchPlanFromFirestore = async () => {
+    setPlan(await getPlan(planId as string));
   };
-
-  useEffect(() => {
-    if (isDirty) {
-      handleSaveDay();
-      setIsDirty(false);
-    }
-  }, [day, isDirty]);
 
   useFocusEffect(
     useCallback(() => {
-      fetchDayFromFirestore();
+      fetchPlanFromFirestore();
     }, [])
   );
 
   useEffect(() => {
-    fetchDayFromFirestore();
+    fetchPlanFromFirestore();
     startStopwatch();
   }, []);
-  const setNameAndSave = (newName) => {
-    setDay({ ...day, name: newName });
-    setIsDirty(true);
-  };
-  const handleSaveDay = async () => {
-    const dayDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
-    );
-    updateDoc(dayDocRef, { name: day.name });
-
-    for (const exercise of day.exercises) {
-      const exerciseDocRef = doc(dayDocRef, `Exercise/${exercise.id}`);
-      await updateDoc(exerciseDocRef, {
-        name: exercise.name,
-        sets: exercise.sets,
-      });
-    }
-  };
-
-  const handleAddSet = async (dayId, exerciseId) => {
-    try {
-      const exerciseDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
-      );
-      const exerciseDocSnap = await getDoc(exerciseDocRef);
-
-      if (exerciseDocSnap.exists()) {
-        const currentSets = exerciseDocSnap.data().sets || [];
-        const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
-        await updateDoc(exerciseDocRef, { sets: newSets });
-
-        const updatedExercises = day.exercises.map((ex) =>
-          ex.id === exerciseId ? { ...ex, sets: newSets } : ex
-        );
-        setDay({ ...day, exercises: updatedExercises });
-        setIsDirty(true);
-      }
-    } catch (error) {
-      console.error("Error adding set:", error);
-    }
-  };
-
-  const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
-    try {
-      const exerciseDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
-      );
-      await deleteDoc(exerciseDocRef);
-
-      const updatedExercises = day.exercises.filter(
-        (exercise) => exercise.id !== exerciseId
-      );
-      setDay({ ...day, exercises: updatedExercises });
-      setIsDirty(true);
-    } catch (error) {
-      console.error("Error deleting exercise:", error);
-    }
-  };
-
-  const handleDeleteSet = async (
-    dayId: string,
-    exerciseId: string,
-    setIndex: number
-  ) => {
-    try {
-      const exerciseDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}/Exercise/${exerciseId}`
-      );
-      const exerciseDocSnap = await getDoc(exerciseDocRef);
-
-      if (exerciseDocSnap.exists()) {
-        const currentSets = exerciseDocSnap.data().sets || [];
-        const newSets = currentSets.filter((set, index) => index !== setIndex);
-        await updateDoc(exerciseDocRef, { sets: newSets });
-
-        const updatedExercises = day.exercises.map((ex) =>
-          ex.id === exerciseId ? { ...ex, sets: newSets } : ex
-        );
-        setDay({ ...day, exercises: updatedExercises });
-        setIsDirty(true);
-      }
-    } catch (error) {
-      console.error("Error deleting set:", error);
-    }
-  };
 
   const handleSaveWorkout = async () => {
     try {
@@ -180,7 +67,7 @@ function WorkoutScreen() {
           `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts`
         ),
         {
-          name: day.name,
+          name: plan?.days[dayIndex as string].name,
           date: formattedDateTime,
           duration: time,
           userId: FIREBASE_AUTH.currentUser.uid,
@@ -193,7 +80,7 @@ function WorkoutScreen() {
       );
       await updateDoc(workoutDoc, { id: docRef.id });
 
-      for (const exercise of day.exercises) {
+      for (const exercise of plan?.days[dayIndex as string].exercises) {
         const exerciseDocRef = await addDoc(
           collection(
             FIRESTORE_DB,
@@ -236,100 +123,6 @@ function WorkoutScreen() {
       { text: "Delete Workout", onPress: () => router.back() },
     ]);
 
-  const updateSets = (day, exerciseIndex, setIndex, property, value) => {
-    const newDay = {
-      ...day,
-      exercises: day.exercises.map((prevExercise, eIndex) =>
-        eIndex === exerciseIndex
-          ? {
-              ...prevExercise,
-              sets: prevExercise.sets.map((prevSet, sIndex) =>
-                sIndex === setIndex
-                  ? { ...prevSet, [property]: value }
-                  : prevSet
-              ),
-            }
-          : prevExercise
-      ),
-    };
-    setDay(newDay);
-    setIsDirty(true);
-  };
-
-  const renderSetInputs = (sets, exerciseIndex, day, exercise) => {
-    return (
-      <View>
-        <View style={styles.setRow}>
-          {!exercise.cardio && (
-            <View style={styles.setRow}>
-              <Text style={styles.baseText}>Reps</Text>
-              <Text style={styles.baseText}>Weight</Text>
-            </View>
-          )}
-          {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
-        </View>
-        {sets.map((set, setIndex) => (
-          <View key={setIndex} style={styles.setRow}>
-            <Text style={styles.baseText}>{`Set ${setIndex + 1}`}</Text>
-            {!exercise.cardio && (
-              <TextInput
-                keyboardType="numeric"
-                style={styles.input}
-                onChangeText={(newReps) =>
-                  updateSets(day, exerciseIndex, setIndex, "reps", newReps)
-                }
-                value={set.reps.toString()}
-              />
-            )}
-            {!exercise.cardio && <Text>x</Text>}
-            {!exercise.cardio && (
-              <TextInput
-                keyboardType="numeric"
-                style={styles.input}
-                onChangeText={(newWeight) =>
-                  updateSets(
-                    day,
-                    exerciseIndex,
-                    setIndex,
-                    "weight_duration",
-                    isMetric
-                      ? parseFloat(newWeight) * 2.205
-                      : parseFloat(newWeight)
-                  )
-                }
-                value={
-                  isMetric
-                    ? Math.floor(set.weight_duration / 2.205).toString()
-                    : Math.floor(set.weight_duration).toString()
-                }
-              />
-            )}
-            {!exercise.cardio && <Text>{isMetric ? "kg" : "lbs"}</Text>}
-            {exercise.cardio && (
-              <TextInput
-                keyboardType="numeric"
-                style={styles.input}
-                onChangeText={(newDuration) =>
-                  updateSets(
-                    day,
-                    exerciseIndex,
-                    setIndex,
-                    "weight_duration",
-                    newDuration
-                  )
-                }
-                value={set.weight_duration.toString()}
-              />
-            )}
-            <Button
-              title="Delete Set"
-              onPress={() => handleDeleteSet(day, exerciseIndex, setIndex)}
-            />
-          </View>
-        ))}
-      </View>
-    );
-  };
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -337,43 +130,17 @@ function WorkoutScreen() {
           {Math.floor(time / 60)}:{time % 60}
         </Text>
         <Button title="End Workout" onPress={handleEndWorkout} />
-        <Text style={styles.baseText}>{day?.name}</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(newName) => setNameAndSave(newName)}
-          value={day?.name}
-        />
         <ScrollView>
-          <View>
-            {day?.exercises &&
-              day?.exercises.map((exercise, exerciseIndex) => (
-                <View key={exercise.id}>
-                  <Text style={styles.baseText}>{exercise.name}</Text>
-                  <Button
-                    title="Delete Exercise"
-                    onPress={() => handleDeleteExercise(day.id, exercise.id)}
-                  />
-                  {renderSetInputs(exercise.sets, exerciseIndex, day, exercise)}
-                  <Button
-                    title={"Add Set"}
-                    onPress={() => handleAddSet(day.id, exercise.id)}
-                  />
-                </View>
-              ))}
-            <Button
-              title="Add Exercise"
-              onPress={() =>
-                router.push({
-                  pathname: "/(tabs)/(workout)/exercises",
-                  params: {
-                    dayId: dayId,
-                    planId: planId,
-                    route: "add",
-                  },
-                })
-              }
-            />
-          </View>
+          <DayCard
+            key={dayId as string}
+            plan={plan}
+            day={plan?.days[dayIndex as string]}
+            dayIndex={dayIndex}
+            theme={theme}
+            isMetric={isMetric}
+            setPlan={setPlan}
+            isWorkout={true}
+          />
         </ScrollView>
       </SafeAreaView>
     </View>

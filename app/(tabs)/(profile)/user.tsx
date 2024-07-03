@@ -54,7 +54,7 @@ function UserScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ paddingBottom: 200 }}>
         <Button
           style={{
             width: 50,
@@ -101,6 +101,7 @@ function UserScreen() {
                 showCommentIcon={true}
                 showUser={false}
                 tab={"(profile)"}
+                viewPost={false}
               />
             )}
             keyExtractor={(item) => item.id}

@@ -111,7 +111,35 @@ export async function savePlan(plan: Plan) {
     FIRESTORE_DB,
     `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
   );
-  updateDoc(planDocRef, { name: plan.name });
+  updateDoc(planDocRef, {
+    id: plan.id,
+    name: plan.name,
+    userId: FIREBASE_AUTH.currentUser.uid,
+  });
+
+  for (const dayKey in plan.days) {
+    const day = plan.days[dayKey];
+    const dayDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${day.id}`
+    );
+    updateDoc(dayDocRef, { id: day.id, name: day.name, planId: plan.id });
+    for (const exerciseKey in day.exercises) {
+      const exercise = day.exercises[exerciseKey];
+      const exerciseDocRef = doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${day.id}/Exercise/${exercise.id}`
+      );
+      console.log(exercise.sets);
+      updateDoc(exerciseDocRef, {
+        cardio: true,
+        dayId: day.id,
+        id: exercise.id,
+        name: exercise.name,
+        sets: exercise.sets,
+      });
+    }
+  }
 }
 
 export async function addDay(plan: Plan): Promise<Plan> {
