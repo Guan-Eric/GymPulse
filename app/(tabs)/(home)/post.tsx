@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, View, StyleSheet, ScrollView, Text } from "react-native";
+import {
+  Button,
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Input } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
@@ -63,66 +71,74 @@ function ViewPostScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
-        <ScrollView>
-          {post && (
-            <PostItem
-              post={post}
-              theme={theme}
-              navigateProfile={navigateProfile}
-              onToggleLike={handleToggleLike}
-              showCommentIcon={false}
-              showUser={true}
-              tab={"(home)"}
-              viewPost={true}
-              renderComments={() => (
-                <>
-                  {comments.map((item, index) => (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView>
+          <ScrollView>
+            {post && (
+              <PostItem
+                post={post}
+                theme={theme}
+                navigateProfile={navigateProfile}
+                onToggleLike={handleToggleLike}
+                showCommentIcon={false}
+                showUser={true}
+                tab={"(home)"}
+                viewPost={true}
+                renderComments={() => (
+                  <>
+                    {comments.map((item, index) => (
+                      <View
+                        key={index}
+                        style={{ flexDirection: "row", paddingLeft: 15 }}
+                      >
+                        <Text
+                          style={[
+                            styles.commentUserName,
+                            { color: theme.colors.black },
+                          ]}
+                        >
+                          {item.userName}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.comment,
+                            { color: theme.colors.black },
+                          ]}
+                        >
+                          {item.comment}
+                        </Text>
+                      </View>
+                    ))}
                     <View
-                      key={index}
-                      style={{ flexDirection: "row", paddingLeft: 15 }}
+                      style={{
+                        flexDirection: "row",
+                        paddingLeft: 15,
+                        paddingRight: 25,
+                      }}
                     >
-                      <Text
-                        style={[
-                          styles.commentUserName,
-                          { color: theme.colors.black },
-                        ]}
-                      >
-                        {item.userName}
-                      </Text>
-                      <Text
-                        style={[styles.comment, { color: theme.colors.black }]}
-                      >
-                        {item.comment}
-                      </Text>
+                      <Input
+                        containerStyle={{ width: 300 }}
+                        onChangeText={setComment}
+                        value={comment}
+                        placeholder="Comment here"
+                        autoCapitalize="none"
+                      />
+                      <Button
+                        disabled={comment === ""}
+                        title="Post"
+                        onPress={handleAddComment}
+                      />
                     </View>
-                  ))}
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      paddingLeft: 15,
-                      paddingRight: 25,
-                    }}
-                  >
-                    <Input
-                      containerStyle={{ width: 300 }}
-                      onChangeText={setComment}
-                      value={comment}
-                      placeholder="Comment here"
-                      autoCapitalize="none"
-                    />
-                    <Button
-                      disabled={comment === ""}
-                      title="Post"
-                      onPress={handleAddComment}
-                    />
-                  </View>
-                </>
-              )}
-            />
-          )}
-        </ScrollView>
-      </SafeAreaView>
+                  </>
+                )}
+              />
+            )}
+          </ScrollView>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
