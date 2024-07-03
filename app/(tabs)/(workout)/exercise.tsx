@@ -14,12 +14,15 @@ import { FIREBASE_STR, FIRESTORE_DB } from "../../../firebaseConfig";
 import { useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
 import { getDoc, doc } from "firebase/firestore";
+import ExerciseCard from "../../../components/ExerciseCard";
+import { useTheme } from "@rneui/themed";
 
 function ExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
-  const screenWidth = Dimensions.get("window").width;
   const { exerciseId } = useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
+
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -44,54 +47,13 @@ function ExerciseScreen() {
     fetchImages();
   }, []);
 
-  const instructions = exercise?.instructions.map((item, index) => (
-    <Text key={index}>{item}</Text>
-  ));
-  const secondaryMuscles = exercise?.secondaryMuscles.map((item, index) => (
-    <Text key={index}>{item}</Text>
-  ));
-
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
-        <FlatList
-          horizontal={true}
-          data={imageUrls}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Image
-              source={{
-                uri: item.uri,
-              }}
-              style={{
-                width: screenWidth,
-                height: screenWidth,
-                resizeMode: "cover",
-              }}
-            />
-          )}
-        />
-
-        <ScrollView>
-          <Text>{exercise?.name}</Text>
-          <Text>Equipment</Text>
-          <Text>{exercise?.equipment}</Text>
-          <Text>Secondary Muscles</Text>
-          {secondaryMuscles}
-          <Text>Level</Text>
-          <Text>{exercise?.level}</Text>
-          <Text>Instructions</Text>
-          {instructions}
-        </ScrollView>
+        {exercise && <ExerciseCard exercise={exercise} imageUrls={imageUrls} />}
       </SafeAreaView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default ExerciseScreen;
