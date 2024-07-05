@@ -8,7 +8,7 @@ import PlanCard from "../../../components/PlanCard";
 import EmptyPlanCard from "../../../components/EmptyPlanCard";
 import BodyPartCard from "../../../components/BodyPartCard";
 import { Plan } from "../../../components/types";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 const bodyParts = [
   { name: "Chest", key: "1" },
@@ -34,12 +34,18 @@ function PlanScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const { theme } = useTheme();
 
+  const fetchPlans = async () => {
+    setPlans(await getPlans());
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      setPlans(await getPlans());
-    };
-    fetchData();
+    fetchPlans();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchPlans();
+    }, [])
+  );
 
   const handleCreatePlan = async () => {
     const newPlan = await createPlan();
@@ -71,7 +77,7 @@ function PlanScreen() {
                     <PlanCard plan={item} theme={theme} />
                   </View>
                 ))}
-            <View style={styles.cardWrapper}>
+            <View key="empty-plan-card" style={styles.cardWrapper}>
               <EmptyPlanCard onPress={handleCreatePlan} />
             </View>
           </View>

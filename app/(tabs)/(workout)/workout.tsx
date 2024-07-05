@@ -98,7 +98,6 @@ function WorkoutScreen() {
         );
         await updateDoc(exerciseDoc, { id: exerciseDocRef.id });
       }
-      console.log(docRef.id);
       router.push({
         pathname: "/(tabs)/(workout)/create",
         params: {

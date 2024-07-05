@@ -130,9 +130,8 @@ export async function savePlan(plan: Plan) {
         FIRESTORE_DB,
         `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${day.id}/Exercise/${exercise.id}`
       );
-      console.log(exercise.sets);
       updateDoc(exerciseDocRef, {
-        cardio: true,
+        cardio: exercise.cardio,
         dayId: day.id,
         id: exercise.id,
         name: exercise.name,
@@ -140,6 +139,14 @@ export async function savePlan(plan: Plan) {
       });
     }
   }
+}
+
+export async function deletePlan(plan: Plan) {
+  const planDocRef = doc(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
+  );
+  deleteDoc(planDocRef);
 }
 
 export async function addDay(plan: Plan): Promise<Plan> {

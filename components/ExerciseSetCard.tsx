@@ -75,7 +75,11 @@ function ExerciseSetCard({
               </Text>
             </>
           )}
-          {exercise.cardio && <Text style={styles.baseText}>Duration</Text>}
+          {exercise.cardio && (
+            <Text style={[styles.baseText, { color: theme.colors.black }]}>
+              Duration
+            </Text>
+          )}
         </View>
         {sets?.map((set, setIndex) => (
           <View key={setIndex} style={styles.setRow}>
@@ -83,21 +87,29 @@ function ExerciseSetCard({
               {`Set ${setIndex + 1}`}
             </Text>
             {!exercise.cardio && (
-              <Input
-                keyboardType="numeric"
-                style={styles.input}
-                onChangeText={(newReps) =>
-                  updateSets(dayIndex, exerciseIndex, setIndex, "reps", newReps)
-                }
-                value={set.reps.toString()}
-              />
-            )}
-            {!exercise.cardio && (
               <>
+                <Input
+                  keyboardType="numeric"
+                  containerStyle={styles.inputContainer}
+                  inputContainerStyle={styles.inputRoundedContainer}
+                  inputStyle={styles.input}
+                  onChangeText={(newReps) =>
+                    updateSets(
+                      dayIndex,
+                      exerciseIndex,
+                      setIndex,
+                      "reps",
+                      newReps
+                    )
+                  }
+                  value={set.reps.toString()}
+                />
                 <Text style={{ color: theme.colors.black }}>x</Text>
                 <Input
                   keyboardType="numeric"
-                  style={styles.input}
+                  containerStyle={styles.inputContainer}
+                  inputContainerStyle={styles.inputRoundedContainer}
+                  inputStyle={styles.input}
                   onChangeText={(newWeight) =>
                     updateSets(
                       dayIndex,
@@ -123,7 +135,9 @@ function ExerciseSetCard({
             {exercise.cardio && (
               <Input
                 keyboardType="numeric"
-                style={styles.input}
+                containerStyle={styles.inputContainer}
+                inputContainerStyle={styles.inputRoundedContainer}
+                inputStyle={styles.input}
                 onChangeText={(newDuration) =>
                   updateSets(
                     dayIndex,
@@ -172,16 +186,27 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   setRow: {
+    padding: 10,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
+    justifyContent: "space-around",
   },
   baseText: {
     fontSize: 18,
   },
+  inputContainer: {
+    width: 70,
+    height: 40,
+  },
+  inputRoundedContainer: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    overflow: "hidden",
+  },
   input: {
-    width: 60,
+    textAlign: "center",
+    fontSize: 16,
   },
 });
 

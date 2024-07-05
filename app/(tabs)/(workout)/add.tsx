@@ -68,7 +68,7 @@ function AddExerciseScreen() {
       name: exercise.name,
       dayId: dayId,
       sets: [{ reps: 0, weight_duration: 0 }],
-      cardio: exercise.category == "cardio",
+      cardio: exercise.category === "cardio",
     });
     const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });

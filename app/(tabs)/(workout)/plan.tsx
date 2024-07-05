@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Plan } from "../../../components/types";
-import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
-import { addDay, getPlan, savePlan } from "../../../backend/plan";
+import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
 
 function ViewPlanScreen() {
@@ -42,9 +42,17 @@ function ViewPlanScreen() {
     setPlan(await addDay(plan));
   };
 
+  const handleDeletePlan = async () => {
+    deletePlan(plan);
+    router.back();
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView style={{ paddingBottom: 50 }}>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      behavior={Platform.OS === "ios" ? "position" : "height"}
+    >
+      <SafeAreaView style={{ paddingBottom: 95 }}>
         <Input
           containerStyle={styles.nameInput}
           inputContainerStyle={styles.nameInput}
@@ -66,9 +74,10 @@ function ViewPlanScreen() {
             />
           ))}
           <Button type="clear" title="Add Day" onPress={handleAddDay} />
+          <Button type="solid" title="Delete Plan" onPress={handleDeletePlan} />
         </ScrollView>
       </SafeAreaView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
