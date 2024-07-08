@@ -10,9 +10,9 @@ function LoginStackLayout(props) {
         name="signin"
         options={{ headerShown: false, gestureEnabled: false }}
       />
-
+      <Stack.Screen name="signup" options={{ headerShown: false }} />
       <Stack.Screen
-        name="signup"
+        name="presignup"
         options={{ headerShown: false, gestureEnabled: false }}
       />
     </Stack>

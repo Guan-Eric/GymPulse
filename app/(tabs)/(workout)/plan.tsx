@@ -49,10 +49,13 @@ function ViewPlanScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
-      behavior={Platform.OS === "ios" ? "position" : "height"}
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+      }}
+      behavior="padding"
     >
-      <SafeAreaView style={{ paddingBottom: 95 }}>
+      <SafeAreaView style={{ paddingBottom: 35 }}>
         <Input
           containerStyle={styles.nameInput}
           inputContainerStyle={styles.nameInput}
@@ -60,22 +63,28 @@ function ViewPlanScreen() {
           onChangeText={handleSaveName}
           value={plan?.name}
         />
-        <ScrollView>
-          {plan?.days?.map((day, dayIndex) => (
-            <DayCard
-              key={day.id}
-              plan={plan}
-              day={day}
-              dayIndex={dayIndex}
-              theme={theme}
-              isMetric={isMetric}
-              setPlan={setPlan}
-              isWorkout={false}
+        {plan?.days.length > 0 ? (
+          <ScrollView>
+            {plan?.days?.map((day, dayIndex) => (
+              <DayCard
+                key={day.id}
+                plan={plan}
+                day={day}
+                dayIndex={dayIndex}
+                theme={theme}
+                isMetric={isMetric}
+                setPlan={setPlan}
+                isWorkout={false}
+              />
+            ))}
+            <Button type="clear" title="Add Day" onPress={handleAddDay} />
+            <Button
+              type="solid"
+              title="Delete Plan"
+              onPress={handleDeletePlan}
             />
-          ))}
-          <Button type="clear" title="Add Day" onPress={handleAddDay} />
-          <Button type="solid" title="Delete Plan" onPress={handleDeletePlan} />
-        </ScrollView>
+          </ScrollView>
+        ) : null}
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

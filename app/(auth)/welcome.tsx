@@ -24,7 +24,7 @@ function WelcomeScreen() {
             size="lg"
             buttonStyle={styles.signUpButton}
             title="Sign Up"
-            onPress={() => router.push("/(auth)/signup")}
+            onPress={() => router.push("/(auth)/presignup")}
           />
 
           <View style={{ alignItems: "center", paddingTop: 40 }}>

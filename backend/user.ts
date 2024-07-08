@@ -24,10 +24,19 @@ export async function addUser() {
       metricUnits: false,
       bio: "",
       id: FIREBASE_AUTH.currentUser.uid,
+      prefixes: [],
     });
   } catch (error) {
     console.error("Error creating user:", error);
   }
+}
+
+function generatePrefixes(name) {
+  const prefixes = [];
+  for (let i = 1; i <= name.length; i++) {
+    prefixes.push(name.substring(0, i).toLowerCase());
+  }
+  return prefixes;
 }
 
 export async function getUser(userId: string): Promise<User> {
