@@ -8,27 +8,13 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
-import { ActivityIndicator } from "react-native-paper";
 import { useTheme, Button } from "@rneui/themed";
-import {
-  collection,
-  onSnapshot,
-  setDoc,
-  query,
-  orderBy,
-  deleteDoc,
-  doc,
-  updateDoc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 import { getUser, getUserFollowing, toggleFollow } from "../../../backend/user";
-import PostItem from "../../../components/PostItem";
 import { getUserPosts } from "../../../backend/post";
+import PostItem from "../../../components/PostItem";
 
 function ViewProfileScreen() {
   const { theme } = useTheme();
@@ -64,54 +50,52 @@ function ViewProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView style={{ paddingBottom: 50 }}>
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingBottom: 5,
-              paddingLeft: 10,
-            }}
-          >
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../../assets/profile.png")}
-            />
-            <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {user?.name}
-            </Text>
-
-            {following ? (
-              <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
-            ) : (
-              <Button size="sm" title="Follow" onPress={handleToggleFollow} />
-            )}
-          </View>
-          {user?.bio != "" ? (
-            <Text style={[styles.bio, { color: theme.colors.black }]}>
-              {user?.bio}
-            </Text>
-          ) : null}
-          <FlatList
-            numColumns={1}
-            horizontal={false}
-            data={posts}
-            renderItem={({ item }) => (
-              <PostItem
-                post={item}
-                theme={theme}
-                navigateProfile={null}
-                onToggleLike={null}
-                renderComments={false}
-                showCommentIcon={true}
-                showUser={false}
-                tab={"(profile)"}
-                viewPost={false}
-              />
-            )}
-            keyExtractor={(item) => item.id}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingBottom: 5,
+            paddingLeft: 10,
+          }}
+        >
+          <Image
+            style={{ width: 40, height: 40 }}
+            source={require("../../../assets/profile.png")}
           />
+          <Text style={[styles.userName, { color: theme.colors.black }]}>
+            {user?.username}
+          </Text>
+
+          {following ? (
+            <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
+          ) : (
+            <Button size="sm" title="Follow" onPress={handleToggleFollow} />
+          )}
         </View>
+        {user?.bio != "" ? (
+          <Text style={[styles.bio, { color: theme.colors.black }]}>
+            {user?.bio}
+          </Text>
+        ) : null}
+        <FlatList
+          numColumns={1}
+          horizontal={false}
+          data={posts}
+          renderItem={({ item }) => (
+            <PostItem
+              post={item}
+              theme={theme}
+              navigateProfile={null}
+              onToggleLike={null}
+              renderComments={false}
+              showCommentIcon={true}
+              showUser={false}
+              tab={"(profile)"}
+              viewPost={false}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+        />
       </SafeAreaView>
     </View>
   );

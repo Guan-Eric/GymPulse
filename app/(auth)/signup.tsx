@@ -3,17 +3,29 @@ import { View, SafeAreaView, Text, Image } from "react-native";
 import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Button, Input } from "@rneui/themed";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { register } from "../../backend/auth";
 
 function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
   const [password, onChangePassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { username, name, height, weight, isMetric } = useLocalSearchParams();
 
   const signUp = async () => {
     setLoading(true);
-    if (register(email, password)) setLoading(false);
+    if (
+      register(
+        email,
+        password,
+        username as string,
+        name as string,
+        height as string,
+        weight as string,
+        isMetric as string
+      )
+    )
+      setLoading(false);
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

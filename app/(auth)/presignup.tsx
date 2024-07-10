@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -10,6 +10,7 @@ import {
 import { Button, Input, Switch } from "@rneui/themed";
 import { router } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
+import { isUsernameExists } from "../../backend/user";
 
 const sexOptions = [
   { label: "Male", value: "male" },
@@ -20,22 +21,42 @@ const sexOptions = [
 function PreSignUpScreen() {
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [sex, setSex] = useState("");
   const [height, setHeight] = useState("");
   const [weight, setWeight] = useState("");
   const [isMetric, setIsMetric] = useState(true);
+  const [isUsernameValid, setIsUsernameValid] = useState(true);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
+  const [isButtonDisabled, setIsButtonDiasabled] = useState(true);
 
   const handleNext = () => {
     router.push({
       pathname: "/signup",
-      params: { username, name, age, sex, height, weight, isMetric },
+      params: {
+        username,
+        name,
+        height,
+        weight,
+        isMetric: isMetric.toString(),
+      },
     });
   };
 
-  const isButtonDisabled =
-    !username || !name || !age || !sex || !height || !weight;
+  useEffect(() => {
+    setIsButtonDiasabled(!(isUsernameValid && name && height && weight));
+    console.log(isButtonDisabled);
+  }, [username, name, height, weight]);
 
+  const checkUsername = async (username: string) => {
+    setUsername(username);
+    if (username.length > 3) {
+      const exists = await isUsernameExists(username);
+      setIsUsernameValid(!exists);
+      setUsernameErrorMessage(exists ? "Username is already taken." : "");
+    } else {
+      setIsUsernameValid(false);
+      setUsernameErrorMessage("Username must be at least 4 characters long.");
+    }
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -43,46 +64,30 @@ function PreSignUpScreen() {
           <Text style={styles.titleText}>Sign Up</Text>
           <View>
             <Input
+              containerStyle={styles.inputContainer}
               style={styles.input}
               placeholder="Username"
-              onChangeText={(text) => setUsername(text)}
+              onChangeText={(text) => checkUsername(text)}
               autoCapitalize="none"
             />
+            {usernameErrorMessage ? (
+              <Text style={styles.errorText}>{usernameErrorMessage}</Text>
+            ) : null}
             <Input
+              containerStyle={styles.inputContainer}
               style={styles.input}
               placeholder="Name"
               onChangeText={(text) => setName(text)}
             />
             <Input
-              style={styles.input}
-              placeholder="Age"
-              keyboardType="numeric"
-              onChangeText={(text) => setAge(text)}
-            />
-            <View style={styles.pickerContainer}>
-              <Text style={styles.pickerLabel}>Gender</Text>
-              <Picker
-                style={styles.picker}
-                selectedValue={sex}
-                onValueChange={(itemValue) => setSex(itemValue)}
-              >
-                <Picker.Item label="Select Sex" value="" />
-                {sexOptions.map((option) => (
-                  <Picker.Item
-                    key={option.value}
-                    label={option.label}
-                    value={option.value}
-                  />
-                ))}
-              </Picker>
-            </View>
-            <Input
+              containerStyle={styles.inputContainer}
               style={styles.input}
               placeholder={isMetric ? "Height (cm)" : "Height (in)"}
               keyboardType="numeric"
               onChangeText={(text) => setHeight(text)}
             />
             <Input
+              containerStyle={styles.inputContainer}
               style={styles.input}
               placeholder={isMetric ? "Weight (kg)" : "Weight (lbs)"}
               keyboardType="numeric"
@@ -139,6 +144,9 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_400Regular",
     fontSize: 20,
   },
+  inputContainer: {
+    width: 300,
+  },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -150,22 +158,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Lato_400Regular",
   },
-  pickerContainer: {
-    borderColor: "white",
-    borderWidth: 1,
-    borderRadius: 10,
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    marginLeft: 10,
+    marginTop: -10,
     marginBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "#333",
-  },
-  pickerLabel: {
-    color: "white",
-    fontSize: 18,
-    fontFamily: "Lato_400Regular",
-    marginBottom: 5,
-  },
-  picker: {
-    color: "white",
     fontFamily: "Lato_400Regular",
   },
 });

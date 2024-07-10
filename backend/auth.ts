@@ -18,11 +18,16 @@ export async function logIn(email: string, password: string): Promise<boolean> {
 
 export async function register(
   email: string,
-  password: string
+  password: string,
+  username: string,
+  name: string,
+  height: string,
+  weight: string,
+  isMetric: string
 ): Promise<boolean> {
   try {
     await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-    addUser();
+    addUser(username, name, height, weight, isMetric);
   } catch (error) {
     console.error(error);
     alert("Sign in failed: " + error.message);

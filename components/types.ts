@@ -1,7 +1,13 @@
 export interface User {
+  username: string;
   name: string;
   bio: string;
   id: string;
+  email: string;
+  height: string;
+  weight: string;
+  metricUnits: boolean;
+  darkMode: boolean;
 }
 
 export interface Post {

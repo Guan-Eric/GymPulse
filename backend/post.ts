@@ -75,7 +75,7 @@ export async function getUserPost(
       caption: userPostSnapshot.data().caption,
       like: userLikeSnapshot.exists(),
       numLikes: numLikesSnapshot.data().count,
-      userName: userDocSnapshot.data().name,
+      userName: userDocSnapshot.data().username,
       workoutId: userPostSnapshot.data().workoutId,
       date: userPostSnapshot.data().date,
     };
@@ -169,7 +169,7 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
 
           return {
             ...postData,
-            userName: userData.name,
+            userName: userData.username,
             like: userLikeSnapshot.exists(),
             numLikes: numLikesSnapshot.data().count,
           };
@@ -240,7 +240,7 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
 
         return {
           ...postData,
-          userName: userData.name,
+          userName: userData.username,
           like: userLikeSnapshot.exists(),
           numLikes: numLikesSnapshot.data().count,
         };
@@ -255,5 +255,5 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
 async function fetchCommentUserName(userId) {
   const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
   const userDocSnapshot = await getDoc(userDocRef);
-  return userDocSnapshot.data().name;
+  return userDocSnapshot.data().username;
 }

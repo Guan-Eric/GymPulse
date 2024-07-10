@@ -63,7 +63,7 @@ function ViewProfileScreen() {
             source={require("../../../assets/profile.png")}
           />
           <Text style={[styles.userName, { color: theme.colors.black }]}>
-            {user?.name}
+            {user?.username}
           </Text>
 
           {following ? (
