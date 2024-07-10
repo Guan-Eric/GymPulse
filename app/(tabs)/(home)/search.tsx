@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, Text } from "react-native";
+import { SafeAreaView, View, FlatList, Text, Pressable } from "react-native";
 import { SearchBar, useTheme } from "@rneui/themed";
 import { query, collection, where, limit, getDocs } from "firebase/firestore";
-import { FIRESTORE_DB } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
+import { router } from "expo-router";
 
 function SearchScreen() {
   const [search, setSearch] = useState("");
@@ -10,7 +11,6 @@ function SearchScreen() {
   const { theme } = useTheme();
 
   async function searchUser(searchText: string) {
-    console.log(searchText);
     if (searchText === "") {
       setResults([]);
       return;
@@ -18,10 +18,9 @@ function SearchScreen() {
 
     try {
       const usersQuery = query(
-        collection(FIRESTORE_DB, "users"),
-        where("name", ">=", searchText),
-        where("name", "<=", searchText + "\uf8ff"),
-        limit(5)
+        collection(FIRESTORE_DB, "Users"),
+        where("prefixes", "array-contains", searchText),
+        limit(10)
       );
 
       const querySnapshot = await getDocs(usersQuery);
@@ -36,19 +35,30 @@ function SearchScreen() {
     }
   }
 
+  const navigateProfile = (userId) => {
+    if (userId === FIREBASE_AUTH.currentUser?.uid) {
+      router.push("/(tabs)/(profile)/user");
+    } else {
+      router.push({
+        pathname: "/(tabs)/(home)/profile",
+        params: { userId: userId },
+      });
+    }
+  };
+
   useEffect(() => {
     searchUser(search);
   }, [search]);
 
   const renderItem = ({ item }) => (
-    <View
+    <Pressable
+      onPress={() => navigateProfile(item.id)}
       style={{
         padding: 10,
-        borderBottomWidth: 1,
       }}
     >
-      <Text style={{ color: theme.colors.black }}>{item.name}</Text>
-    </View>
+      <Text style={{ color: theme.colors.black }}>{item.username}</Text>
+    </Pressable>
   );
 
   return (
