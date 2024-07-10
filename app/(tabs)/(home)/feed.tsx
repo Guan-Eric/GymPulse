@@ -49,15 +49,20 @@ const FeedScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView style={{ paddingBottom: -50 }}>
+      <SafeAreaView>
         <View
           style={{
+            paddingLeft: 25,
+            paddingRight: 25,
+            paddingBottom: 10,
             flexDirection: "row",
             alignItems: "center",
-            alignContent: "space-between",
+            justifyContent: "space-between",
           }}
         >
-          <Text style={{ color: theme.colors.black }}>Feed</Text>
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            Feed
+          </Text>
           <Pressable
             onPress={() =>
               router.push({
@@ -65,7 +70,7 @@ const FeedScreen: React.FC = () => {
               })
             }
           >
-            <Icon name="magnify" type="material-community" />
+            <Icon size={30} name="magnify" type="material-community" />
           </Pressable>
         </View>
         <FlatList
@@ -93,3 +98,11 @@ const FeedScreen: React.FC = () => {
 };
 
 export default FeedScreen;
+
+const styles = StyleSheet.create({
+  title: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 32,
+    fontWeight: "bold",
+  },
+});
