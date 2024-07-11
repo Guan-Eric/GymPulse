@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    fontFamily: "Lato_700Bold",
     fontWeight: "bold",
     marginBottom: 16,
   },

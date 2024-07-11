@@ -65,8 +65,6 @@ export async function getUserPost(
     );
 
     const numLikesSnapshot = await getCountFromServer(numLikesCollection);
-    const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
-    const userDocSnapshot = await getDoc(userDocRef);
 
     const userPost: Post = {
       id: postId,
@@ -75,7 +73,6 @@ export async function getUserPost(
       caption: userPostSnapshot.data().caption,
       like: userLikeSnapshot.exists(),
       numLikes: numLikesSnapshot.data().count,
-      userName: userDocSnapshot.data().username,
       workoutId: userPostSnapshot.data().workoutId,
       date: userPostSnapshot.data().date,
     };

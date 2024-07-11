@@ -8,6 +8,7 @@ export interface User {
   weight: string;
   metricUnits: boolean;
   darkMode: boolean;
+  url: string;
 }
 
 export interface Post {
@@ -15,7 +16,6 @@ export interface Post {
   url: string;
   userId: string;
   caption: string;
-  userName: string;
   like: boolean;
   numLikes: number;
   workoutId: string;

@@ -5,6 +5,8 @@ import { ScreenWidth } from "@rneui/base";
 import { router } from "expo-router";
 import TruncatedText from "./TruncatedText";
 import { format } from "date-fns";
+import { getUser } from "../backend/user";
+import { User } from "./types";
 
 const PostItem = ({
   post,
@@ -21,6 +23,18 @@ const PostItem = ({
     new Date(post.date),
     "MMMM do, yyyy 'at' h:mm a"
   );
+
+  const [user, setUser] = useState<User>();
+
+  async function fetchUser(userId: string) {
+    const fetchedUser = await getUser(post.userId);
+    setUser(fetchedUser);
+  }
+
+  useEffect(() => {
+    fetchUser(post.userId);
+  }, []);
+
   return (
     <View style={{ paddingBottom: 20 }}>
       {showUser ? (
@@ -35,11 +49,11 @@ const PostItem = ({
         >
           <Image
             style={{ width: 40, height: 40 }}
-            source={require("../assets/profile.png")}
+            source={{ uri: user?.url }}
           />
           <View style={{ flexDirection: "column" }}>
             <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {post.userName}
+              {user?.username}
             </Text>
             <Text style={[styles.workoutText, { color: "gray" }]}>
               did a workout on {formattedDate}
