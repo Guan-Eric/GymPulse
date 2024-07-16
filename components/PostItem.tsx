@@ -60,7 +60,16 @@ const PostItem = ({
             </Text>
           </View>
         </Pressable>
-      ) : null}
+      ) : (
+        <Text
+          style={[
+            styles.workoutText,
+            { color: "gray", alignSelf: "flex-end", paddingRight: 15 },
+          ]}
+        >
+          {formattedDate}
+        </Text>
+      )}
       <Pressable
         onPress={
           !viewPost

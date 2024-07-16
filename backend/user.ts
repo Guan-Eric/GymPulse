@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -9,7 +10,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_STR, FIRESTORE_DB } from "../firebaseConfig";
 import { Post, User } from "../components/types";
 
 export async function addUser(
@@ -79,15 +80,74 @@ export async function toggleFollow(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
     );
+    const followerDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${userId}/Followers/${FIREBASE_AUTH.currentUser.uid}`
+    );
     if (following) {
       await deleteDoc(followingDocRef);
+      await deleteDoc(followerDocRef);
     } else {
       await setDoc(followingDocRef, {});
+      await setDoc(followerDocRef, {});
     }
     return !following;
   } catch (error) {
     console.error("Error toggling like:", error);
     return !following;
+  }
+}
+
+export async function sendFollowRequest(userId: string) {
+  try {
+    const followRequestsDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${userId}/FollowRequests/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    await setDoc(followRequestsDocRef, { status: "pending" });
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const dateDay = String(currentDate.getDate()).padStart(2, "0");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
+
+    const notificationsCollection = collection(
+      FIRESTORE_DB,
+      `Users/${userId}/Notifications/`
+    );
+    await addDoc(notificationsCollection, {
+      type: "followRequest",
+      timestamp: formattedDateTime,
+    });
+  } catch (error) {
+    console.error("Error sending follow request:", error);
+  }
+}
+
+export async function handleFollowRequest(
+  userId: string,
+  notificationId: string,
+  accepted: boolean
+) {
+  try {
+    const followRequestsDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/FollowRequests/${userId}`
+    );
+    const notificationDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Notifications/${notificationId}`
+    );
+    deleteDoc(notificationDocRef);
+    deleteDoc(followRequestsDocRef);
+
+    if (accepted) {
+    }
+  } catch (error) {
+    console.error("Error handling follow request:", error);
   }
 }
 

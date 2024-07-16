@@ -73,7 +73,7 @@ function PlanScreen() {
             {plans.length == 0
               ? null
               : plans.map((item) => (
-                  <View key={item.id} style={styles.cardWrapper}>
+                  <View style={styles.cardWrapper}>
                     <PlanCard plan={item} theme={theme} />
                   </View>
                 ))}

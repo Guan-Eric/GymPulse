@@ -54,24 +54,20 @@ function UserScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView style={{ paddingBottom: 200 }}>
-        <Button
+      <SafeAreaView style={{ paddingBottom: 70 }}>
+        <View
           style={{
-            width: 50,
-            alignSelf: "flex-end",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingLeft: 20,
+            paddingRight: 10,
           }}
-          type="clear"
-          onPress={() => router.push("/(tabs)/(profile)/settings")}
         >
-          <Icon name="cog-outline" type="material-community" />
-        </Button>
-        <View>
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
-
-              paddingLeft: 10,
             }}
           >
             <Image
@@ -82,6 +78,14 @@ function UserScreen() {
               {user?.name}
             </Text>
           </View>
+          <Button
+            type="clear"
+            onPress={() => router.push("/(tabs)/(profile)/settings")}
+          >
+            <Icon size={32} name="cog-outline" type="material-community" />
+          </Button>
+        </View>
+        <View>
           {user?.bio != "" ? (
             <Text style={[styles.bio, { color: theme.colors.black }]}>
               {user?.bio}

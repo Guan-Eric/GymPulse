@@ -11,7 +11,7 @@ import { router, useFocusEffect } from "expo-router";
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
-
+  const [isNotification, setIsNotification] = useState(true);
   async function fetchFeed() {
     try {
       const feed = await getFeed();
@@ -53,7 +53,7 @@ const FeedScreen: React.FC = () => {
         <View
           style={{
             paddingLeft: 25,
-            paddingRight: 25,
+            paddingRight: 10,
             paddingBottom: 10,
             flexDirection: "row",
             alignItems: "center",
@@ -63,15 +63,36 @@ const FeedScreen: React.FC = () => {
           <Text style={[styles.title, { color: theme.colors.black }]}>
             Feed
           </Text>
-          <Pressable
-            onPress={() =>
-              router.push({
-                pathname: "/(tabs)/(home)/search",
-              })
-            }
-          >
-            <Icon size={30} name="magnify" type="material-community" />
-          </Pressable>
+          <View style={{ flexDirection: "row" }}>
+            <Button
+              type="clear"
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/(home)/notification",
+                })
+              }
+            >
+              {isNotification ? (
+                <Icon
+                  size={32}
+                  name="bell-badge-outline"
+                  type="material-community"
+                />
+              ) : (
+                <Icon size={32} name="bell-outline" type="material-community" />
+              )}
+            </Button>
+            <Button
+              type="clear"
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/(home)/search",
+                })
+              }
+            >
+              <Icon size={32} name="magnify" type="material-community" />
+            </Button>
+          </View>
         </View>
         <FlatList
           numColumns={1}
