@@ -63,28 +63,25 @@ function ViewPlanScreen() {
           onChangeText={handleSaveName}
           value={plan?.name}
         />
-        {plan?.days.length > 0 ? (
-          <ScrollView>
-            {plan?.days?.map((day, dayIndex) => (
-              <DayCard
-                key={day.id}
-                plan={plan}
-                day={day}
-                dayIndex={dayIndex}
-                theme={theme}
-                isMetric={isMetric}
-                setPlan={setPlan}
-                isWorkout={false}
-              />
-            ))}
-            <Button type="clear" title="Add Day" onPress={handleAddDay} />
-            <Button
-              type="solid"
-              title="Delete Plan"
-              onPress={handleDeletePlan}
-            />
-          </ScrollView>
-        ) : null}
+
+        <ScrollView>
+          {plan?.days.length > 0
+            ? plan?.days?.map((day, dayIndex) => (
+                <DayCard
+                  key={day.id}
+                  plan={plan}
+                  day={day}
+                  dayIndex={dayIndex}
+                  theme={theme}
+                  isMetric={isMetric}
+                  setPlan={setPlan}
+                  isWorkout={false}
+                />
+              ))
+            : null}
+          <Button type="clear" title="Add Day" onPress={handleAddDay} />
+          <Button type="solid" title="Delete Plan" onPress={handleDeletePlan} />
+        </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

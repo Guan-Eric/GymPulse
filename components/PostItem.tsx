@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Pressable, Image, Text, StyleSheet } from "react-native";
-import { CheckBox, Icon } from "@rneui/themed";
+import { Avatar, CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { router } from "expo-router";
 import TruncatedText from "./TruncatedText";
@@ -47,10 +47,7 @@ const PostItem = ({
           }}
           onPress={() => navigateProfile(post.userId)}
         >
-          <Image
-            style={{ width: 40, height: 40 }}
-            source={{ uri: user?.url }}
-          />
+          <Avatar rounded size={40} source={{ uri: user?.url }} />
           <View style={{ flexDirection: "column" }}>
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.username}

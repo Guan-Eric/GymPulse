@@ -28,7 +28,7 @@ export async function toggleLike(post: Post): Promise<Post> {
       await deleteDoc(likeRef);
     } else {
       await setDoc(likeRef, {});
-      addNotification(post.userId, "like");
+      addNotification(post.userId, "like", post.id);
     }
 
     const updatedPost = {
@@ -134,7 +134,7 @@ export async function addComment(comment: string, post: Post) {
     await updateDoc(commentDoc, {
       id: commentDocRef.id,
     });
-    addNotification(post.userId, "comment");
+    addNotification(post.userId, "comment", post.id);
   } catch (error) {
     console.error("Error posting comment:", error);
   }

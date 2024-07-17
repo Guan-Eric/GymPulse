@@ -8,19 +8,26 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme, Button } from "@rneui/themed";
+import { useTheme, Button, Avatar } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
-import { getUser, getUserFollowing, toggleFollow } from "../../../backend/user";
+import {
+  getUser,
+  getUserFollowing,
+  removeFollowRequest,
+  sendFollowRequest,
+  toggleFollow,
+} from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 function ViewProfileScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
-  const [following, setFollowing] = useState<boolean>();
+  const [following, setFollowing] = useState("");
   const [loading, setLoading] = useState(true);
 
   const { userId } = useLocalSearchParams();
@@ -44,7 +51,16 @@ function ViewProfileScreen() {
   }, []);
 
   const handleToggleFollow = async () => {
-    setFollowing(await toggleFollow(userId as string, following));
+    if (following == "following") {
+      await toggleFollow(userId as string, FIREBASE_AUTH.currentUser.uid, true);
+      setFollowing("notFollowing");
+    } else if (following == "notFollowing") {
+      await sendFollowRequest(userId as string);
+      setFollowing("requested");
+    } else {
+      await removeFollowRequest(userId as string);
+      setFollowing("notFollowing");
+    }
   };
 
   return (
@@ -58,10 +74,7 @@ function ViewProfileScreen() {
             paddingLeft: 10,
           }}
         >
-          <Image
-            style={{ width: 40, height: 40 }}
-            source={require("../../../assets/profile.png")}
-          />
+          <Avatar rounded size={40} source={{ uri: user?.url }} />
           <Text style={[styles.userName, { color: theme.colors.black }]}>
             {user?.username}
           </Text>

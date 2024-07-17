@@ -63,13 +63,24 @@ export async function getUser(userId: string): Promise<User> {
   }
 }
 
-export async function getUserFollowing(userId: string): Promise<boolean> {
+export async function getUserFollowing(userId: string): Promise<string> {
   const followingDocRef = doc(
     FIRESTORE_DB,
     `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
   );
   const followingSnapshot = await getDoc(followingDocRef);
-  return followingSnapshot.exists();
+  const followRequestsDocRef = doc(
+    FIRESTORE_DB,
+    `Users/${userId}/FollowRequests/${FIREBASE_AUTH.currentUser.uid}`
+  );
+  const followRequestsSnapshot = await getDoc(followRequestsDocRef);
+  if (followingSnapshot.exists()) {
+    return "following";
+  } else if (followRequestsSnapshot.exists()) {
+    return "requested";
+  } else {
+    return "notFollowing";
+  }
 }
 
 export async function toggleFollow(
@@ -122,7 +133,19 @@ export async function sendFollowRequest(userId: string) {
   }
 }
 
-export function handleFollowRequest(userId: string, accepted: boolean) {
+export async function removeFollowRequest(userId: string) {
+  try {
+    const followRequestsDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${userId}/FollowRequests/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    deleteDoc(followRequestsDocRef);
+  } catch (error) {
+    console.error("Error removing follow request:", error);
+  }
+}
+
+export function answerFollowRequest(userId: string, accepted: boolean) {
   try {
     const followRequestsDocRef = doc(
       FIRESTORE_DB,
@@ -146,17 +169,23 @@ export async function getFollowRequests() {
     );
     const q = query(followRequestsRef, orderBy("date", "desc"));
     const snapshot = await getDocs(q);
-    const requestsList = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      username: getUser(doc.id),
-      ...doc.data(),
-    }));
+    const requestsList = await Promise.all(
+      snapshot.docs.map(async (doc) => ({
+        id: doc.id,
+        username: (await getUser(doc.id)).username,
+        date: doc.data().date as string,
+      }))
+    );
     return requestsList;
   } catch (error) {
     console.error("Error fetching follow requests:", error);
   }
 }
-export async function addNotification(userId: string, type: string) {
+export async function addNotification(
+  userId: string,
+  type: string,
+  postId: string
+) {
   try {
     const notificationsCollectionRef = collection(
       FIRESTORE_DB,
@@ -174,6 +203,7 @@ export async function addNotification(userId: string, type: string) {
       userId: FIREBASE_AUTH.currentUser.uid,
       type: type,
       date: formattedDateTime,
+      postId: postId,
     });
     updateDoc(notificationDocRef, { id: notificationDocRef.id });
   } catch (error) {
@@ -189,11 +219,16 @@ export async function getNotifications() {
     );
     const q = query(notificationsRef, orderBy("date", "desc"));
     const snapshot = await getDocs(q);
-    const notificationsList = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      username: getUser(doc.id),
-      ...doc.data(),
-    }));
+    const notificationsList = await Promise.all(
+      snapshot.docs.map(async (doc) => ({
+        id: doc.id,
+        username: (await getUser(doc.data().userId)).username,
+        date: doc.data().date as string,
+        userId: doc.data().userId as string,
+        type: doc.data().type as string,
+        postId: doc.data().postId as string,
+      }))
+    );
     return notificationsList;
   } catch (error) {
     console.error("Error fetching notification:", error);

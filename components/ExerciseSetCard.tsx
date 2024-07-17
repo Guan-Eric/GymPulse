@@ -65,7 +65,7 @@ function ExerciseSetCard({
       </View>
       <View>
         <View style={styles.setHeader}>
-          {!exercise.cardio && (
+          {!exercise.cardio ? (
             <>
               <Text style={[styles.baseText, { color: theme.colors.black }]}>
                 Reps
@@ -74,8 +74,7 @@ function ExerciseSetCard({
                 Weight
               </Text>
             </>
-          )}
-          {exercise.cardio && (
+          ) : (
             <Text style={[styles.baseText, { color: theme.colors.black }]}>
               Duration
             </Text>
@@ -86,70 +85,67 @@ function ExerciseSetCard({
             <Text style={[styles.baseText, { color: theme.colors.black }]}>
               {`Set ${setIndex + 1}`}
             </Text>
-            {!exercise.cardio && (
-              <>
-                <Input
-                  keyboardType="numeric"
-                  containerStyle={styles.inputContainer}
-                  inputContainerStyle={styles.inputRoundedContainer}
-                  inputStyle={styles.input}
-                  onChangeText={(newReps) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "reps",
-                      newReps
-                    )
-                  }
-                  value={set.reps.toString()}
-                />
-                <Text style={{ color: theme.colors.black }}>x</Text>
-                <Input
-                  keyboardType="numeric"
-                  containerStyle={styles.inputContainer}
-                  inputContainerStyle={styles.inputRoundedContainer}
-                  inputStyle={styles.input}
-                  onChangeText={(newWeight) =>
-                    updateSets(
-                      dayIndex,
-                      exerciseIndex,
-                      setIndex,
-                      "weight_duration",
-                      isMetric
-                        ? parseFloat(newWeight) * 2.205
-                        : parseFloat(newWeight)
-                    )
-                  }
-                  value={
-                    isMetric
-                      ? Math.floor(set.weight_duration / 2.205).toString()
-                      : Math.floor(set.weight_duration).toString()
-                  }
-                />
-                <Text style={{ color: theme.colors.black }}>
-                  {isMetric ? "kg" : "lbs"}
-                </Text>
-              </>
-            )}
-            {exercise.cardio && (
+            <>
               <Input
                 keyboardType="numeric"
                 containerStyle={styles.inputContainer}
                 inputContainerStyle={styles.inputRoundedContainer}
                 inputStyle={styles.input}
-                onChangeText={(newDuration) =>
-                  updateSets(
-                    dayIndex,
-                    exerciseIndex,
-                    setIndex,
-                    "weight_duration",
-                    newDuration
-                  )
+                onChangeText={(value) =>
+                  updateSets(dayIndex, exerciseIndex, setIndex, "reps", value)
                 }
-                value={set?.weight_duration.toString()}
+                value={set.reps.toString()}
               />
-            )}
+              {!exercise.cardio ? (
+                <>
+                  <Text style={{ color: theme.colors.black }}>x</Text>
+                  <Input
+                    keyboardType="numeric"
+                    containerStyle={styles.inputContainer}
+                    inputContainerStyle={styles.inputRoundedContainer}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      updateSets(
+                        dayIndex,
+                        exerciseIndex,
+                        setIndex,
+                        "weight_duration",
+                        isMetric ? parseFloat(value) * 2.205 : parseFloat(value)
+                      )
+                    }
+                    value={
+                      isMetric
+                        ? Math.floor(set.weight_duration / 2.205).toString()
+                        : Math.floor(set.weight_duration).toString()
+                    }
+                  />
+                  <Text style={{ color: theme.colors.black }}>
+                    {isMetric ? "kg" : "lbs"}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text style={{ color: theme.colors.black }}>m</Text>
+                  <Input
+                    keyboardType="numeric"
+                    containerStyle={styles.inputContainer}
+                    inputContainerStyle={styles.inputRoundedContainer}
+                    inputStyle={styles.input}
+                    onChangeText={(value) =>
+                      updateSets(
+                        dayIndex,
+                        exerciseIndex,
+                        setIndex,
+                        "weight_duration",
+                        value
+                      )
+                    }
+                    value={set?.weight_duration.toString()}
+                  />
+                  <Text style={{ color: theme.colors.black }}>s</Text>
+                </>
+              )}
+            </>
             <Button
               type="clear"
               title="Delete Set"
