@@ -15,7 +15,7 @@ import {
 } from "firebase/firestore";
 import { Post } from "../components/types";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../firebaseConfig";
-import post from "../app/(tabs)/(home)/post";
+import { addNotification } from "./user";
 
 export async function toggleLike(post: Post): Promise<Post> {
   try {
@@ -28,6 +28,7 @@ export async function toggleLike(post: Post): Promise<Post> {
       await deleteDoc(likeRef);
     } else {
       await setDoc(likeRef, {});
+      addNotification(post.userId, "like");
     }
 
     const updatedPost = {
@@ -133,6 +134,7 @@ export async function addComment(comment: string, post: Post) {
     await updateDoc(commentDoc, {
       id: commentDocRef.id,
     });
+    addNotification(post.userId, "comment");
   } catch (error) {
     console.error("Error posting comment:", error);
   }

@@ -8,10 +8,11 @@ import {
   orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
-import { FIREBASE_AUTH, FIREBASE_STR, FIRESTORE_DB } from "../firebaseConfig";
-import { Post, User } from "../components/types";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
+import { User } from "../components/types";
 
 export async function addUser(
   username: string,
@@ -72,17 +73,18 @@ export async function getUserFollowing(userId: string): Promise<boolean> {
 }
 
 export async function toggleFollow(
-  userId: string,
+  followedUserId: string,
+  followerUserId: string,
   following: boolean
 ): Promise<boolean> {
   try {
     const followingDocRef = doc(
       FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
+      `Users/${followerUserId}/Following/${followedUserId}`
     );
     const followerDocRef = doc(
       FIRESTORE_DB,
-      `Users/${userId}/Followers/${FIREBASE_AUTH.currentUser.uid}`
+      `Users/${followedUserId}/Followers/${followerUserId}`
     );
     if (following) {
       await deleteDoc(followingDocRef);
@@ -104,8 +106,6 @@ export async function sendFollowRequest(userId: string) {
       FIRESTORE_DB,
       `Users/${userId}/FollowRequests/${FIREBASE_AUTH.currentUser.uid}`
     );
-    await setDoc(followRequestsDocRef, { status: "pending" });
-
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -114,40 +114,89 @@ export async function sendFollowRequest(userId: string) {
     const minutes = String(currentDate.getMinutes()).padStart(2, "0");
     const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
 
-    const notificationsCollection = collection(
-      FIRESTORE_DB,
-      `Users/${userId}/Notifications/`
-    );
-    await addDoc(notificationsCollection, {
-      type: "followRequest",
-      timestamp: formattedDateTime,
+    await setDoc(followRequestsDocRef, {
+      date: formattedDateTime,
     });
   } catch (error) {
     console.error("Error sending follow request:", error);
   }
 }
 
-export async function handleFollowRequest(
-  userId: string,
-  notificationId: string,
-  accepted: boolean
-) {
+export function handleFollowRequest(userId: string, accepted: boolean) {
   try {
     const followRequestsDocRef = doc(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}/FollowRequests/${userId}`
     );
-    const notificationDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/Notifications/${notificationId}`
-    );
-    deleteDoc(notificationDocRef);
     deleteDoc(followRequestsDocRef);
 
     if (accepted) {
+      toggleFollow(FIREBASE_AUTH.currentUser.uid, userId, false);
     }
   } catch (error) {
     console.error("Error handling follow request:", error);
+  }
+}
+
+export async function getFollowRequests() {
+  try {
+    const followRequestsRef = collection(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/FollowRequests`
+    );
+    const q = query(followRequestsRef, orderBy("date", "desc"));
+    const snapshot = await getDocs(q);
+    const requestsList = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      username: getUser(doc.id),
+      ...doc.data(),
+    }));
+    return requestsList;
+  } catch (error) {
+    console.error("Error fetching follow requests:", error);
+  }
+}
+export async function addNotification(userId: string, type: string) {
+  try {
+    const notificationsCollectionRef = collection(
+      FIRESTORE_DB,
+      `Users/${userId}/Notifications`
+    );
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const dateDay = String(currentDate.getDate()).padStart(2, "0");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+    const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
+
+    const notificationDocRef = await addDoc(notificationsCollectionRef, {
+      userId: FIREBASE_AUTH.currentUser.uid,
+      type: type,
+      date: formattedDateTime,
+    });
+    updateDoc(notificationDocRef, { id: notificationDocRef.id });
+  } catch (error) {
+    console.error("Error creating notification:", error);
+  }
+}
+
+export async function getNotifications() {
+  try {
+    const notificationsRef = collection(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Notifications`
+    );
+    const q = query(notificationsRef, orderBy("date", "desc"));
+    const snapshot = await getDocs(q);
+    const notificationsList = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      username: getUser(doc.id),
+      ...doc.data(),
+    }));
+    return notificationsList;
+  } catch (error) {
+    console.error("Error fetching notification:", error);
   }
 }
 
