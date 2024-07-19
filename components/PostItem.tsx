@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, Pressable, Image, Text, StyleSheet } from "react-native";
-import { Avatar, CheckBox, Icon } from "@rneui/themed";
+import { Avatar, Button, CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { router } from "expo-router";
 import TruncatedText from "./TruncatedText";
@@ -38,34 +38,57 @@ const PostItem = ({
   return (
     <View style={{ paddingBottom: 20 }}>
       {showUser ? (
-        <Pressable
+        <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             paddingBottom: 5,
-            paddingLeft: 30,
+            paddingLeft: 20,
           }}
-          onPress={() => navigateProfile(post.userId)}
         >
-          <Avatar rounded size={40} source={{ uri: user?.url }} />
+          <Pressable onPress={() => navigateProfile(post.userId)}>
+            <Avatar rounded size={40} source={{ uri: user?.url }} />
+          </Pressable>
           <View style={{ flexDirection: "column" }}>
-            <Text style={[styles.userName, { color: theme.colors.black }]}>
-              {user?.username}
-            </Text>
+            <Pressable onPress={() => navigateProfile(post.userId)}>
+              <Text style={[styles.userName, { color: theme.colors.black }]}>
+                {user?.username}
+              </Text>
+            </Pressable>
             <Text style={[styles.workoutText, { color: "gray" }]}>
               did a workout on {formattedDate}
             </Text>
           </View>
-        </Pressable>
+          <Pressable>
+            <Icon
+              style={{ paddingLeft: 15 }}
+              size={32}
+              name="clipboard-list-outline"
+              type="material-community"
+            />
+          </Pressable>
+        </View>
       ) : (
-        <Text
-          style={[
-            styles.workoutText,
-            { color: "gray", alignSelf: "flex-end", paddingRight: 15 },
-          ]}
+        <View
+          style={{
+            flexDirection: "row",
+            alignSelf: "flex-end",
+            alignItems: "center",
+            paddingLeft: 20,
+          }}
         >
-          {formattedDate}
-        </Text>
+          <Text style={[styles.workoutText, { color: "gray" }]}>
+            {formattedDate}
+          </Text>
+          <Pressable>
+            <Icon
+              style={{ paddingHorizontal: 15 }}
+              size={32}
+              name="clipboard-list-outline"
+              type="material-community"
+            />
+          </Pressable>
+        </View>
       )}
       <Pressable
         onPress={

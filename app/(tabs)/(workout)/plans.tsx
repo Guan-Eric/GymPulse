@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Text, View, Pressable, FlatList, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@rneui/themed";
+import { Tab, TabView, useTheme } from "@rneui/themed";
 import { createPlan, getPlans } from "../../../backend/plan";
 import PlanCard from "../../../components/PlanCard";
 import EmptyPlanCard from "../../../components/EmptyPlanCard";
@@ -33,6 +33,7 @@ const bodyParts = [
 function PlanScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const { theme } = useTheme();
+  const [index, setIndex] = useState(0);
 
   const fetchPlans = async () => {
     setPlans(await getPlans());
@@ -57,50 +58,60 @@ function PlanScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={[styles.container, { paddingBottom: -50 }]}>
-        <ScrollView>
-          <View
-            style={{
-              alignItems: "center",
-              flexDirection: "row",
-              alignContent: "space-between",
-            }}
-          >
-            <Text style={[styles.titleText, { color: theme.colors.black }]}>
-              Your Plans
-            </Text>
-          </View>
-          <View style={styles.planContainer}>
-            {plans.length == 0
-              ? null
-              : plans.map((item) => (
-                  <View style={styles.cardWrapper}>
-                    <PlanCard plan={item} theme={theme} />
-                  </View>
+        <Tab
+          value={index}
+          onChange={(e) => setIndex(e)}
+          indicatorStyle={{
+            backgroundColor: theme.colors.black,
+          }}
+        >
+          <Tab.Item
+            title="Plans"
+            titleStyle={{ fontSize: 18, color: theme.colors.black }}
+          />
+          <Tab.Item
+            title="Exercises"
+            titleStyle={{ fontSize: 18, color: theme.colors.black }}
+          />
+        </Tab>
+        <TabView value={index} onChange={setIndex} animationType="spring">
+          <TabView.Item>
+            <ScrollView>
+              <View style={styles.planContainer}>
+                {plans.length == 0
+                  ? null
+                  : plans.map((item) => (
+                      <View key={item.id} style={styles.cardWrapper}>
+                        <PlanCard plan={item} theme={theme} />
+                      </View>
+                    ))}
+                <View key="empty-plan-card" style={styles.cardWrapper}>
+                  <EmptyPlanCard onPress={handleCreatePlan} />
+                </View>
+              </View>
+            </ScrollView>
+          </TabView.Item>
+          <TabView.Item>
+            <ScrollView>
+              <View style={styles.planContainer}>
+                {bodyParts.map((item) => (
+                  <Pressable
+                    style={styles.cardWrapper}
+                    key={item.key}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(tabs)/(workout)/bodypart",
+                        params: { bodypart: item.name, route: "exercise" },
+                      })
+                    }
+                  >
+                    <BodyPartCard bodypart={item.name} theme={theme} />
+                  </Pressable>
                 ))}
-            <View key="empty-plan-card" style={styles.cardWrapper}>
-              <EmptyPlanCard onPress={handleCreatePlan} />
-            </View>
-          </View>
-          <Text style={[styles.titleText, { color: theme.colors.black }]}>
-            View Exercises
-          </Text>
-          <View style={styles.planContainer}>
-            {bodyParts.map((item) => (
-              <Pressable
-                style={styles.cardWrapper}
-                key={item.key}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/(workout)/bodypart",
-                    params: { bodypart: item.name, route: "exercise" },
-                  })
-                }
-              >
-                <BodyPartCard bodypart={item.name} theme={theme} />
-              </Pressable>
-            ))}
-          </View>
-        </ScrollView>
+              </View>
+            </ScrollView>
+          </TabView.Item>
+        </TabView>
       </SafeAreaView>
     </View>
   );

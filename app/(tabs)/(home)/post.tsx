@@ -44,7 +44,7 @@ function ViewPostScreen() {
       }
     }
     fetchUserPost();
-  }, [userId, postId]);
+  }, []);
 
   const navigateProfile = () => {
     if (post?.userId === FIREBASE_AUTH.currentUser?.uid) {
