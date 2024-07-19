@@ -18,6 +18,7 @@ import DayCard from "../../../components/DayCard";
 import { useTheme } from "@rneui/themed";
 import { setDay } from "date-fns";
 import { getPlan } from "../../../backend/plan";
+import { getMetric } from "../../../backend/user";
 
 function WorkoutScreen() {
   const currentDate = new Date();
@@ -46,6 +47,7 @@ function WorkoutScreen() {
   };
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
+    setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
   };
 
   useFocusEffect(
