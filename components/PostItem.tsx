@@ -59,14 +59,23 @@ const PostItem = ({
               did a workout on {formattedDate}
             </Text>
           </View>
-          <Pressable>
+          <Button
+            onPress={() =>
+              router.push({
+                pathname: "(tabs)/" + tab + "/workout",
+                params: {
+                  workoutId: post.workoutId,
+                },
+              })
+            }
+          >
             <Icon
               style={{ paddingLeft: 15 }}
               size={32}
               name="clipboard-list-outline"
               type="material-community"
             />
-          </Pressable>
+          </Button>
         </View>
       ) : (
         <View
@@ -80,14 +89,23 @@ const PostItem = ({
           <Text style={[styles.workoutText, { color: "gray" }]}>
             {formattedDate}
           </Text>
-          <Pressable>
+          <Button
+            onPress={() =>
+              router.push({
+                pathname: "(tabs)/" + tab + "/workout",
+                params: {
+                  workoutId: post.workoutId,
+                },
+              })
+            }
+          >
             <Icon
               style={{ paddingHorizontal: 15 }}
               size={32}
               name="clipboard-list-outline"
               type="material-community"
             />
-          </Pressable>
+          </Button>
         </View>
       )}
       <Pressable

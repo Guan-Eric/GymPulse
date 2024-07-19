@@ -76,6 +76,7 @@ function ViewPlanScreen() {
                   isMetric={isMetric}
                   setPlan={setPlan}
                   isWorkout={false}
+                  isDisabled={false}
                 />
               ))
             : null}

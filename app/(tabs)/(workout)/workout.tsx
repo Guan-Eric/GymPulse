@@ -139,6 +139,7 @@ function WorkoutScreen() {
             isMetric={isMetric}
             setPlan={setPlan}
             isWorkout={true}
+            isDisabled={false}
           />
         </ScrollView>
       </SafeAreaView>
