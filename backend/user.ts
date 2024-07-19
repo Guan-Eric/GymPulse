@@ -235,6 +235,18 @@ export async function getNotifications() {
   }
 }
 
+export async function getMetric(uid: string): Promise<boolean> {
+  try {
+    const userDoc = await getDoc(
+      doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
+    );
+    const userData = userDoc.data();
+    return userData.metricUnits;
+  } catch (error) {
+    console.error("Error fetching plan data:", error);
+  }
+}
+
 export async function isUsernameExists(username: string): Promise<boolean> {
   try {
     const userCollection = collection(FIRESTORE_DB, "Users");

@@ -13,6 +13,7 @@ function ExerciseSetCard({
   theme,
   isMetric,
   setPlan,
+  isDisabled,
 }) {
   const updateSets = (
     dayIndex: number,
@@ -87,6 +88,7 @@ function ExerciseSetCard({
             </Text>
             <>
               <Input
+                disabled={isDisabled}
                 keyboardType="numeric"
                 containerStyle={styles.inputContainer}
                 inputContainerStyle={styles.inputRoundedContainer}
@@ -100,6 +102,7 @@ function ExerciseSetCard({
                 <>
                   <Text style={{ color: theme.colors.black }}>x</Text>
                   <Input
+                    disabled={isDisabled}
                     keyboardType="numeric"
                     containerStyle={styles.inputContainer}
                     inputContainerStyle={styles.inputRoundedContainer}
@@ -127,6 +130,7 @@ function ExerciseSetCard({
                 <>
                   <Text style={{ color: theme.colors.black }}>m</Text>
                   <Input
+                    disabled={isDisabled}
                     keyboardType="numeric"
                     containerStyle={styles.inputContainer}
                     inputContainerStyle={styles.inputRoundedContainer}

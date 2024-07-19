@@ -41,18 +41,6 @@ export async function getPlans(): Promise<Plan[]> {
   }
 }
 
-export async function getMetric(): Promise<boolean> {
-  try {
-    const userDoc = await getDoc(
-      doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
-    );
-    const userData = userDoc.data();
-    return userData.metricUnits;
-  } catch (error) {
-    console.error("Error fetching plan data:", error);
-  }
-}
-
 export async function createPlan(): Promise<Plan> {
   try {
     const docRef = await addDoc(

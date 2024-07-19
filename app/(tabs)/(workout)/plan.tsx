@@ -7,6 +7,8 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
+import { getMetric } from "../../../backend/user";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -16,6 +18,7 @@ function ViewPlanScreen() {
 
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
+    setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
   };
 
   useEffect(() => {
@@ -76,6 +79,7 @@ function ViewPlanScreen() {
                   isMetric={isMetric}
                   setPlan={setPlan}
                   isWorkout={false}
+                  isDisabled={false}
                 />
               ))
             : null}

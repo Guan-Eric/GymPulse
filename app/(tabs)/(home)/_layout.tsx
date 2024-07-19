@@ -9,6 +9,7 @@ function SocialStackLayout(props) {
       <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen name="search" options={{ headerShown: false }} />
       <Stack.Screen name="notification" options={{ headerShown: false }} />
+      <Stack.Screen name="workout" options={{ headerShown: false }} />
     </Stack>
   );
 }

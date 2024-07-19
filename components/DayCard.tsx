@@ -4,7 +4,16 @@ import { View, StyleSheet } from "react-native";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
 
-function DayCard({ plan, day, dayIndex, theme, isMetric, setPlan, isWorkout }) {
+function DayCard({
+  plan,
+  day,
+  dayIndex,
+  theme,
+  isMetric,
+  setPlan,
+  isWorkout,
+  isDisabled,
+}) {
   const handleDeleteDay = async (dayId: string) => {
     setPlan(await deleteDay(plan, dayId));
   };
@@ -22,13 +31,14 @@ function DayCard({ plan, day, dayIndex, theme, isMetric, setPlan, isWorkout }) {
     >
       <View style={styles.dayHeader}>
         <Input
+          disabled={isDisabled}
           containerStyle={styles.nameInput}
           inputContainerStyle={styles.nameInput}
           style={styles.nameInput}
           onChangeText={(newDayName) => updateDayName(dayIndex, newDayName)}
           value={day?.name}
         />
-        {isWorkout ? null : (
+        {isWorkout || isDisabled ? null : (
           <Button
             title="Start Workout"
             type="clear"
@@ -58,27 +68,32 @@ function DayCard({ plan, day, dayIndex, theme, isMetric, setPlan, isWorkout }) {
             theme={theme}
             isMetric={isMetric}
             setPlan={setPlan}
+            isDisabled={isDisabled}
           />
         ))}
-      <Button
-        type="clear"
-        title="Add Exercise"
-        onPress={() =>
-          router.push({
-            pathname: "/(tabs)/(workout)/exercises",
-            params: {
-              planId: plan.id,
-              dayId: day.id,
-              route: "add",
-            },
-          })
-        }
-      />
-      <Button
-        type="clear"
-        title="Delete Day"
-        onPress={() => handleDeleteDay(day.id)}
-      />
+      {isDisabled ? null : (
+        <>
+          <Button
+            type="clear"
+            title="Add Exercise"
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/(workout)/exercises",
+                params: {
+                  planId: plan.id,
+                  dayId: day.id,
+                  route: "add",
+                },
+              })
+            }
+          />
+          <Button
+            type="clear"
+            title="Delete Day"
+            onPress={() => handleDeleteDay(day.id)}
+          />
+        </>
+      )}
     </Card>
   );
 }
