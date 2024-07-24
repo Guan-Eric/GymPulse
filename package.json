@@ -30,6 +30,7 @@
     "expo-linking": "~6.3.1",
     "expo-notifications": "~0.28.10",
     "expo-router": "~3.5.18",
+    "expo-server-sdk": "^3.10.0",
     "expo-status-bar": "~1.12.1",
     "firebase": "^10.12.4",
     "react": "18.2.0",

@@ -21,6 +21,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
+import { addNotification } from "../../../backend/user";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
@@ -84,7 +85,12 @@ function CreatePostScreen() {
         urls: downloadUrls,
       });
 
-      router.push("/(tabs)/(home)/feed");
+      addNotification(
+        FIREBASE_AUTH.currentUser.uid,
+        "post",
+        userPostsDocRef.id
+      );
+      router.push("/(tabs)/(workout)/plans");
     } catch (error) {
       console.error("Error creating post:", error);
     }
