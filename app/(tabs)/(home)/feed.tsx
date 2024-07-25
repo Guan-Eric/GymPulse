@@ -8,6 +8,7 @@ import PostItem from "../../../components/PostItem";
 import { Post } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
+import { savePushToken } from "../../../backend/user";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -18,7 +19,6 @@ const FeedScreen: React.FC = () => {
     hasNewNotification,
     markNotificationsAsRead,
   } = usePushNotifications();
-  const data = JSON.stringify(notification, undefined, 2);
   console.log(expoPushToken);
 
   async function fetchFeed() {
@@ -32,6 +32,7 @@ const FeedScreen: React.FC = () => {
 
   useEffect(() => {
     fetchFeed();
+    savePushToken(expoPushToken.data);
   }, []);
 
   useFocusEffect(
