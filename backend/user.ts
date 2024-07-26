@@ -13,9 +13,6 @@ import {
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { User } from "../components/types";
-import Expo from "expo-server-sdk";
-
-const expo = new Expo();
 
 export async function addUser(
   username: string,
@@ -324,6 +321,6 @@ async function pushNotifications(userId: string, type: string) {
       body: (await getUser(userId)).username + getNotificationMessage(type),
     }));
 
-    expo.sendPushNotificationsAsync(messages);
+    // send push notification
   }
 }

@@ -19,7 +19,6 @@ const FeedScreen: React.FC = () => {
     hasNewNotification,
     markNotificationsAsRead,
   } = usePushNotifications();
-  console.log(expoPushToken);
 
   async function fetchFeed() {
     try {
@@ -32,7 +31,7 @@ const FeedScreen: React.FC = () => {
 
   useEffect(() => {
     fetchFeed();
-    savePushToken(expoPushToken.data);
+    savePushToken(expoPushToken?.data);
   }, []);
 
   useFocusEffect(
