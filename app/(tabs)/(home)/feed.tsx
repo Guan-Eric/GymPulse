@@ -7,11 +7,19 @@ import { getFeed, toggleLike } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import { Post } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
+import { usePushNotifications } from "../../../components/usePushNotifications";
+import { savePushToken } from "../../../backend/user";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
-  const [isNotification, setIsNotification] = useState(true);
+  const {
+    expoPushToken,
+    notification,
+    hasNewNotification,
+    markNotificationsAsRead,
+  } = usePushNotifications();
+
   async function fetchFeed() {
     try {
       const feed = await getFeed();
@@ -24,6 +32,10 @@ const FeedScreen: React.FC = () => {
   useEffect(() => {
     fetchFeed();
   }, []);
+
+  useEffect(() => {
+    savePushToken(expoPushToken?.data);
+  }, [expoPushToken]);
 
   useFocusEffect(
     useCallback(() => {
@@ -47,6 +59,13 @@ const FeedScreen: React.FC = () => {
     setPosts(posts.map((p) => (p.id === updatedPost.id ? updatedPost : p)));
   };
 
+  const navigateToNotifications = () => {
+    markNotificationsAsRead();
+    router.push({
+      pathname: "/(tabs)/(home)/notification",
+    });
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
@@ -64,15 +83,8 @@ const FeedScreen: React.FC = () => {
             Feed
           </Text>
           <View style={{ flexDirection: "row" }}>
-            <Button
-              type="clear"
-              onPress={() =>
-                router.push({
-                  pathname: "/(tabs)/(home)/notification",
-                })
-              }
-            >
-              {isNotification ? (
+            <Button type="clear" onPress={navigateToNotifications}>
+              {hasNewNotification ? (
                 <Icon
                   size={32}
                   name="bell-badge-outline"

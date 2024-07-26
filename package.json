@@ -4,8 +4,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "ts:check": "tsc"
   },
@@ -22,14 +22,16 @@
     "expo": "~51.0.21",
     "expo-camera": "~15.0.14",
     "expo-constants": "~16.0.2",
+    "expo-device": "~6.0.2",
     "expo-font": "~12.0.5",
     "expo-image-manipulator": "~12.0.5",
     "expo-image-picker": "~15.0.7",
     "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
+    "expo-notifications": "~0.28.10",
     "expo-router": "~3.5.18",
     "expo-status-bar": "~1.12.1",
-    "firebase": "^10.7.1",
+    "firebase": "^10.12.4",
     "react": "18.2.0",
     "react-native": "0.74.3",
     "react-native-gesture-handler": "~2.16.1",
@@ -40,9 +42,7 @@
     "react-native-screens": "3.31.1",
     "react-native-vector-icons": "^10.0.3",
     "react-navigation-material-bottom-tabs": "^2.3.5",
-    "typescript": "~5.3.3",
-    "expo-notifications": "~0.28.10",
-    "expo-device": "~6.0.2"
+    "typescript": "~5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"

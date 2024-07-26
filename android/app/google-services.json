@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "174909441573",
+    "project_id": "fitai-2e02d",
+    "storage_bucket": "fitai-2e02d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174909441573:android:12d096515ed3ccffe6e1cc",
+        "android_client_info": {
+          "package_name": "com.eronkgonk.gympulse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc2piUCH-ixpDgJuzQmXsJS4eS89uSKSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

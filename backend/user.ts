@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { User } from "../components/types";
+import axios from "axios";
 
 export async function addUser(
   username: string,
@@ -128,6 +129,7 @@ export async function sendFollowRequest(userId: string) {
     await setDoc(followRequestsDocRef, {
       date: formattedDateTime,
     });
+    pushNotifications(userId, "request");
   } catch (error) {
     console.error("Error sending follow request:", error);
   }
@@ -156,6 +158,7 @@ export function answerFollowRequest(userId: string, accepted: boolean) {
     if (accepted) {
       toggleFollow(FIREBASE_AUTH.currentUser.uid, userId, false);
     }
+    pushNotifications(userId, "accepted");
   } catch (error) {
     console.error("Error handling follow request:", error);
   }
@@ -206,6 +209,7 @@ export async function addNotification(
       postId: postId,
     });
     updateDoc(notificationDocRef, { id: notificationDocRef.id });
+    pushNotifications(userId, type);
   } catch (error) {
     console.error("Error creating notification:", error);
   }
@@ -256,5 +260,69 @@ export async function isUsernameExists(username: string): Promise<boolean> {
     return !(await userSnapshot).empty;
   } catch (error) {
     console.error("Error checking username:", error);
+  }
+}
+
+export async function savePushToken(token: string) {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      const tokens = data.tokens ?? [];
+
+      if (!tokens.includes(token)) {
+        tokens.push(token);
+        await updateDoc(userDocRef, { tokens: tokens });
+      }
+    }
+  } catch (error) {
+    console.error("Error saving push token:", error);
+  }
+}
+
+async function getUserPushTokens(userId: string) {
+  const docRef = doc(FIRESTORE_DB, `Users/${userId}`);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    return data.tokens ?? [];
+  } else {
+    return [];
+  }
+}
+
+function getNotificationMessage(type: string): string {
+  return type === "like"
+    ? " liked your post."
+    : type === "comment"
+    ? " commented on your post."
+    : type === "accepted"
+    ? " accepted your follow request."
+    : type === "request"
+    ? " requested to follow you."
+    : " has a new post.";
+}
+
+async function pushNotifications(userId: string, type: string) {
+  const tokens = await getUserPushTokens(userId);
+
+  if (tokens.length > 0) {
+    await Promise.all(
+      tokens.map(async (token) =>
+        axios.post("http://192.168.2.44:8000/sendPushNotification", {
+          token,
+          body:
+            (await getUser(FIREBASE_AUTH.currentUser.uid)).username +
+            getNotificationMessage(type),
+        })
+      )
+    );
   }
 }
