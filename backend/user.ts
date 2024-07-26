@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { User } from "../components/types";
+import axios from "axios";
 
 export async function addUser(
   username: string,
@@ -273,13 +274,12 @@ export async function savePushToken(token: string) {
 
     if (docSnap.exists()) {
       const data = docSnap.data();
-      const tokens = data.tokens || [];
+      const tokens = data.tokens ?? [];
 
       if (!tokens.includes(token)) {
         tokens.push(token);
+        await updateDoc(userDocRef, { tokens: tokens });
       }
-
-      await updateDoc(userDocRef, { tokens: tokens });
     }
   } catch (error) {
     console.error("Error saving push token:", error);
@@ -314,13 +314,15 @@ async function pushNotifications(userId: string, type: string) {
   const tokens = await getUserPushTokens(userId);
 
   if (tokens.length > 0) {
-    const messages = tokens.map(async (token) => ({
-      to: token,
-      sound: "default",
-      title: "Gym Pulse",
-      body: (await getUser(userId)).username + getNotificationMessage(type),
-    }));
-
-    // send push notification
+    await Promise.all(
+      tokens.map(async (token) =>
+        axios.post("http://192.168.2.44:8000/sendPushNotification", {
+          token,
+          body:
+            (await getUser(FIREBASE_AUTH.currentUser.uid)).username +
+            getNotificationMessage(type),
+        })
+      )
+    );
   }
 }

@@ -31,8 +31,11 @@ const FeedScreen: React.FC = () => {
 
   useEffect(() => {
     fetchFeed();
-    savePushToken(expoPushToken?.data);
   }, []);
+
+  useEffect(() => {
+    savePushToken(expoPushToken?.data);
+  }, [expoPushToken]);
 
   useFocusEffect(
     useCallback(() => {
