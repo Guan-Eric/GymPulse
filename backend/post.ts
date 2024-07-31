@@ -210,6 +210,16 @@ async function getUserFollowingIds(): Promise<string[]> {
   return userFollowingSnapshot.docs.map((doc) => doc.id);
 }
 
+export async function getUserFollowersIds(): Promise<string[]> {
+  const userFollowersCollection = collection(
+    doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`),
+    "Followers"
+  );
+
+  const userFollowersSnapshot = await getDocs(userFollowersCollection);
+  return userFollowersSnapshot.docs.map((doc) => doc.id);
+}
+
 async function getFollowingUserPosts(userId: string): Promise<Post[]> {
   const followingUserPostsQuery = query(
     collectionGroup(FIRESTORE_DB, "Posts"),
