@@ -20,7 +20,7 @@ import { ScreenWidth } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { router, useLocalSearchParams } from "expo-router";
+import { Href, router, useLocalSearchParams } from "expo-router";
 import { addNotification, getUser } from "../../../backend/user";
 import { getUserFollowersIds } from "../../../backend/post";
 import Carousel from "react-native-reanimated-carousel";
@@ -98,19 +98,17 @@ function CreatePostScreen() {
         id: userPostsDocRef.id,
         urls: downloadUrls,
       });
-      const followersUserId = await getUserFollowersIds();
-
-      for (let i = 0; i < followersUserId.length; i++) {
-        addNotification(
-        followersUserId[i],
+      console.log("added urls");
+      addNotification(
+        FIREBASE_AUTH.currentUser.uid,
         "post",
         userPostsDocRef.id
       );
-      router.push("/(tabs)/(workout)/plans");
+      console.log("Post created successfully");
     } catch (error) {
       console.error("Error creating post:", error);
     } finally {
-      router.push("/(tabs)/(workout)/plans");
+      router.push("/(tabs)/(workout)/plans" as Href<string | object>);
     }
   };
 
