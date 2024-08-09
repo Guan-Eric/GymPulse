@@ -52,7 +52,9 @@ function ExerciseCard({ exercise, imageUrls }) {
     <View>
       <ScrollView>
         <Carousel
-          style={{ alignSelf: "center" }}
+          panGestureHandlerProps={{
+            activeOffsetX: [-10, 10],
+          }}
           data={imageUrls}
           renderItem={renderCarouselItem}
           width={screenWidth}

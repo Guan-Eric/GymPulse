@@ -69,7 +69,7 @@ export async function getUserPost(
 
     const userPost: Post = {
       id: postId,
-      url: userPostSnapshot.data().url,
+      urls: userPostSnapshot.data().urls,
       userId: userId,
       caption: userPostSnapshot.data().caption,
       like: userLikeSnapshot.exists(),
