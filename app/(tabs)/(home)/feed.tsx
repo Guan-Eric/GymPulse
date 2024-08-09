@@ -34,7 +34,9 @@ const FeedScreen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    savePushToken(expoPushToken?.data);
+    if (expoPushToken) {
+      savePushToken(expoPushToken.data);
+    }
   }, [expoPushToken]);
 
   useFocusEffect(

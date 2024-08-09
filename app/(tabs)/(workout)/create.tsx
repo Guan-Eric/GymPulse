@@ -18,10 +18,11 @@ import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { ScreenWidth } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
-import { Input, useTheme, Button } from "@rneui/themed";
+import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { addNotification } from "../../../backend/user";
+import Carousel from "react-native-reanimated-carousel";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
@@ -30,11 +31,12 @@ function CreatePostScreen() {
   const [images, setImages] = useState([]);
   const { workoutId } = useLocalSearchParams();
 
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      allowsEditing: true,
       aspect: [4, 5],
       quality: 1,
     });
@@ -69,32 +71,60 @@ function CreatePostScreen() {
       });
 
       const downloadUrls = [];
-
       for (let i = 0; i < images.length; i++) {
-        const response = await fetch(images[i]);
-        const blob = await response.blob();
-        const imageRef = ref(FIREBASE_STR, `posts/${userPostsDocRef.id}/${i}`);
-        await uploadBytes(imageRef, blob);
-        const downloadUrl = await getDownloadURL(imageRef);
-        downloadUrls.push(downloadUrl);
+        try {
+          const response = await fetch(images[i]);
+
+          const blob = await response.blob();
+
+          const imageRef = ref(
+            FIREBASE_STR,
+            `posts/${userPostsDocRef.id}/${i}`
+          );
+
+          await uploadBytes(imageRef, blob);
+
+          const downloadUrl = await getDownloadURL(imageRef);
+
+          downloadUrls.push(downloadUrl);
+          await sleep(1000);
+        } catch (imageError) {
+          console.error(`Error uploading image ${i + 1}:`, imageError);
+        }
       }
 
-      const userPostsDoc = doc(userPostsCollection, userPostsDocRef.id);
-      await updateDoc(userPostsDoc, {
+      await updateDoc(userPostsDocRef, {
         id: userPostsDocRef.id,
         urls: downloadUrls,
       });
-
+      console.log("added urls");
       addNotification(
         FIREBASE_AUTH.currentUser.uid,
         "post",
         userPostsDocRef.id
       );
-      router.push("/(tabs)/(workout)/plans");
+      console.log("Post created successfully");
     } catch (error) {
       console.error("Error creating post:", error);
+    } finally {
+      router.push("/(tabs)/(workout)/plans");
     }
   };
+
+  const renderCarouselItem = ({ item }) => (
+    <View style={{ width: ScreenWidth, height: ScreenWidth }}>
+      <Image
+        source={{ uri: item }}
+        style={{
+          alignSelf: "center",
+          borderRadius: 20,
+          width: ScreenWidth * 0.95,
+          height: ScreenWidth * 0.95 * 1.25,
+          resizeMode: "cover",
+        }}
+      />
+    </View>
+  );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -117,26 +147,29 @@ function CreatePostScreen() {
             placeholder="Write Title here"
           />
           <ScrollView>
-            {images.length > 0 ? (
-              images.map((imageUri, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: imageUri }}
-                  style={{
-                    alignSelf: "center",
-                    borderRadius: 20,
-                    width: 0.9 * ScreenWidth,
-                    height: 0.9 * ScreenWidth * 1.25,
-                    resizeMode: "cover",
-                    marginBottom: 10,
+            <Pressable onPress={pickImages}>
+              {images.length > 0 ? (
+                <Carousel
+                  panGestureHandlerProps={{
+                    activeOffsetX: [-10, 10],
                   }}
+                  style={{ alignSelf: "center" }}
+                  data={images}
+                  renderItem={renderCarouselItem}
+                  width={ScreenWidth}
+                  height={ScreenWidth * 1.25}
+                  scrollAnimationDuration={1000}
+                  loop={false}
                 />
-              ))
-            ) : (
-              <Pressable onPress={pickImages}>
-                <Text>Add Photos</Text>
-              </Pressable>
-            )}
+              ) : (
+                <Card
+                  wrapperStyle={{
+                    width: ScreenWidth * 0.95,
+                    height: (ScreenWidth * 0.95) / (195 / 130),
+                  }}
+                ></Card>
+              )}
+            </Pressable>
             <View
               style={{
                 paddingTop: 20,
