@@ -20,7 +20,7 @@ import { ScreenWidth } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Href, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { addNotification, getUser } from "../../../backend/user";
 import { getUserFollowersIds } from "../../../backend/post";
 import Carousel from "react-native-reanimated-carousel";
@@ -108,7 +108,7 @@ function CreatePostScreen() {
     } catch (error) {
       console.error("Error creating post:", error);
     } finally {
-      router.push("/(tabs)/(workout)/plans" as Href<string | object>);
+      router.push("/(tabs)/(workout)/plans");
     }
   };
 

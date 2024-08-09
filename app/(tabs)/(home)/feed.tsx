@@ -6,7 +6,7 @@ import { Icon, useTheme, Button } from "@rneui/themed";
 import { getFeed, toggleLike } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import { Post } from "../../../components/types";
-import { Href, router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
 import { savePushToken } from "../../../backend/user";
 
@@ -47,7 +47,7 @@ const FeedScreen: React.FC = () => {
 
   const navigateProfile = (id: string) => {
     if (id === FIREBASE_AUTH.currentUser?.uid) {
-      router.push("/(tabs)/(profile)/user" as Href<string | object>);
+      router.push("/(tabs)/(profile)/user");
     } else {
       router.push({
         pathname: "/(tabs)/(home)/profile",

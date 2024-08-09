@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
-import { Href, router } from "expo-router";
+import { router } from "expo-router";
 import { getUser } from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
@@ -80,9 +80,7 @@ function UserScreen() {
           </View>
           <Button
             type="clear"
-            onPress={() =>
-              router.push("/(tabs)/(profile)/settings" as Href<string | object>)
-            }
+            onPress={() => router.push("/(tabs)/(profile)/settings")}
           >
             <Icon size={32} name="cog-outline" type="material-community" />
           </Button>

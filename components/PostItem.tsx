@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Pressable, Image, Text, StyleSheet } from "react-native";
 import { Avatar, Button, CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
-import { Href, router } from "expo-router";
+import { router } from "expo-router";
 import TruncatedText from "./TruncatedText";
 import { format } from "date-fns";
 import { getUser } from "../backend/user";
@@ -79,9 +79,7 @@ const PostItem = ({
           <Button
             onPress={() =>
               router.push({
-                pathname: ("(tabs)/" + tab + "/workout") as Href<
-                  string | object
-                >,
+                pathname: "(tabs)/" + tab + "/workout",
                 params: {
                   workoutId: post.workoutId,
                 },
