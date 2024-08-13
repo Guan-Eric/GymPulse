@@ -265,9 +265,29 @@ export function updateSet(
   property,
   value
 ) {
-  return {
+  if (!plan.days[dayIndex]) {
+    console.error(`Invalid dayIndex: ${dayIndex}`);
+    return plan;
+  }
+
+  if (!plan.days[dayIndex].exercises[exerciseIndex]) {
+    console.error(`Invalid exerciseIndex: ${exerciseIndex}`);
+    return plan;
+  }
+
+  if (!plan.days[dayIndex].exercises[exerciseIndex].sets[setIndex]) {
+    console.error(`Invalid setIndex: ${setIndex}`);
+    return plan;
+  }
+  console.log("before updating:");
+  console.log(plan.days[dayIndex].exercises[exerciseIndex].sets[setIndex]);
+
+  console.log("Updating property:", property);
+  console.log("With value:", value);
+
+  const updatedPlan = {
     ...plan,
-    days: plan?.days.map((prevDay, dIndex) =>
+    days: plan.days.map((prevDay, dIndex) =>
       dIndex === dayIndex
         ? {
             ...prevDay,
@@ -287,6 +307,13 @@ export function updateSet(
         : prevDay
     ),
   };
+  console.log("Updated set before saving:");
+  console.log(
+    updatedPlan.days[dayIndex].exercises[exerciseIndex].sets[setIndex]
+  );
+
+  savePlan(updatedPlan);
+  return updatedPlan;
 }
 
 export function updateDay(plan: Plan, dayIndex, newName) {

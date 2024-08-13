@@ -87,11 +87,13 @@ function DayCard({
               })
             }
           />
-          <Button
-            type="clear"
-            title="Delete Day"
-            onPress={() => handleDeleteDay(day.id)}
-          />
+          {isWorkout ? null : (
+            <Button
+              type="clear"
+              title="Delete Day"
+              onPress={() => handleDeleteDay(day.id)}
+            />
+          )}
         </>
       )}
     </Card>

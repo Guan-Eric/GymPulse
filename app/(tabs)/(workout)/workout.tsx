@@ -17,7 +17,7 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import DayCard from "../../../components/DayCard";
 import { useTheme } from "@rneui/themed";
 import { setDay } from "date-fns";
-import { getPlan } from "../../../backend/plan";
+import { getPlan, savePlan } from "../../../backend/plan";
 import { getMetric } from "../../../backend/user";
 
 function WorkoutScreen() {
@@ -45,6 +45,7 @@ function WorkoutScreen() {
     }, 1000);
     setRunning(true);
   };
+
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
     setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
@@ -136,7 +137,7 @@ function WorkoutScreen() {
             key={dayId as string}
             plan={plan}
             day={plan?.days[dayIndex as string]}
-            dayIndex={dayIndex}
+            dayIndex={Number(dayIndex)}
             theme={theme}
             isMetric={isMetric}
             setPlan={setPlan}
