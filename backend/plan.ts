@@ -279,11 +279,6 @@ export function updateSet(
     console.error(`Invalid setIndex: ${setIndex}`);
     return plan;
   }
-  console.log("before updating:");
-  console.log(plan.days[dayIndex].exercises[exerciseIndex].sets[setIndex]);
-
-  console.log("Updating property:", property);
-  console.log("With value:", value);
 
   const updatedPlan = {
     ...plan,
@@ -307,12 +302,6 @@ export function updateSet(
         : prevDay
     ),
   };
-  console.log("Updated set before saving:");
-  console.log(
-    updatedPlan.days[dayIndex].exercises[exerciseIndex].sets[setIndex]
-  );
-
-  savePlan(updatedPlan);
   return updatedPlan;
 }
 

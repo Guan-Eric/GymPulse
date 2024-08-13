@@ -51,6 +51,12 @@ function WorkoutScreen() {
     setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
   };
 
+  useEffect(() => {
+    if (plan) {
+      savePlan(plan);
+    }
+  }, [plan]);
+
   useFocusEffect(
     useCallback(() => {
       fetchPlanFromFirestore();
