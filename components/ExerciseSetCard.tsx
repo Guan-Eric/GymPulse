@@ -58,11 +58,13 @@ function ExerciseSetCard({
         <Text style={[styles.baseText, { color: theme.colors.black }]}>
           {exercise.name}
         </Text>
-        <Button
-          type="clear"
-          title="Delete Exercise"
-          onPress={() => handleDeleteExercise(day.id, exercise.id)}
-        />
+        {isDisabled ? null : (
+          <Button
+            type="clear"
+            title="Delete Exercise"
+            onPress={() => handleDeleteExercise(day.id, exercise.id)}
+          />
+        )}
       </View>
       <View>
         <View style={styles.setHeader}>
@@ -150,20 +152,26 @@ function ExerciseSetCard({
                 </>
               )}
             </>
-            <Button
-              type="clear"
-              title="Delete Set"
-              onPress={() => handleDeleteSet(dayIndex, exerciseIndex, setIndex)}
-            />
+            {isDisabled ? null : (
+              <Button
+                type="clear"
+                title="Delete Set"
+                onPress={() =>
+                  handleDeleteSet(dayIndex, exerciseIndex, setIndex)
+                }
+              />
+            )}
           </View>
         ))}
       </View>
-      <Button
-        size="sm"
-        type="clear"
-        title="Add Set"
-        onPress={() => handleAddSet(day.id, exercise.id, plan?.days)}
-      />
+      {isDisabled ? null : (
+        <Button
+          size="sm"
+          type="clear"
+          title="Add Set"
+          onPress={() => handleAddSet(day.id, exercise.id, plan?.days)}
+        />
+      )}
     </Card>
   );
 }

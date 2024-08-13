@@ -11,7 +11,7 @@ import { getWorkout } from "../../../backend/workout";
 import { getMetric } from "../../../backend/user";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
-function ViewPlanScreen() {
+function ViewWorkoutScreen() {
   const [workout, setWorkout] = useState<Workout>();
   const [isMetric, setIsMetric] = useState(true); // Set default as metric for now
   const { workoutId } = useLocalSearchParams();
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ViewPlanScreen;
+export default ViewWorkoutScreen;

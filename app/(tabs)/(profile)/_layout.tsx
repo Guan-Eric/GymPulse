@@ -8,6 +8,7 @@ function ProfileStackLayout(props) {
       <Stack.Screen name="settings" options={{ headerShown: false }} />
       <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen name="post" options={{ headerShown: false }} />
+      <Stack.Screen name="workout" options={{ headerShown: false }} />
     </Stack>
   );
 }
