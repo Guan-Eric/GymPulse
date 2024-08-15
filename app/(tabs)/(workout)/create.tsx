@@ -8,11 +8,9 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   View,
-  Image,
   StyleSheet,
   ScrollView,
   Pressable,
-  Text,
 } from "react-native";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
@@ -21,9 +19,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
-import { addNotification, getUser } from "../../../backend/user";
-import { getUserFollowersIds } from "../../../backend/post";
-import Carousel from "react-native-reanimated-carousel";
+import { addNotification } from "../../../backend/user";
+import ImageCarousel from "../../../components/ImageCarousel";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
@@ -31,8 +28,6 @@ function CreatePostScreen() {
   const { theme } = useTheme();
   const [images, setImages] = useState([]);
   const { workoutId } = useLocalSearchParams();
-
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -88,7 +83,7 @@ function CreatePostScreen() {
           const downloadUrl = await getDownloadURL(imageRef);
 
           downloadUrls.push(downloadUrl);
-          await sleep(1000);
+          console.log(i + 1);
         } catch (imageError) {
           console.error(`Error uploading image ${i + 1}:`, imageError);
         }
@@ -111,21 +106,6 @@ function CreatePostScreen() {
       router.push("/(tabs)/(workout)/plans");
     }
   };
-
-  const renderCarouselItem = ({ item }) => (
-    <View style={{ width: ScreenWidth, height: ScreenWidth }}>
-      <Image
-        source={{ uri: item }}
-        style={{
-          alignSelf: "center",
-          borderRadius: 20,
-          width: ScreenWidth * 0.95,
-          height: ScreenWidth * 0.95 * 1.25,
-          resizeMode: "cover",
-        }}
-      />
-    </View>
-  );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -150,18 +130,7 @@ function CreatePostScreen() {
           <ScrollView>
             <Pressable onPress={pickImages}>
               {images.length > 0 ? (
-                <Carousel
-                  panGestureHandlerProps={{
-                    activeOffsetX: [-10, 10],
-                  }}
-                  style={{ alignSelf: "center" }}
-                  data={images}
-                  renderItem={renderCarouselItem}
-                  width={ScreenWidth}
-                  height={ScreenWidth * 1.25}
-                  scrollAnimationDuration={1000}
-                  loop={false}
-                />
+                <ImageCarousel data={images} theme={theme} />
               ) : (
                 <Card
                   wrapperStyle={{
