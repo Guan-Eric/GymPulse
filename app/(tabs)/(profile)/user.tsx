@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   FlatList,
@@ -25,7 +25,7 @@ import {
 } from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { getUser } from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
@@ -37,20 +37,27 @@ function UserScreen() {
   const [loading, setLoading] = useState(true);
   const imageWidth = ScreenWidth / 3;
 
+  const fetchUserAndUserPostsFirestore = async () => {
+    try {
+      setUser(await getUser(FIREBASE_AUTH.currentUser.uid));
+      setPosts(await getUserPosts(FIREBASE_AUTH.currentUser.uid));
+    } catch (error) {
+      console.error("Error fetching user and userPosts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
-    const fetchUserAndUserPostsFirestore = async () => {
-      try {
-        setUser(await getUser(FIREBASE_AUTH.currentUser.uid));
-        setPosts(await getUserPosts(FIREBASE_AUTH.currentUser.uid));
-      } catch (error) {
-        console.error("Error fetching user and userPosts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchUserAndUserPostsFirestore();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserAndUserPostsFirestore();
+    }, [])
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>

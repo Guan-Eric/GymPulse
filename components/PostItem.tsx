@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { getUser } from "../backend/user";
 import { User } from "./types";
 import Carousel from "react-native-reanimated-carousel";
+import ImageCarousel from "./ImageCarousel";
 
 const PostItem = ({
   post,
@@ -36,21 +37,6 @@ const PostItem = ({
   useEffect(() => {
     fetchUser(post.userId);
   }, []);
-
-  const renderCarouselItem = ({ item }) => (
-    <View style={{ width: ScreenWidth, height: ScreenWidth }}>
-      <Image
-        source={{ uri: item }}
-        style={{
-          alignSelf: "center",
-          borderRadius: 20,
-          width: ScreenWidth * 0.95,
-          height: ScreenWidth * 0.95 * 1.25,
-          resizeMode: "cover",
-        }}
-      />
-    </View>
-  );
 
   return (
     <View style={{ paddingBottom: 20 }}>
@@ -143,20 +129,7 @@ const PostItem = ({
         {post.caption ? (
           <TruncatedText theme={theme}>{post.caption}</TruncatedText>
         ) : null}
-        <Carousel
-          panGestureHandlerProps={{
-            activeOffsetX: [-10, 10],
-          }}
-          data={post.urls}
-          renderItem={renderCarouselItem}
-          width={ScreenWidth}
-          height={ScreenWidth * 1.25}
-          scrollAnimationDuration={1000}
-          loop={false}
-          onSnapToItem={(index) => setActiveIndex(index)}
-          pagingEnabled={true}
-          //layout={"stack"}
-        />
+        <ImageCarousel data={post.urls} theme={theme} />
       </Pressable>
       <View
         style={{
