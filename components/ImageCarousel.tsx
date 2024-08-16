@@ -24,50 +24,61 @@ const ImageCarousel = ({ data, theme }) => {
 
   return (
     <View style={{ alignItems: "center" }}>
-      {data?.length > 0 ? (
-        <Carousel
-          panGestureHandlerProps={{
-            activeOffsetX: [-10, 10],
-          }}
-          data={data}
-          renderItem={renderCarouselItem}
-          width={ScreenWidth}
-          height={ScreenWidth * 1.25}
-          loop={false}
-          onProgressChange={(offsetProgress, absoluteProgress) => {
-            const index = Math.round(absoluteProgress);
-            setCurrentIndex(index);
-          }}
-        />
-      ) : null}
       {data?.length > 1 ? (
-        <AnimatedDotsCarousel
-          length={data.length}
-          currentIndex={currentIndex}
-          maxIndicators={2}
-          activeIndicatorConfig={{
-            color: theme.colors.black,
-            margin: 3,
-            opacity: 1,
-            size: 8,
-          }}
-          inactiveIndicatorConfig={{
-            color: theme.colors.black,
-            margin: 3,
-            opacity: 0.5,
-            size: 6,
-          }}
-          decreasingDots={[
-            {
-              config: {
-                color: theme.colors.black,
-                margin: 3,
-                opacity: 0.5,
-                size: 6,
+        <>
+          <Carousel
+            panGestureHandlerProps={{
+              activeOffsetX: [-10, 10],
+            }}
+            data={data}
+            renderItem={renderCarouselItem}
+            width={ScreenWidth}
+            height={ScreenWidth * 0.92 * 1.25}
+            loop={false}
+            onProgressChange={(_offsetProgress, absoluteProgress) => {
+              const index = Math.round(absoluteProgress);
+              setCurrentIndex(index);
+            }}
+          />
+          <AnimatedDotsCarousel
+            length={data?.length}
+            currentIndex={currentIndex}
+            maxIndicators={data?.length}
+            activeIndicatorConfig={{
+              color: theme.colors.black,
+              margin: 3,
+              opacity: 1,
+              size: 8,
+            }}
+            inactiveIndicatorConfig={{
+              color: theme.colors.black,
+              margin: 3,
+              opacity: 0.5,
+              size: 6,
+            }}
+            decreasingDots={[
+              {
+                config: {
+                  color: theme.colors.black,
+                  margin: 3,
+                  opacity: 0.5,
+                  size: 6,
+                },
+                quantity: 1,
               },
-              quantity: 1,
-            },
-          ]}
+            ]}
+          />
+        </>
+      ) : data?.length == 1 ? (
+        <Image
+          source={{ uri: data[0] }}
+          style={{
+            alignSelf: "center",
+            borderRadius: 15,
+            width: 0.9 * ScreenWidth,
+            height: 0.9 * ScreenWidth * 1.25,
+            resizeMode: "cover",
+          }}
         />
       ) : null}
     </View>
