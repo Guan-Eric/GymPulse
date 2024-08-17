@@ -13,7 +13,7 @@ import { FIRESTORE_DB, FIREBASE_STR } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Exercise } from "../../../components/types";
-import { router, useLocalSearchParams } from "expo-router";
+import { Href, router, useLocalSearchParams } from "expo-router";
 import { Card, useTheme } from "@rneui/themed";
 
 const screenWidth = Dimensions.get("window").width;
@@ -79,7 +79,7 @@ function BodyPartScreen() {
                 router.push({
                   pathname: "/(tabs)/(workout)/" + route,
                   params: { exerciseId: item.id, planId: planId, dayId: dayId },
-                })
+                } as Href<string>)
               }
             >
               <Card

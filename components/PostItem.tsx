@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Pressable, Image, Text, StyleSheet } from "react-native";
 import { Avatar, Button, CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import TruncatedText from "./TruncatedText";
 import { format } from "date-fns";
 import { getUser } from "../backend/user";
@@ -69,7 +69,7 @@ const PostItem = ({
                 params: {
                   workoutId: post.workoutId,
                 },
-              })
+              } as Href<string>)
             }
           >
             <Icon
@@ -99,7 +99,7 @@ const PostItem = ({
                 params: {
                   workoutId: post.workoutId,
                 },
-              })
+              } as Href<string>)
             }
           >
             <Icon
@@ -121,7 +121,7 @@ const PostItem = ({
                     postId: post.id,
                     userId: post.userId,
                   },
-                })
+                } as Href<string>)
             : null
         }
       >
@@ -166,7 +166,7 @@ const PostItem = ({
                   postId: post.id,
                   userId: post.userId,
                 },
-              })
+              } as Href<string>)
             }
           >
             <Icon name="comment-outline" type="material-community" />
