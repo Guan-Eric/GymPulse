@@ -13,7 +13,13 @@ import {
   Pressable,
 } from "react-native";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
-import { ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import {
+  ref,
+  getDownloadURL,
+  uploadString,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { ScreenWidth } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
@@ -26,7 +32,9 @@ function CreatePostScreen() {
   const [caption, setCaption] = useState("");
   const [title, setTitle] = useState("");
   const { theme } = useTheme();
+  const [blobs, setBlobs] = useState([]);
   const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { workoutId } = useLocalSearchParams();
 
   const pickImages = async () => {
@@ -38,11 +46,25 @@ function CreatePostScreen() {
     });
 
     if (!result.canceled) {
-      setImages(result.assets.map((asset) => asset.uri));
+      const blobsAndImages = await Promise.all(
+        result.assets.map(async (asset) => {
+          const response = await fetch(asset.uri);
+          const blob = await response.blob();
+          return { blob, image: asset.uri };
+        })
+      );
+
+      const blobs = blobsAndImages.map((item) => item.blob);
+      const images = blobsAndImages.map((item) => item.image);
+
+      setBlobs(blobs);
+      setImages(images);
     }
   };
 
   const createPost = async () => {
+    setLoading(true);
+
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -67,23 +89,36 @@ function CreatePostScreen() {
       });
 
       const downloadUrls = [];
-      for (let i = 0; i < images.length; i++) {
+      for (let i = 0; i < blobs.length; i++) {
         try {
-          const response = await fetch(images[i]);
-
-          const blob = await response.blob();
-
           const imageRef = ref(
             FIREBASE_STR,
             `posts/${userPostsDocRef.id}/${i}`
           );
 
-          await uploadBytes(imageRef, blob);
+          const uploadTask = uploadBytesResumable(imageRef, blobs[i]);
 
-          const downloadUrl = await getDownloadURL(imageRef);
+          const downloadUrl = await new Promise((resolve, reject) => {
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                const progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(`Upload is ${progress}% done for image ${i + 1}`);
+              },
+              (error) => {
+                console.error(`Error uploading image ${i + 1}:`, error);
+                reject(error);
+              },
+              async () => {
+                const url = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(url);
+              }
+            );
+          });
 
           downloadUrls.push(downloadUrl);
-          console.log(i + 1);
+          console.log(`Image ${i + 1} uploaded successfully`);
         } catch (imageError) {
           console.error(`Error uploading image ${i + 1}:`, imageError);
         }
@@ -103,6 +138,7 @@ function CreatePostScreen() {
     } catch (error) {
       console.error("Error creating post:", error);
     } finally {
+      setLoading(false);
       router.push("/(tabs)/(workout)/plans");
     }
   };
@@ -134,8 +170,8 @@ function CreatePostScreen() {
               ) : (
                 <Card
                   wrapperStyle={{
-                    width: ScreenWidth * 0.95,
-                    height: (ScreenWidth * 0.95) / (195 / 130),
+                    width: ScreenWidth * 0.9,
+                    height: ScreenWidth * 0.9 * 1.25,
                   }}
                 ></Card>
               )}
@@ -158,7 +194,9 @@ function CreatePostScreen() {
               <Button
                 buttonStyle={styles.postButton}
                 title="Post"
+                loading={loading}
                 onPress={createPost}
+                disabled={loading}
               />
             </View>
             <View style={{ paddingTop: 10, paddingLeft: 15, paddingRight: 15 }}>
