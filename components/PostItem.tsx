@@ -62,7 +62,7 @@ const PostItem = ({
               did a workout on {formattedDate}
             </Text>
           </View>
-          <Button
+          <Pressable
             onPress={() =>
               router.push({
                 pathname: "(tabs)/" + tab + "/workout",
@@ -74,11 +74,11 @@ const PostItem = ({
           >
             <Icon
               style={{ paddingLeft: 15 }}
-              size={32}
+              size={28}
               name="clipboard-list-outline"
               type="material-community"
             />
-          </Button>
+          </Pressable>
         </View>
       ) : (
         <View

@@ -1,4 +1,4 @@
-import { Input, Button, Card } from "@rneui/themed";
+import { Input, Button, Card, Icon } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import { Day, Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
@@ -58,10 +58,17 @@ function ExerciseSetCard({
         <Text style={[styles.baseText, { color: theme.colors.black }]}>
           {exercise.name}
         </Text>
-        {isDisabled ? null : (
+        {!isDisabled && (
           <Button
             type="clear"
-            title="Delete Exercise"
+            icon={
+              <Icon
+                name="trash-can-outline"
+                size={24}
+                color={theme.colors.black}
+                type="material-community"
+              />
+            }
             onPress={() => handleDeleteExercise(day.id, exercise.id)}
           />
         )}
@@ -152,10 +159,17 @@ function ExerciseSetCard({
                 </>
               )}
             </>
-            {isDisabled ? null : (
+            {!isDisabled && (
               <Button
                 type="clear"
-                title="Delete Set"
+                icon={
+                  <Icon
+                    name="trash-can-outline"
+                    size={24}
+                    color={theme.colors.black}
+                    type="material-community"
+                  />
+                }
                 onPress={() =>
                   handleDeleteSet(dayIndex, exerciseIndex, setIndex)
                 }
@@ -164,11 +178,18 @@ function ExerciseSetCard({
           </View>
         ))}
       </View>
-      {isDisabled ? null : (
+      {!isDisabled && (
         <Button
           size="sm"
           type="clear"
-          title="Add Set"
+          icon={
+            <Icon
+              name="plus-circle-outline"
+              size={24}
+              color={theme.colors.black}
+              type="material-community"
+            />
+          }
           onPress={() => handleAddSet(day.id, exercise.id, plan?.days)}
         />
       )}
@@ -179,7 +200,6 @@ function ExerciseSetCard({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
-    padding: 16,
     marginVertical: 8,
   },
   exerciseHeader: {

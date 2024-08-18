@@ -1,6 +1,6 @@
-import { Input, Button, Card } from "@rneui/themed";
-import { router } from "expo-router";
+import { Input, Button, Icon } from "@rneui/themed";
 import { View, StyleSheet } from "react-native";
+import { router } from "expo-router";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
 
@@ -23,12 +23,7 @@ function DayCard({
   };
 
   return (
-    <Card
-      containerStyle={[
-        styles.card,
-        { backgroundColor: theme.colors.background },
-      ]}
-    >
+    <View style={{ padding: 10 }}>
       <View style={styles.dayHeader}>
         <Input
           disabled={isDisabled}
@@ -38,10 +33,17 @@ function DayCard({
           onChangeText={(newDayName) => updateDayName(dayIndex, newDayName)}
           value={day?.name}
         />
-        {isWorkout || isDisabled ? null : (
+        {!isWorkout && !isDisabled && (
           <Button
-            title="Start Workout"
             type="clear"
+            icon={
+              <Icon
+                name="play-circle"
+                size={24}
+                color={theme.colors.black}
+                type="material-community"
+              />
+            }
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/(workout)/workout",
@@ -71,11 +73,18 @@ function DayCard({
             isDisabled={isDisabled}
           />
         ))}
-      {isDisabled ? null : (
+      {!isDisabled && (
         <>
           <Button
             type="clear"
-            title="Add Exercise"
+            icon={
+              <Icon
+                name="plus-circle-outline"
+                size={24}
+                color={theme.colors.black}
+                type="material-community"
+              />
+            }
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/(workout)/exercises",
@@ -87,25 +96,27 @@ function DayCard({
               })
             }
           />
-          {isWorkout ? null : (
+          {!isWorkout && (
             <Button
               type="clear"
-              title="Delete Day"
+              icon={
+                <Icon
+                  name="trash-can-outline"
+                  size={24}
+                  color={theme.colors.black}
+                  type="material-community"
+                />
+              }
               onPress={() => handleDeleteDay(day.id)}
             />
           )}
         </>
       )}
-    </Card>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 8,
-    padding: 16,
-    marginVertical: 8,
-  },
   dayHeader: {
     flexDirection: "row",
     justifyContent: "space-between",

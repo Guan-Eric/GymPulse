@@ -16,7 +16,6 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
       "bundleIdentifier": "com.eronkgonk.gympulse"
     },
     "android": {

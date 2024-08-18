@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { Input, useTheme, Button, Card } from "@rneui/themed";
+import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
 import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
 import { getMetric } from "../../../backend/user";
@@ -83,8 +83,24 @@ function ViewPlanScreen() {
                 />
               ))
             : null}
-          <Button type="clear" title="Add Day" onPress={handleAddDay} />
-          <Button type="solid" title="Delete Plan" onPress={handleDeletePlan} />
+          <Button
+            type="clear"
+            icon={
+              <Icon
+                name="plus-circle-outline"
+                size={24}
+                color={theme.colors.black}
+                type="material-community"
+              />
+            }
+            onPress={handleAddDay}
+          />
+          <Button
+            type="clear"
+            title="Delete Plan"
+            onPress={handleDeletePlan}
+            color={theme.colors.error}
+          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
