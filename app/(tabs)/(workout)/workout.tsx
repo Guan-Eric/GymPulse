@@ -111,6 +111,8 @@ function WorkoutScreen() {
         pathname: "/(tabs)/(workout)/create",
         params: {
           workoutId: docRef.id,
+          planName: plan.name,
+          dayName: plan.days[dayIndex as string].name,
         },
       });
     } catch (error) {

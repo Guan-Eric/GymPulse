@@ -15,6 +15,7 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { Exercise } from "../../../components/types";
 import { Href, router, useLocalSearchParams } from "expo-router";
 import { Card, useTheme } from "@rneui/themed";
+import { ScreenWidth } from "@rneui/base";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -23,14 +24,14 @@ function BodyPartScreen() {
   const [imageUrls, setImageUrls] = useState({});
   const { bodypart, route, planId, dayId } = useLocalSearchParams();
 
-  const bodyPart = (bodypart as string).toLowerCase();
+  const bodyPartQuery = (bodypart as string).toLowerCase();
 
   const fetchExercisesFromFirestore = async () => {
     try {
       const collectionRef = collection(FIRESTORE_DB, "Exercises");
       const queryRef = query(
         collectionRef,
-        where("primaryMuscles", "array-contains", bodyPart)
+        where("primaryMuscles", "array-contains", bodyPartQuery)
       );
       const querySnapshot = await getDocs(queryRef);
       const data = [];
@@ -69,7 +70,7 @@ function BodyPartScreen() {
     >
       <SafeAreaView>
         <Text style={[styles.title, { color: theme.colors.black }]}>
-          {bodyPart}
+          {bodypart}
         </Text>
         <FlatList
           data={exercises}
@@ -82,20 +83,19 @@ function BodyPartScreen() {
                 } as Href<string>)
               }
             >
-              <Card
-                containerStyle={[
-                  styles.card,
-                  { backgroundColor: theme.colors.background },
-                ]}
-              >
-                <Image
-                  source={{ uri: imageUrls[item.id] }}
-                  style={styles.image}
-                />
-                <Text style={[styles.baseText, { color: theme.colors.black }]}>
-                  {item.name}
-                </Text>
-              </Card>
+              <Image
+                source={{ uri: imageUrls[item.id] }}
+                style={{
+                  alignSelf: "center",
+                  borderRadius: 15,
+                  width: 0.9 * ScreenWidth,
+                  height: (0.9 * ScreenWidth) / (195 / 130),
+                  resizeMode: "cover",
+                }}
+              />
+              <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                {item.name}
+              </Text>
             </Pressable>
           )}
           keyExtractor={(item) => item.id}

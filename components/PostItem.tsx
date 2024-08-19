@@ -8,7 +8,7 @@ import { format } from "date-fns";
 import { getUser } from "../backend/user";
 import { User } from "./types";
 import Carousel from "react-native-reanimated-carousel";
-import ImageCarousel from "./ImageCarousel";
+import ImageCarousel from "./PostCarousel";
 
 const PostItem = ({
   post,
@@ -45,8 +45,9 @@ const PostItem = ({
           style={{
             flexDirection: "row",
             alignItems: "center",
-            paddingBottom: 5,
-            paddingLeft: 20,
+            justifyContent: "space-between",
+            paddingRight: ScreenWidth * 0.05,
+            paddingLeft: ScreenWidth * 0.05,
           }}
         >
           <Pressable onPress={() => navigateProfile(post.userId)}>
@@ -62,7 +63,8 @@ const PostItem = ({
               did a workout on {formattedDate}
             </Text>
           </View>
-          <Pressable
+          <Button
+            type="clear"
             onPress={() =>
               router.push({
                 pathname: "(tabs)/" + tab + "/workout",
@@ -73,26 +75,28 @@ const PostItem = ({
             }
           >
             <Icon
-              style={{ paddingLeft: 15 }}
               size={28}
               name="clipboard-list-outline"
               type="material-community"
             />
-          </Pressable>
+          </Button>
         </View>
       ) : (
         <View
           style={{
             flexDirection: "row",
-            alignSelf: "flex-end",
             alignItems: "center",
-            paddingLeft: 20,
+            justifyContent: "space-between",
+
+            paddingLeft: ScreenWidth * 0.05,
+            paddingRight: ScreenWidth * 0.05,
           }}
         >
           <Text style={[styles.workoutText, { color: "gray" }]}>
             {formattedDate}
           </Text>
           <Button
+            type="clear"
             onPress={() =>
               router.push({
                 pathname: "(tabs)/" + tab + "/workout",
@@ -103,8 +107,7 @@ const PostItem = ({
             }
           >
             <Icon
-              style={{ paddingHorizontal: 15 }}
-              size={32}
+              size={28}
               name="clipboard-list-outline"
               type="material-community"
             />
@@ -133,8 +136,8 @@ const PostItem = ({
       </Pressable>
       <View
         style={{
-          paddingLeft: 10,
-          paddingRight: 25,
+          paddingLeft: ScreenWidth * 0.025,
+          paddingRight: ScreenWidth * 0.04,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
@@ -157,8 +160,8 @@ const PostItem = ({
           onPress={onToggleLike}
         />
         {showCommentIcon && (
-          <Pressable
-            style={{ paddingRight: 10 }}
+          <Button
+            type="clear"
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/" + tab + "/post",
@@ -170,7 +173,7 @@ const PostItem = ({
             }
           >
             <Icon name="comment-outline" type="material-community" />
-          </Pressable>
+          </Button>
         )}
       </View>
 
@@ -183,18 +186,18 @@ const styles = StyleSheet.create({
   userName: {
     fontFamily: "Lato_700Bold",
     fontSize: 16,
-    paddingLeft: 10,
+    paddingLeft: ScreenWidth * 0.025,
   },
   workoutText: {
     fontFamily: "Lato_400Regular",
     fontSize: 12,
-    paddingLeft: 10,
+    paddingLeft: ScreenWidth * 0.025,
   },
   caption: {
     textAlign: "justify",
     fontFamily: "Lato_400Regular",
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingLeft: ScreenWidth * 0.04,
+    paddingRight: ScreenWidth * 0.04,
     paddingBottom: 15,
     fontSize: 14,
   },

@@ -26,16 +26,16 @@ import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { addNotification } from "../../../backend/user";
-import ImageCarousel from "../../../components/ImageCarousel";
+import ImageCarousel from "../../../components/PostCarousel";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
-  const [title, setTitle] = useState("");
   const { theme } = useTheme();
   const [blobs, setBlobs] = useState([]);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { workoutId } = useLocalSearchParams();
+  const { workoutId, planName, dayName } = useLocalSearchParams();
+  const [title, setTitle] = useState(planName + " - " + dayName);
 
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -161,7 +161,7 @@ function CreatePostScreen() {
             inputContainerStyle={styles.caption}
             maxLength={50}
             onChangeText={(text) => setTitle(text)}
-            placeholder="Write Title here"
+            value={title}
           />
           <ScrollView>
             <Pressable onPress={pickImages}>

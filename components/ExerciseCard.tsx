@@ -1,16 +1,8 @@
 import React from "react";
-import {
-  Dimensions,
-  ScrollView,
-  Text,
-  View,
-  Image,
-  StyleSheet,
-} from "react-native";
-import { Card, useTheme } from "@rneui/themed";
-import Carousel from "react-native-reanimated-carousel";
+import { ScrollView, Text, View, StyleSheet } from "react-native";
+import { useTheme } from "@rneui/themed";
+import ExerciseCarousel from "./ExerciseCarousel";
 
-const screenWidth = Dimensions.get("window").width;
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -33,35 +25,10 @@ function ExerciseCard({ exercise, imageUrls }) {
     </Text>
   ));
 
-  const renderCarouselItem = ({ item }) => (
-    <View style={{ width: screenWidth, height: screenWidth }}>
-      <Image
-        source={{ uri: item.uri }}
-        style={{
-          alignSelf: "center",
-          borderRadius: 20,
-          width: screenWidth * 0.95,
-          height: (screenWidth * 0.95) / (195 / 130),
-          resizeMode: "cover",
-        }}
-      />
-    </View>
-  );
-
   return (
     <View>
       <ScrollView>
-        <Carousel
-          panGestureHandlerProps={{
-            activeOffsetX: [-10, 10],
-          }}
-          data={imageUrls}
-          renderItem={renderCarouselItem}
-          width={screenWidth}
-          height={screenWidth / (195 / 130)}
-          scrollAnimationDuration={1000}
-          loop={false}
-        />
+        <ExerciseCarousel data={imageUrls} theme={theme} />
         <View style={styles.contentContainer}>
           <Text style={[styles.title, { color: theme.colors.primary }]}>
             {capitalizeFirstLetter(exercise?.name)}

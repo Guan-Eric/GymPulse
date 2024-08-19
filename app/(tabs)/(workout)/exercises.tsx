@@ -49,7 +49,7 @@ function ExerciseListScreen() {
                     router.push({
                       pathname: "/(tabs)/(workout)/bodypart",
                       params: {
-                        bodypart: item.name,
+                        bodyPart: item.name,
                         route: route,
                         planId: planId,
                         dayId: dayId,
