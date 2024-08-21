@@ -46,8 +46,8 @@ const PostItem = ({
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingRight: ScreenWidth * 0.05,
-            paddingLeft: ScreenWidth * 0.05,
+            paddingRight: 10,
+            paddingLeft: 15,
           }}
         >
           <Pressable onPress={() => navigateProfile(post.userId)}>
@@ -88,8 +88,8 @@ const PostItem = ({
             alignItems: "center",
             justifyContent: "space-between",
 
-            paddingLeft: ScreenWidth * 0.05,
-            paddingRight: ScreenWidth * 0.05,
+            paddingLeft: 15,
+            paddingRight: 10,
           }}
         >
           <Text style={[styles.workoutText, { color: "gray" }]}>
@@ -143,22 +143,28 @@ const PostItem = ({
           justifyContent: "space-between",
         }}
       >
-        <CheckBox
-          title={post.numLikes.toString()}
-          checked={post.like}
-          checkedIcon={
-            <Icon
-              size={28}
-              name="arm-flex"
-              type="material-community"
-              color="#ffde34"
-            />
-          }
-          uncheckedIcon={
-            <Icon size={28} name="arm-flex-outline" type="material-community" />
-          }
-          onPress={onToggleLike}
-        />
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Button
+            type="clear"
+            onPress={onToggleLike}
+            icon={
+              <Icon
+                size={28}
+                name={post.like ? "arm-flex" : "arm-flex-outline"}
+                type="material-community"
+                color={post.like ? "#ffde34" : undefined}
+              />
+            }
+          />
+          <Text
+            style={[
+              styles.likeCount,
+              { fontSize: 16, color: theme.colors.black },
+            ]}
+          >
+            {post.numLikes}
+          </Text>
+        </View>
         {showCommentIcon && (
           <Button
             type="clear"
@@ -186,20 +192,24 @@ const styles = StyleSheet.create({
   userName: {
     fontFamily: "Lato_700Bold",
     fontSize: 16,
-    paddingLeft: ScreenWidth * 0.025,
+    paddingLeft: 5,
   },
   workoutText: {
     fontFamily: "Lato_400Regular",
     fontSize: 12,
-    paddingLeft: ScreenWidth * 0.025,
+    paddingLeft: 5,
   },
   caption: {
     textAlign: "justify",
     fontFamily: "Lato_400Regular",
-    paddingLeft: ScreenWidth * 0.04,
-    paddingRight: ScreenWidth * 0.04,
+    paddingLeft: 15,
+    paddingRight: 15,
     paddingBottom: 15,
     fontSize: 14,
+  },
+  likeCount: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 16,
   },
 });
 

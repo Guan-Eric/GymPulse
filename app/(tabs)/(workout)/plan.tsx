@@ -9,16 +9,24 @@ import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
 import { getMetric } from "../../../backend/user";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { Instagram } from "react-content-loader/native";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
-  const [isMetric, setIsMetric] = useState(true); // Set default as metric for now
+  const [isMetric, setIsMetric] = useState(true);
   const { planId } = useLocalSearchParams();
+  const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
 
   const fetchPlanFromFirestore = async () => {
-    setPlan(await getPlan(planId as string));
-    setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
+    try {
+      setPlan(await getPlan(planId as string));
+      setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
+    } catch (error) {
+      console.error("Error fetching plan:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -49,6 +57,14 @@ function ViewPlanScreen() {
     deletePlan(plan);
     router.back();
   };
+
+  if (loading) {
+    return (
+      <View>
+        <Instagram />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView

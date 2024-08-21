@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
-import { useTheme, Button, Icon } from "@rneui/themed";
+import { useTheme, Button, Icon, Avatar } from "@rneui/themed";
 import {
   collection,
   onSnapshot,
@@ -77,10 +77,7 @@ function UserScreen() {
               alignItems: "center",
             }}
           >
-            <Image
-              style={{ width: 40, height: 40 }}
-              source={require("../../../assets/profile.png")}
-            />
+            <Avatar rounded size={40} source={{ uri: user?.url }} />
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.username}
             </Text>

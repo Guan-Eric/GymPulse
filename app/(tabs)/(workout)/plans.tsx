@@ -66,31 +66,15 @@ function PlanScreen() {
           }}
         >
           <Tab.Item
-            title="Plans"
-            titleStyle={{ fontSize: 18, color: theme.colors.black }}
-          />
-          <Tab.Item
             title="Exercises"
             titleStyle={{ fontSize: 18, color: theme.colors.black }}
           />
+          <Tab.Item
+            title="Plans"
+            titleStyle={{ fontSize: 18, color: theme.colors.black }}
+          />
         </Tab>
-        <TabView value={index} onChange={setIndex} animationType="spring">
-          <TabView.Item>
-            <ScrollView>
-              <View style={styles.planContainer}>
-                {plans.length == 0
-                  ? null
-                  : plans.map((item) => (
-                      <View key={item.id} style={styles.cardWrapper}>
-                        <PlanCard plan={item} theme={theme} />
-                      </View>
-                    ))}
-                <View key="empty-plan-card" style={styles.cardWrapper}>
-                  <EmptyPlanCard onPress={handleCreatePlan} />
-                </View>
-              </View>
-            </ScrollView>
-          </TabView.Item>
+        <TabView value={index} onChange={setIndex}>
           <TabView.Item>
             <ScrollView>
               <View style={styles.planContainer}>
@@ -108,6 +92,22 @@ function PlanScreen() {
                     <BodyPartCard bodypart={item.name} theme={theme} />
                   </Pressable>
                 ))}
+              </View>
+            </ScrollView>
+          </TabView.Item>
+          <TabView.Item>
+            <ScrollView>
+              <View style={styles.planContainer}>
+                {plans.length == 0
+                  ? null
+                  : plans.map((item) => (
+                      <View key={item.id} style={styles.cardWrapper}>
+                        <PlanCard plan={item} theme={theme} />
+                      </View>
+                    ))}
+                <View key="empty-plan-card" style={styles.cardWrapper}>
+                  <EmptyPlanCard onPress={handleCreatePlan} />
+                </View>
               </View>
             </ScrollView>
           </TabView.Item>

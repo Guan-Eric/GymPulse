@@ -13,9 +13,8 @@ const ImageCarousel = ({ data, theme }) => {
         source={{ uri: item.uri }}
         style={{
           alignSelf: "center",
-          borderRadius: 20,
-          width: ScreenWidth * 0.95,
-          height: (ScreenWidth * 0.95) / (195 / 130),
+          width: ScreenWidth,
+          height: ScreenWidth / (195 / 130),
           resizeMode: "cover",
         }}
       />
@@ -74,9 +73,8 @@ const ImageCarousel = ({ data, theme }) => {
           source={{ uri: data[0] }}
           style={{
             alignSelf: "center",
-            borderRadius: 15,
-            width: 0.9 * ScreenWidth,
-            height: (0.9 * ScreenWidth) / (195 / 130),
+            width: ScreenWidth,
+            height: ScreenWidth / (195 / 130),
             resizeMode: "cover",
           }}
         />

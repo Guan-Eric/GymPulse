@@ -13,7 +13,7 @@ import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 function ViewWorkoutScreen() {
   const [workout, setWorkout] = useState<Workout>();
-  const [isMetric, setIsMetric] = useState(true); // Set default as metric for now
+  const [isMetric, setIsMetric] = useState(true);
   const { workoutId } = useLocalSearchParams();
   const { theme } = useTheme();
 

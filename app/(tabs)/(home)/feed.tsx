@@ -9,9 +9,12 @@ import { Post } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
 import { savePushToken } from "../../../backend/user";
+import { Instagram } from "react-content-loader/native";
+import { ScreenWidth } from "@rneui/base";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
+  const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
   const {
     expoPushToken,
@@ -26,6 +29,8 @@ const FeedScreen: React.FC = () => {
       setPosts(feed);
     } catch (error) {
       console.error("Error fetching feed:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -108,25 +113,38 @@ const FeedScreen: React.FC = () => {
             </Button>
           </View>
         </View>
-        <FlatList
-          numColumns={1}
-          horizontal={false}
-          data={posts}
-          renderItem={({ item }) => (
-            <PostItem
-              post={item}
-              theme={theme}
-              navigateProfile={navigateProfile}
-              onToggleLike={() => handleToggleLike(item)}
-              renderComments={false}
-              showCommentIcon={true}
-              showUser={true}
-              tab={"(home)"}
-              viewPost={false}
+        {loading ? (
+          <View style={{ alignItems: "center" }}>
+            <Instagram
+              foregroundColor={theme.colors.grey3}
+              backgroundColor={theme.colors.grey4}
             />
-          )}
-          keyExtractor={(item) => item.id}
-        />
+            <Instagram
+              foregroundColor={theme.colors.grey3}
+              backgroundColor={theme.colors.grey4}
+            />
+          </View>
+        ) : (
+          <FlatList
+            numColumns={1}
+            horizontal={false}
+            data={posts}
+            renderItem={({ item }) => (
+              <PostItem
+                post={item}
+                theme={theme}
+                navigateProfile={navigateProfile}
+                onToggleLike={() => handleToggleLike(item)}
+                renderComments={false}
+                showCommentIcon={true}
+                showUser={true}
+                tab={"(home)"}
+                viewPost={false}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+          />
+        )}
       </SafeAreaView>
     </View>
   );
