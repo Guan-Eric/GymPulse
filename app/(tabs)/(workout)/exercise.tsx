@@ -2,35 +2,46 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
+  Appearance,
   Image,
   ScrollView,
+  Button,
   FlatList,
-  Dimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
-import { FIREBASE_STR, FIRESTORE_DB } from "../../../firebaseConfig";
-import { useLocalSearchParams } from "expo-router";
+import { FIREBASE_STR } from "../../../firebaseConfig";
+import {
+  updateDoc,
+  getDoc,
+  doc,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+} from "firebase/firestore";
+import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
-import { getDoc, doc } from "firebase/firestore";
 import ExerciseCard from "../../../components/ExerciseCard";
 import { useTheme } from "@rneui/themed";
 
-function ExerciseScreen() {
+function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
-  const { exerciseId } = useLocalSearchParams();
+  const { exerciseId, planId, dayId, route } = useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
 
   const { theme } = useTheme();
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchExercise = async () => {
       try {
         const exerciseDoc = await getDoc(
           doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
         );
         setExercise(exerciseDoc.data() as Exercise);
+
         const image1Ref = ref(FIREBASE_STR, `assets/${exerciseId}_0.jpg`);
         const url1 = await getDownloadURL(image1Ref);
         const image2Ref = ref(FIREBASE_STR, `assets/${exerciseId}_1.jpg`);
@@ -40,20 +51,45 @@ function ExerciseScreen() {
           { id: 1, uri: url2 },
         ]);
       } catch (error) {
-        console.error("Error fetching images:", error);
+        console.error("Error fetching exercise:", error);
       }
     };
 
-    fetchImages();
+    fetchExercise();
   }, []);
 
+  const handleAddExercise = async () => {
+    const dayDoc = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
+    );
+    const exerciseCollection = collection(dayDoc, "Exercise");
+    const exerciseDocRef = await addDoc(exerciseCollection, {
+      name: exercise.name,
+      dayId: dayId,
+      sets: [{ reps: 0, weight_duration: 0 }],
+      cardio: exercise.category === "cardio",
+    });
+    const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
+    await updateDoc(exerciseDoc, { id: exerciseDoc.id });
+    router.back();
+    router.back();
+    router.back();
+  };
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
-        {exercise && <ExerciseCard exercise={exercise} imageUrls={imageUrls} />}
+      <SafeAreaView style={{ paddingBottom: 70 }}>
+        {exercise && (
+          <View>
+            {route == "add" ? (
+              <Button title="Add Exercise" onPress={handleAddExercise} />
+            ) : null}
+            <ExerciseCard exercise={exercise} imageUrls={imageUrls} />
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );
 }
 
-export default ExerciseScreen;
+export default AddExerciseScreen;

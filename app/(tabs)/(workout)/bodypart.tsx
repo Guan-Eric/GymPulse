@@ -78,8 +78,13 @@ function BodyPartScreen() {
             <Pressable
               onPress={() =>
                 router.push({
-                  pathname: "/(tabs)/(workout)/" + route,
-                  params: { exerciseId: item.id, planId: planId, dayId: dayId },
+                  pathname: "/(tabs)/(workout)/exercise",
+                  params: {
+                    exerciseId: item.id,
+                    planId: planId,
+                    dayId: dayId,
+                    route: route,
+                  },
                 } as Href<string>)
               }
             >

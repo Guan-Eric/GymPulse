@@ -19,7 +19,7 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "axios": "^1.6.2",
     "date-fns": "^3.6.0",
-    "expo": "~51.0.28",
+    "expo": "~51.0.31",
     "expo-camera": "~15.0.14",
     "expo-constants": "~16.0.2",
     "expo-device": "~6.0.2",
@@ -45,7 +45,8 @@
     "react-native-svg": "15.2.0",
     "react-native-vector-icons": "^10.0.3",
     "react-navigation-material-bottom-tabs": "^2.3.5",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "expo-dev-client": "~4.0.25"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"
