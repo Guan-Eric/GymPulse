@@ -28,11 +28,11 @@ function ExerciseCard({ exercise, imageUrls }) {
   return (
     <View>
       <ScrollView>
+        <Text style={[styles.title, { color: theme.colors.black }]}>
+          {capitalizeFirstLetter(exercise?.name)}
+        </Text>
         <ExerciseCarousel data={imageUrls} theme={theme} />
         <View style={styles.contentContainer}>
-          <Text style={[styles.title, { color: theme.colors.primary }]}>
-            {capitalizeFirstLetter(exercise?.name)}
-          </Text>
           <Text style={[styles.heading, { color: theme.colors.black }]}>
             Equipment
           </Text>
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
+    alignSelf: "center",
     fontSize: 24,
     fontFamily: "Lato_700Bold",
     fontWeight: "bold",

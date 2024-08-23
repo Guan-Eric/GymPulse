@@ -87,7 +87,6 @@ const PostItem = ({
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-
             paddingLeft: 15,
             paddingRight: 10,
           }}
@@ -145,6 +144,7 @@ const PostItem = ({
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Button
+            disabled={!showUser}
             type="clear"
             onPress={onToggleLike}
             icon={

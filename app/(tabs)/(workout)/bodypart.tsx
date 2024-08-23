@@ -24,7 +24,7 @@ function BodyPartScreen() {
   const [imageUrls, setImageUrls] = useState({});
   const { bodypart, route, planId, dayId } = useLocalSearchParams();
 
-  const bodyPartQuery = (bodypart as string).toLowerCase();
+  const bodyPartQuery = (bodypart as string)?.toLowerCase();
 
   const fetchExercisesFromFirestore = async () => {
     try {
@@ -87,9 +87,8 @@ function BodyPartScreen() {
                 source={{ uri: imageUrls[item.id] }}
                 style={{
                   alignSelf: "center",
-                  borderRadius: 15,
-                  width: 0.9 * ScreenWidth,
-                  height: (0.9 * ScreenWidth) / (195 / 130),
+                  width: ScreenWidth,
+                  height: ScreenWidth / (195 / 130),
                   resizeMode: "cover",
                 }}
               />

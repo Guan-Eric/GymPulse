@@ -32,7 +32,7 @@ const ImageCarousel = ({ data, theme }) => {
             data={data}
             renderItem={renderCarouselItem}
             width={ScreenWidth}
-            height={ScreenWidth / (195 / 130)}
+            height={(ScreenWidth * 1.07) / (195 / 130)}
             loop={false}
             onProgressChange={(_offsetProgress, absoluteProgress) => {
               const index = Math.round(absoluteProgress);

@@ -6,6 +6,7 @@ import {
   Button,
   SafeAreaView,
   StyleSheet,
+  Pressable,
 } from "react-native";
 import { format } from "date-fns";
 import {
@@ -14,6 +15,7 @@ import {
   getNotifications,
 } from "../../../backend/user";
 import { Tab, TabView, useTheme } from "@rneui/themed";
+import { router } from "expo-router";
 
 const NotificationsScreen = () => {
   const [notifications, setNotifications] = useState([]);
@@ -45,9 +47,18 @@ const NotificationsScreen = () => {
 
   const renderFollowRequest = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text style={{ color: theme.colors.black }}>
-        {item.username} sent you a follow request
-      </Text>
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/(tabs)/(home)/profile",
+            params: { userId: item.userId },
+          })
+        }
+      >
+        <Text style={{ color: theme.colors.black }}>
+          {item.username} sent you a follow request
+        </Text>
+      </Pressable>
       <Button
         title="Accept"
         onPress={() => handleFollowRequest(item.id, true)}
@@ -61,7 +72,16 @@ const NotificationsScreen = () => {
 
   const renderNotification = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text style={{ color: theme.colors.black }}>{item.username}</Text>
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/(tabs)/(home)/profile",
+            params: { userId: item.userId },
+          })
+        }
+      >
+        <Text style={{ color: theme.colors.black }}>{item.username}</Text>
+      </Pressable>
       <Text style={{ color: theme.colors.black }}>
         {item.type === "like"
           ? " liked your post"
