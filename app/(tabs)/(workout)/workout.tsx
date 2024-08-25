@@ -134,9 +134,11 @@ function WorkoutScreen() {
     ]);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SafeAreaView style={{ flex: 1 }}>
-        <Text style={styles.titleText}>
+        <Text style={[styles.titleText, { color: theme.colors.black }]}>
           {Math.floor(time / 60)}:{time % 60}
         </Text>
         <Button title="End Workout" onPress={handleEndWorkout} />
