@@ -37,9 +37,7 @@ function ExerciseListScreen() {
           Body Part
         </Text>
         <View>
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 50, paddingTop: 20 }}
-          >
+          <ScrollView contentContainerStyle={{ flex: 1, paddingTop: 20 }}>
             <View style={styles.planContainer}>
               {bodyPart.map((item) => (
                 <Pressable

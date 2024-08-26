@@ -125,7 +125,7 @@ function ViewPostScreen() {
                       />
                       <Button
                         disabled={comment === ""}
-                        title="Post"
+                        title="Comment"
                         onPress={handleAddComment}
                       />
                     </View>

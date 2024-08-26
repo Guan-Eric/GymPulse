@@ -30,7 +30,7 @@ export async function register(
     addUser(username, name, height, weight, isMetric);
   } catch (error) {
     console.error(error);
-    alert("Sign in failed: " + error.message);
+    alert("Sign up failed: " + error.message);
     return false;
   }
   return true;

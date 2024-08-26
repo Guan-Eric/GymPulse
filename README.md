@@ -26,9 +26,7 @@ A fitness tracker app that helps users organize their workout plans and track th
 1. Clone the repository to your local machine.
 2. Navigate to the project directory in your terminal.
 3. Install dependencies by running `npm install`.
-4. Set up Firebase Firestore and Firebase Storage for data storage.
-5. Update the Firebase configuration in the `firebaseConfig.js` file.
-6. Run the app on a simulator or physical device using Expo Go.
+4. Run the app on a simulator or physical device using Expo Go by running `npx expo start`.
 
 ## Usage
 
@@ -43,7 +41,6 @@ A fitness tracker app that helps users organize their workout plans and track th
 - React Native
 - Firebase (Firestore, Authentication, Storage)
 - Expo
-- React Navigation
 
 ## Contributing
 

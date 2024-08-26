@@ -61,7 +61,7 @@ function UserScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView style={{ paddingBottom: 70 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
             flexDirection: "row",

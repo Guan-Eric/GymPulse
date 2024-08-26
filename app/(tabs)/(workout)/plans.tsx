@@ -57,7 +57,7 @@ function PlanScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <SafeAreaView style={[styles.container, { paddingBottom: -50 }]}>
+      <SafeAreaView style={[styles.container, { flex: 1 }]}>
         <Tab
           value={index}
           onChange={(e) => setIndex(e)}

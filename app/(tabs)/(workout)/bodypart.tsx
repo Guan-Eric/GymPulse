@@ -14,7 +14,7 @@ import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Exercise } from "../../../components/types";
 import { Href, router, useLocalSearchParams } from "expo-router";
-import { Card, useTheme } from "@rneui/themed";
+import { Card, Divider, useTheme } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 
 const screenWidth = Dimensions.get("window").width;
@@ -68,14 +68,21 @@ function BodyPartScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <Text style={[styles.title, { color: theme.colors.black }]}>
           {bodypart}
         </Text>
         <FlatList
+          style={{ flex: 1 }}
           data={exercises}
           renderItem={({ item }) => (
             <Pressable
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                borderTopWidth: 0.5,
+                borderTopColor: "gray",
+              }}
               onPress={() =>
                 router.push({
                   pathname: "/(tabs)/(workout)/exercise",
@@ -92,8 +99,8 @@ function BodyPartScreen() {
                 source={{ uri: imageUrls[item.id] }}
                 style={{
                   alignSelf: "center",
-                  width: ScreenWidth,
-                  height: ScreenWidth / (195 / 130),
+                  width: ScreenWidth * 0.2,
+                  height: (ScreenWidth * 0.2) / (195 / 130),
                   resizeMode: "cover",
                 }}
               />
@@ -114,13 +121,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   baseText: {
-    paddingTop: 20,
-    fontSize: 20,
+    paddingLeft: 10,
+    fontSize: 16,
     textAlign: "center",
   },
   title: {
-    fontSize: 20,
-    textAlign: "center",
+    fontFamily: "Lato_700Bold",
+    fontSize: 32,
+    fontWeight: "bold",
+    paddingLeft: 10,
+    paddingBottom: 10,
   },
   card: {
     padding: 20,

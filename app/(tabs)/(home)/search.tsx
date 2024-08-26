@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList, Text, Pressable } from "react-native";
-import { SearchBar, useTheme } from "@rneui/themed";
+import {
+  SafeAreaView,
+  View,
+  FlatList,
+  Text,
+  Pressable,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+import { Avatar, SearchBar, useTheme } from "@rneui/themed";
 import { query, collection, where, limit, getDocs } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { router } from "expo-router";
@@ -19,16 +27,13 @@ function SearchScreen() {
     try {
       const usersQuery = query(
         collection(FIRESTORE_DB, "Users"),
-        where("prefixes", "array-contains", searchText),
+        where("prefixes", "array-contains", searchText.toLowerCase()),
         limit(10)
       );
 
       const querySnapshot = await getDocs(usersQuery);
 
-      const users = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const users = querySnapshot.docs.map((doc) => doc.data());
       setResults(users);
     } catch (error) {
       console.error("Error searching users: ", error);
@@ -57,26 +62,46 @@ function SearchScreen() {
         padding: 10,
       }}
     >
-      <Text style={{ color: theme.colors.black }}>{item.username}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Avatar rounded source={{ uri: item.url }} />
+        <Text style={{ color: theme.colors.black, paddingLeft: 10 }}>
+          {item.username}
+        </Text>
+      </View>
     </Pressable>
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
-        <SearchBar
-          placeholder="Type Here..."
-          onChangeText={(text) => setSearch(text)}
-          onClear={() => setSearch("")}
-          value={search}
-        />
-        <FlatList
-          data={results}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-        />
-      </SafeAreaView>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.colors.background,
+        }}
+      >
+        <SafeAreaView>
+          <SearchBar
+            containerStyle={{
+              backgroundColor: theme.colors.background,
+              borderTopWidth: 0,
+              borderBottomWidth: 0,
+            }}
+            inputContainerStyle={{
+              borderRadius: 10,
+            }}
+            placeholder="Type Here..."
+            onChangeText={(text) => setSearch(text)}
+            onClear={() => setSearch("")}
+            value={search}
+          />
+          <FlatList
+            data={results}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+          />
+        </SafeAreaView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 

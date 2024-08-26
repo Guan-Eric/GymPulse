@@ -6,27 +6,24 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Button, Input, Switch } from "@rneui/themed";
 import { router } from "expo-router";
-import { Picker } from "@react-native-picker/picker";
 import { isUsernameExists } from "../../backend/user";
 
-const sexOptions = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
-  { label: "Other", value: "other" },
-];
+const PreSignUpScreen = () => {
+  const [username, setUsername] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [height, setHeight] = useState<string>("");
+  const [weight, setWeight] = useState<string>("");
+  const [isMetric, setIsMetric] = useState<boolean>(true);
+  const [isUsernameValid, setIsUsernameValid] = useState<boolean>(true);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
-function PreSignUpScreen() {
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
-  const [height, setHeight] = useState("");
-  const [weight, setWeight] = useState("");
-  const [isMetric, setIsMetric] = useState(true);
-  const [isUsernameValid, setIsUsernameValid] = useState(true);
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
-  const [isButtonDisabled, setIsButtonDiasabled] = useState(true);
+  const unitHeight = isMetric ? " cm" : " in";
+  const unitWeight = isMetric ? " kg" : " lbs";
 
   const handleNext = () => {
     router.push({
@@ -42,9 +39,34 @@ function PreSignUpScreen() {
   };
 
   useEffect(() => {
-    setIsButtonDiasabled(!(isUsernameValid && name && height && weight));
-    console.log(isButtonDisabled);
+    setIsButtonDisabled(
+      !(
+        isUsernameValid &&
+        name &&
+        validateDecimal(height) &&
+        validateDecimal(weight)
+      )
+    );
   }, [username, name, height, weight]);
+
+  const validateDecimal = (value: string) => {
+    const decimalPattern = /^\d+(\.\d{0,2})?$/;
+    return decimalPattern.test(value) && value !== "";
+  };
+
+  const handleHeightChange = (text: string) => {
+    const processedText = text.replace(/^0+(?!\.|$)/, ""); // Remove leading zeros
+    if (validateDecimal(processedText) || processedText === "") {
+      setHeight(processedText);
+    }
+  };
+
+  const handleWeightChange = (text: string) => {
+    const processedText = text.replace(/^0+(?!\.|$)/, ""); // Remove leading zeros
+    if (validateDecimal(processedText) || processedText === "") {
+      setWeight(processedText);
+    }
+  };
 
   const checkUsername = async (username: string) => {
     setUsername(username);
@@ -57,64 +79,81 @@ function PreSignUpScreen() {
       setUsernameErrorMessage("Username must be at least 4 characters long.");
     }
   };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <SafeAreaView style={styles.content}>
-          <Text style={styles.titleText}>Sign Up</Text>
-          <View>
-            <Input
-              containerStyle={styles.inputContainer}
-              style={styles.input}
-              placeholder="Username"
-              onChangeText={(text) => checkUsername(text)}
-              autoCapitalize="none"
-            />
-            {usernameErrorMessage ? (
-              <Text style={styles.errorText}>{usernameErrorMessage}</Text>
-            ) : null}
-            <Input
-              containerStyle={styles.inputContainer}
-              style={styles.input}
-              placeholder="Name"
-              onChangeText={(text) => setName(text)}
-            />
-            <Input
-              containerStyle={styles.inputContainer}
-              style={styles.input}
-              placeholder={isMetric ? "Height (cm)" : "Height (in)"}
-              keyboardType="numeric"
-              onChangeText={(text) => setHeight(text)}
-            />
-            <Input
-              containerStyle={styles.inputContainer}
-              style={styles.input}
-              placeholder={isMetric ? "Weight (kg)" : "Weight (lbs)"}
-              keyboardType="numeric"
-              onChangeText={(text) => setWeight(text)}
-            />
-            <View style={styles.switchContainer}>
-              <Text style={styles.switchLabel}>Use Metric Units</Text>
-              <Switch
-                value={isMetric}
-                onValueChange={(value) => setIsMetric(value)}
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <SafeAreaView style={styles.content}>
+            <Text style={styles.titleText}>Sign Up</Text>
+            <View>
+              <Input
+                containerStyle={styles.inputContainer}
+                style={styles.input}
+                placeholder="Username"
+                onChangeText={(text) => checkUsername(text)}
+                autoCapitalize="none"
               />
+              {usernameErrorMessage ? (
+                <Text style={styles.errorText}>{usernameErrorMessage}</Text>
+              ) : null}
+              <Input
+                containerStyle={styles.inputContainer}
+                style={styles.input}
+                placeholder="Name"
+                onChangeText={(text) => setName(text)}
+              />
+              <View style={styles.inputWithUnitContainer}>
+                <Input
+                  containerStyle={styles.inputContainer}
+                  style={styles.inputWithUnit}
+                  placeholder="Height"
+                  keyboardType="numeric"
+                  onChangeText={handleHeightChange}
+                  value={height}
+                  errorMessage={
+                    height && !validateDecimal(height) ? "Invalid height" : ""
+                  }
+                />
+                <Text style={styles.unitText}>{unitHeight}</Text>
+              </View>
+              <View style={styles.inputWithUnitContainer}>
+                <Input
+                  containerStyle={styles.inputContainer}
+                  style={styles.inputWithUnit}
+                  placeholder="Weight"
+                  keyboardType="numeric"
+                  onChangeText={handleWeightChange}
+                  value={weight}
+                  errorMessage={
+                    weight && !validateDecimal(weight) ? "Invalid weight" : ""
+                  }
+                />
+                <Text style={styles.unitText}>{unitWeight}</Text>
+              </View>
+              <View style={styles.switchContainer}>
+                <Text style={styles.switchLabel}>Use Metric Units</Text>
+                <Switch
+                  value={isMetric}
+                  onValueChange={(value) => setIsMetric(value)}
+                />
+              </View>
             </View>
-          </View>
-          <Button
-            buttonStyle={[
-              styles.nextButton,
-              { opacity: isButtonDisabled ? 0.5 : 1 },
-            ]}
-            title="Next"
-            onPress={handleNext}
-            disabled={isButtonDisabled}
-          />
-        </SafeAreaView>
+            <Button
+              buttonStyle={[
+                styles.nextButton,
+                { opacity: isButtonDisabled ? 0.5 : 1 },
+              ]}
+              title="Next"
+              onPress={handleNext}
+              disabled={isButtonDisabled}
+            />
+          </SafeAreaView>
+        </KeyboardAvoidingView>
       </View>
     </TouchableWithoutFeedback>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -146,6 +185,22 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: 300,
+  },
+  inputWithUnitContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inputWithUnit: {
+    borderColor: "white",
+    flex: 1,
+    fontFamily: "Lato_400Regular",
+    fontSize: 20,
+  },
+  unitText: {
+    color: "white",
+    fontSize: 18,
+    marginRight: 10,
+    fontFamily: "Lato_400Regular",
   },
   switchContainer: {
     flexDirection: "row",

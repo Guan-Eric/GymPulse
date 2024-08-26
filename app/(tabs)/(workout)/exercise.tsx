@@ -78,7 +78,7 @@ function AddExerciseScreen() {
   };
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView style={{ paddingBottom: -35 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         {exercise && (
           <View>
             {route == "add" ? (

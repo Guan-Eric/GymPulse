@@ -3,33 +3,13 @@ import {
   Button,
   View,
   StyleSheet,
-  Pressable,
-  Image,
   Text,
-  TextInput,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
-import { ActivityIndicator } from "react-native-paper";
-import { useTheme, CheckBox, Icon, Input } from "@rneui/themed";
-import {
-  collection,
-  updateDoc,
-  onSnapshot,
-  setDoc,
-  query,
-  orderBy,
-  deleteDoc,
-  doc,
-  getCountFromServer,
-  getDocs,
-  getDoc,
-  addDoc,
-} from "firebase/firestore";
-import { ScreenWidth } from "@rneui/base";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { useTheme, Input } from "@rneui/themed";
 import { Post } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 import {

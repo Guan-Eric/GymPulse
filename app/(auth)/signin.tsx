@@ -65,7 +65,7 @@ function SignInScreen() {
               type="clear"
               buttonStyle={styles.signUpButton}
               title="Sign Up"
-              onPress={() => router.push("/(auth)/signup")}
+              onPress={() => router.push("/(auth)/presignup")}
             />
           </View>
         </SafeAreaView>

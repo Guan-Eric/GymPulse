@@ -10,7 +10,6 @@ import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
 import { savePushToken } from "../../../backend/user";
 import { Instagram } from "react-content-loader/native";
-import { ScreenWidth } from "@rneui/base";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -75,7 +74,7 @@ const FeedScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
             paddingLeft: 25,

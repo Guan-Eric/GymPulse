@@ -17,11 +17,11 @@ export async function getWorkout(workoutId): Promise<Workout> {
       exerciseDoc.data()
     );
     const workoutData: Workout = {
-      date: workoutDoc.data().date,
+      date: workoutDoc.data()?.date,
       exercises: exercisesData as Exercise[],
-      id: workoutDoc.data().id,
-      name: workoutDoc.data().name,
-      duration: workoutDoc.data().duration,
+      id: workoutDoc.data()?.id,
+      name: workoutDoc.data()?.name,
+      duration: workoutDoc.data()?.duration,
     };
 
     return workoutData as Workout;

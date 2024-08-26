@@ -22,7 +22,7 @@ const PostItem = ({
   viewPost,
 }) => {
   const formattedDate = format(
-    new Date(post.date),
+    new Date(post?.date),
     "MMMM do, yyyy 'at' h:mm a"
   );
 

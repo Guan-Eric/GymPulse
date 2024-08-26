@@ -33,7 +33,7 @@ function ViewWorkoutScreen() {
         backgroundColor: theme.colors.background,
       }}
     >
-      <SafeAreaView style={{ paddingBottom: 35 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScrollView>
           <DayCard
             plan={null}

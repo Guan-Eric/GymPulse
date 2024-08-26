@@ -74,7 +74,7 @@ function ViewPlanScreen() {
       }}
       behavior="padding"
     >
-      <SafeAreaView style={{ paddingBottom: 35 }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <Input
           containerStyle={styles.nameInput}
           inputContainerStyle={styles.nameInput}
