@@ -127,7 +127,9 @@ const PostItem = ({
             : null
         }
       >
-        <Text>{post.title}</Text>
+        <Text style={[styles.title, { color: theme.colors.black }]}>
+          {post.title}
+        </Text>
         {post.caption ? (
           <TruncatedText theme={theme}>{post.caption}</TruncatedText>
         ) : null}
@@ -193,6 +195,13 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_700Bold",
     fontSize: 16,
     paddingLeft: 5,
+  },
+  title: {
+    fontFamily: "Lato_700Bold",
+    fontWeight: "bold",
+    fontSize: 20,
+    paddingLeft: 20,
+    paddingBottom: 15,
   },
   workoutText: {
     fontFamily: "Lato_400Regular",
