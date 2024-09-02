@@ -9,6 +9,7 @@ import EmptyPlanCard from "../../../components/EmptyPlanCard";
 import BodyPartCard from "../../../components/BodyPartCard";
 import { Plan } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
+import PlansLoader from "../../../components/PlansLoader";
 
 const bodyParts = [
   { name: "Chest", key: "1" },
@@ -34,12 +35,14 @@ function PlanScreen() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const { theme } = useTheme();
   const [index, setIndex] = useState(0);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPlans = async () => {
     setPlans(await getPlans());
   };
   useEffect(() => {
     fetchPlans();
+    setLoading(false);
   }, []);
 
   useFocusEffect(
@@ -96,20 +99,28 @@ function PlanScreen() {
             </ScrollView>
           </TabView.Item>
           <TabView.Item>
-            <ScrollView>
+            {loading ? (
               <View style={styles.planContainer}>
-                {plans.length == 0
-                  ? null
-                  : plans.map((item) => (
-                      <View key={item.id} style={styles.cardWrapper}>
-                        <PlanCard plan={item} theme={theme} />
-                      </View>
-                    ))}
-                <View key="empty-plan-card" style={styles.cardWrapper}>
-                  <EmptyPlanCard onPress={handleCreatePlan} />
+                <View style={styles.cardWrapper}>
+                  <PlansLoader theme={theme} />
                 </View>
               </View>
-            </ScrollView>
+            ) : (
+              <ScrollView>
+                <View style={styles.planContainer}>
+                  {plans.length == 0
+                    ? null
+                    : plans.map((item) => (
+                        <View key={item.id} style={styles.cardWrapper}>
+                          <PlanCard plan={item} theme={theme} />
+                        </View>
+                      ))}
+                  <View key="empty-plan-card" style={styles.cardWrapper}>
+                    <EmptyPlanCard onPress={handleCreatePlan} />
+                  </View>
+                </View>
+              </ScrollView>
+            )}
           </TabView.Item>
         </TabView>
       </SafeAreaView>

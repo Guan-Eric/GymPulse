@@ -10,6 +10,7 @@ import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
 import { savePushToken } from "../../../backend/user";
 import { Instagram } from "react-content-loader/native";
+import FeedLoader from "../../../components/FeedLoader";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -114,14 +115,8 @@ const FeedScreen: React.FC = () => {
         </View>
         {loading ? (
           <View style={{ alignItems: "center" }}>
-            <Instagram
-              foregroundColor={theme.colors.grey3}
-              backgroundColor={theme.colors.grey4}
-            />
-            <Instagram
-              foregroundColor={theme.colors.grey3}
-              backgroundColor={theme.colors.grey4}
-            />
+            <FeedLoader theme={theme} />
+            <FeedLoader theme={theme} />
           </View>
         ) : (
           <FlatList
