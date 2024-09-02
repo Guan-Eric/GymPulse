@@ -16,14 +16,16 @@ const PlanCardLoader = ({ theme }) => {
         width={150}
         height={200}
         viewBox="0 0 150 200"
-        backgroundColor={theme.colors.grey5}
+        backgroundColor={theme.colors.grey4}
         foregroundColor={theme.colors.grey3}
       >
-        <Rect x="5" y="10" rx="8" ry="8" width="100" height="20" />
-        <Rect x="0" y="50" rx="8" ry="8" width="110" height="10" />
-        <Rect x="0" y="70" rx="8" ry="8" width="90" height="10" />
-        <Rect x="0" y="90" rx="8" ry="8" width="100" height="10" />
-        <Rect x="0" y="110" rx="8" ry="8" width="80" height="10" />
+        <Rect x="5" y="5" rx="5" ry="5" width="100" height="10" />
+        <Rect x="0" y="50" rx="5" ry="5" width="110" height="10" />
+        <Rect x="0" y="70" rx="5" ry="5" width="90" height="10" />
+        <Rect x="0" y="90" rx="5" ry="5" width="100" height="10" />
+        <Rect x="0" y="110" rx="5" ry="5" width="80" height="10" />
+        <Rect x="0" y="130" rx="5" ry="5" width="110" height="10" />
+        <Rect x="0" y="150" rx="5" ry="5" width="100" height="10" />
       </ContentLoader>
     </Card>
   );

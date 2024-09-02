@@ -29,6 +29,7 @@ import { router, useFocusEffect } from "expo-router";
 import { getUser } from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
+import ProfileLoader from "../../../components/ProfileLoader";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -95,25 +96,32 @@ function UserScreen() {
               {user?.bio}
             </Text>
           ) : null}
-          <FlatList
-            numColumns={1}
-            horizontal={false}
-            data={posts}
-            renderItem={({ item }) => (
-              <PostItem
-                post={item}
-                theme={theme}
-                navigateProfile={null}
-                onToggleLike={null}
-                renderComments={false}
-                showCommentIcon={true}
-                showUser={false}
-                tab={"(profile)"}
-                viewPost={false}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-          />
+          {loading ? (
+            <>
+              <ProfileLoader theme={theme} />
+              <ProfileLoader theme={theme} />
+            </>
+          ) : (
+            <FlatList
+              numColumns={1}
+              horizontal={false}
+              data={posts}
+              renderItem={({ item }) => (
+                <PostItem
+                  post={item}
+                  theme={theme}
+                  navigateProfile={null}
+                  onToggleLike={null}
+                  renderComments={false}
+                  showCommentIcon={true}
+                  showUser={false}
+                  tab={"(profile)"}
+                  viewPost={false}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+            />
+          )}
         </View>
       </SafeAreaView>
     </View>

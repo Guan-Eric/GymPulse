@@ -38,11 +38,16 @@ function PlanScreen() {
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchPlans = async () => {
-    setPlans(await getPlans());
+    try {
+      setPlans(await getPlans());
+    } catch (error) {
+      console.error("Error fetching plans", error);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     fetchPlans();
-    setLoading(false);
   }, []);
 
   useFocusEffect(

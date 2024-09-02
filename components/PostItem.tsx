@@ -39,7 +39,7 @@ const PostItem = ({
   }, []);
 
   return (
-    <View style={{ paddingBottom: 20 }}>
+    <View style={{ paddingBottom: 5 }}>
       {showUser ? (
         <View
           style={{
@@ -48,6 +48,7 @@ const PostItem = ({
             justifyContent: "space-between",
             paddingRight: 10,
             paddingLeft: 15,
+            paddingBottom: 10,
           }}
         >
           <Pressable onPress={() => navigateProfile(post.userId)}>
@@ -127,9 +128,11 @@ const PostItem = ({
             : null
         }
       >
-        <Text style={[styles.title, { color: theme.colors.black }]}>
-          {post.title}
-        </Text>
+        {post.title ? (
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            {post.title}
+          </Text>
+        ) : null}
         {post.caption ? (
           <TruncatedText theme={theme}>{post.caption}</TruncatedText>
         ) : null}
