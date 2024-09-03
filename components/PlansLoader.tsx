@@ -20,12 +20,12 @@ const PlanCardLoader = ({ theme }) => {
         foregroundColor={theme.colors.grey3}
       >
         <Rect x="5" y="5" rx="5" ry="5" width="100" height="10" />
-        <Rect x="0" y="50" rx="5" ry="5" width="110" height="10" />
-        <Rect x="0" y="70" rx="5" ry="5" width="90" height="10" />
-        <Rect x="0" y="90" rx="5" ry="5" width="100" height="10" />
-        <Rect x="0" y="110" rx="5" ry="5" width="80" height="10" />
-        <Rect x="0" y="130" rx="5" ry="5" width="110" height="10" />
-        <Rect x="0" y="150" rx="5" ry="5" width="100" height="10" />
+        <Rect x="0" y="40" rx="5" ry="5" width="110" height="10" />
+        <Rect x="0" y="60" rx="5" ry="5" width="90" height="10" />
+        <Rect x="0" y="80" rx="5" ry="5" width="100" height="10" />
+        <Rect x="0" y="100" rx="5" ry="5" width="80" height="10" />
+        <Rect x="0" y="120" rx="5" ry="5" width="110" height="10" />
+        <Rect x="0" y="140" rx="5" ry="5" width="100" height="10" />
       </ContentLoader>
     </Card>
   );

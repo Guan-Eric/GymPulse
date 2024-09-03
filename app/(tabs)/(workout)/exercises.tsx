@@ -29,70 +29,48 @@ function ExerciseListScreen() {
   const { theme } = useTheme();
   const { route, planId, dayId } = useLocalSearchParams();
   return (
-    <View
+    <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <SafeAreaView style={styles.container}>
-        <Text style={[styles.titleText, { color: theme.colors.black }]}>
-          Body Part
-        </Text>
-        <View>
-          <ScrollView contentContainerStyle={{ flex: 1, paddingTop: 20 }}>
-            <View style={styles.planContainer}>
-              {bodyPart.map((item) => (
-                <Pressable
-                  style={styles.cardWrapper}
-                  key={item.key}
-                  onPress={() =>
-                    router.push({
-                      pathname: "/(tabs)/(workout)/bodypart",
-                      params: {
-                        bodypart: item.name,
-                        route: route,
-                        planId: planId,
-                        dayId: dayId,
-                      },
-                    })
-                  }
-                >
-                  <BodyPartCard bodypart={item.name} theme={theme} />
-                </Pressable>
-              ))}
-            </View>
-          </ScrollView>
+      <Text style={[styles.titleText, { color: theme.colors.black }]}>
+        Body Part
+      </Text>
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.planContainer}>
+          {bodyPart.map((item) => (
+            <Pressable
+              style={styles.cardWrapper}
+              key={item.key}
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/(workout)/bodypart",
+                  params: {
+                    bodypart: item.name,
+                    route: route,
+                    planId: planId,
+                    dayId: dayId,
+                  },
+                })
+              }
+            >
+              <BodyPartCard bodypart={item.name} theme={theme} />
+            </Pressable>
+          ))}
         </View>
-      </SafeAreaView>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  baseText: {
-    fontSize: 20,
-  },
   titleText: {
     fontSize: 24,
     fontWeight: "bold",
-  },
-  logoText: {
-    fontSize: 50,
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
+    paddingBottom: 10,
+    paddingLeft: 25,
   },
   planContainer: {
     flexDirection: "row",
@@ -107,4 +85,5 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
 export default ExerciseListScreen;

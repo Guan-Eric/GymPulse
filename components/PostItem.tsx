@@ -51,18 +51,20 @@ const PostItem = ({
             paddingBottom: 10,
           }}
         >
-          <Pressable onPress={() => navigateProfile(post.userId)}>
-            <Avatar rounded size={40} source={{ uri: user?.url }} />
-          </Pressable>
-          <View style={{ flexDirection: "column" }}>
+          <View style={{ flexDirection: "row", gap: 5 }}>
             <Pressable onPress={() => navigateProfile(post.userId)}>
-              <Text style={[styles.userName, { color: theme.colors.black }]}>
-                {user?.username}
-              </Text>
+              <Avatar rounded size={40} source={{ uri: user?.url }} />
             </Pressable>
-            <Text style={[styles.workoutText, { color: "gray" }]}>
-              did a workout on {formattedDate}
-            </Text>
+            <View style={{ flexDirection: "column" }}>
+              <Pressable onPress={() => navigateProfile(post.userId)}>
+                <Text style={[styles.userName, { color: theme.colors.black }]}>
+                  {user?.username}
+                </Text>
+              </Pressable>
+              <Text style={[styles.workoutText, { color: "gray" }]}>
+                did a workout on {formattedDate}
+              </Text>
+            </View>
           </View>
           <Button
             type="clear"
