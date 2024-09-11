@@ -1,87 +1,78 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Button, Pressable } from "react-native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useThemeMode, useTheme, CheckBox } from "@rneui/themed";
+import { useThemeMode, useTheme, CheckBox, Card, Icon } from "@rneui/themed";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { logOut } from "../../../backend/auth";
+import { router } from "expo-router";
 
 function SettingScreen() {
   const { theme } = useTheme();
-  const { mode, setMode } = useThemeMode();
-  const [isDark, setIsDark] = useState();
-  const [isMetric, setIsMetric] = useState();
-  useEffect(() => {
-    const fetchUserFromFirestore = async () => {
-      const userDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}`
-      );
-      const userDocSnapshot = await getDoc(userDocRef);
-      setIsDark(userDocSnapshot.data().darkMode);
-      setIsMetric(userDocSnapshot.data().metricUnits);
-    };
-    fetchUserFromFirestore();
-  }, []);
-  const setDarkMode = async (value) => {
-    setMode(value ? "dark" : "light");
-    setIsDark(value);
-    const userDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}`
-    );
-    await updateDoc(userDocRef, {
-      darkMode: value,
-    });
-  };
-  const setMetricMode = async (value) => {
-    setIsMetric(value);
-    const userDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}`
-    );
-    await updateDoc(userDocRef, {
-      metricUnits: value,
-    });
-  };
 
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView>
-        <CheckBox
-          checked={isDark == true}
-          onPress={() => setDarkMode(true)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Dark Theme"}
-        />
-        <CheckBox
-          checked={isDark == false}
-          onPress={() => setDarkMode(false)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Light Theme"}
-        />
-        <CheckBox
-          checked={isMetric == true}
-          onPress={() => setMetricMode(true)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Metric Units"}
-        />
-        <CheckBox
-          checked={isMetric == false}
-          onPress={() => setMetricMode(false)}
-          iconType="material-community"
-          checkedIcon="radiobox-marked"
-          uncheckedIcon="radiobox-blank"
-          title={"Imperial Units"}
-        />
+        <Text style={{ color: theme.colors.black }}>Settings</Text>
+        <Card
+          containerStyle={[
+            styles.card,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Pressable
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+            onPress={() => router.push("/(tabs)/(profile)/personal")}
+          >
+            <Text style={{ color: theme.colors.black }}>
+              Personal Information
+            </Text>
+            <Icon name="chevron-right" type="material-community" size={20} />
+          </Pressable>
+        </Card>
+        <Card
+          containerStyle={[
+            styles.card,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Pressable
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+            onPress={() => router.push("/(tabs)/(profile)/display")}
+          >
+            <Text style={{ color: theme.colors.black }}>Display</Text>
+            <Icon name="chevron-right" type="material-community" size={20} />
+          </Pressable>
+        </Card>
+        <Card
+          containerStyle={[
+            styles.card,
+            { backgroundColor: theme.colors.background },
+          ]}
+        >
+          <Pressable
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+            onPress={() => router.push("/(tabs)/(profile)/notifications")}
+          >
+            <Text style={{ color: theme.colors.black }}>Notifications</Text>
+            <Icon name="chevron-right" type="material-community" size={20} />
+          </Pressable>
+        </Card>
+
         <Button onPress={() => logOut()} title="Log Out" />
       </SafeAreaView>
     </View>
@@ -90,6 +81,9 @@ function SettingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  card: {
+    borderRadius: 8,
   },
   content: {
     flex: 1,

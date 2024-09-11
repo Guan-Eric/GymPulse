@@ -58,14 +58,6 @@ function ViewPlanScreen() {
     router.back();
   };
 
-  if (loading) {
-    return (
-      <View>
-        <Instagram />
-      </View>
-    );
-  }
-
   return (
     <KeyboardAvoidingView
       style={{
@@ -74,51 +66,57 @@ function ViewPlanScreen() {
       }}
       behavior="padding"
     >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Input
-          containerStyle={styles.nameInput}
-          inputContainerStyle={styles.nameInput}
-          style={styles.nameInput}
-          onChangeText={handleSaveName}
-          value={plan?.name}
-        />
+      {loading ? (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Instagram />
+        </SafeAreaView>
+      ) : (
+        <SafeAreaView style={{ flex: 1 }}>
+          <Input
+            containerStyle={styles.nameInput}
+            inputContainerStyle={styles.nameInput}
+            style={styles.nameInput}
+            onChangeText={handleSaveName}
+            value={plan?.name}
+          />
 
-        <ScrollView>
-          {plan?.days.length > 0
-            ? plan?.days?.map((day, dayIndex) => (
-                <DayCard
-                  key={day.id}
-                  plan={plan}
-                  day={day}
-                  dayIndex={dayIndex}
-                  theme={theme}
-                  isMetric={isMetric}
-                  setPlan={setPlan}
-                  isWorkout={false}
-                  isDisabled={false}
+          <ScrollView>
+            {plan?.days.length > 0
+              ? plan?.days?.map((day, dayIndex) => (
+                  <DayCard
+                    key={day.id}
+                    plan={plan}
+                    day={day}
+                    dayIndex={dayIndex}
+                    theme={theme}
+                    isMetric={isMetric}
+                    setPlan={setPlan}
+                    isWorkout={false}
+                    isDisabled={false}
+                  />
+                ))
+              : null}
+            <Button
+              type="clear"
+              icon={
+                <Icon
+                  name="plus-circle-outline"
+                  size={24}
+                  color={theme.colors.black}
+                  type="material-community"
                 />
-              ))
-            : null}
-          <Button
-            type="clear"
-            icon={
-              <Icon
-                name="plus-circle-outline"
-                size={24}
-                color={theme.colors.black}
-                type="material-community"
-              />
-            }
-            onPress={handleAddDay}
-          />
-          <Button
-            type="clear"
-            title="Delete Plan"
-            onPress={handleDeletePlan}
-            color={theme.colors.error}
-          />
-        </ScrollView>
-      </SafeAreaView>
+              }
+              onPress={handleAddDay}
+            />
+            <Button
+              type="clear"
+              title="Delete Plan"
+              onPress={handleDeletePlan}
+              color={theme.colors.error}
+            />
+          </ScrollView>
+        </SafeAreaView>
+      )}
     </KeyboardAvoidingView>
   );
 }
