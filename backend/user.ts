@@ -300,9 +300,9 @@ async function getUserPushTokens(userId: string) {
 
 function getNotificationMessage(type: string): string {
   return type === "like"
-    ? " liked your post."
+    ? " gave you props for your workout."
     : type === "comment"
-    ? " commented on your post."
+    ? " commented on your workout."
     : type === "accepted"
     ? " accepted your follow request."
     : type === "request"
