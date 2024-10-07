@@ -33,6 +33,7 @@ function WelcomeScreen() {
             <Button
               type="clear"
               buttonStyle={styles.signInButton}
+              titleStyle={{ fontFamily: "Alata_400Regular", fontSize: 15 }}
               title="Sign In"
               onPress={() => router.push("/(auth)/signin")}
             />
@@ -52,22 +53,24 @@ const styles = StyleSheet.create({
   sloganText: {
     fontSize: 20,
     color: "white",
-    fontFamily: "Lato_700Bold",
+    fontFamily: "Alata_400Regular",
   },
   logoText: {
     fontSize: 64,
-    fontFamily: "Roboto_700Bold",
+    fontFamily: "Anton_400Regular",
     color: "#3490de",
   },
   baseText: {
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     color: "gray",
     fontSize: 15,
   },
   signUpButton: {
-    fontFamily: "Lato_700Bold",
-    borderRadius: 15,
-    width: 200,
+    fontFamily: "Alata_400Regular",
+    fontSize: 20,
+    borderRadius: 20,
+    width: 240,
+    height: 46,
   },
   signInButton: { width: 100 },
 });

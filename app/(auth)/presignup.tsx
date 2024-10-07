@@ -17,13 +17,14 @@ const PreSignUpScreen = () => {
   const [name, setName] = useState<string>("");
   const [height, setHeight] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
-  const [isMetric, setIsMetric] = useState<boolean>(true);
+  const [cmIsMetric, setCmIsMetric] = useState<boolean>(true);
+  const [kgIsMetric, setKgIsMetric] = useState<boolean>(true);
   const [isUsernameValid, setIsUsernameValid] = useState<boolean>(true);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("");
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
-  const unitHeight = isMetric ? " cm" : " in";
-  const unitWeight = isMetric ? " kg" : " lbs";
+  const unitHeight = cmIsMetric ? " cm" : " in";
+  const unitWeight = kgIsMetric ? " kg" : " lbs";
 
   const handleNext = () => {
     router.push({
@@ -33,7 +34,8 @@ const PreSignUpScreen = () => {
         name,
         height,
         weight,
-        isMetric: isMetric.toString(),
+        cmIsMetric: cmIsMetric.toString(),
+        kgIsMetric: kgIsMetric.toString(),
       },
     });
   };
@@ -104,38 +106,43 @@ const PreSignUpScreen = () => {
                 onChangeText={(text) => setName(text)}
               />
               <View style={styles.inputWithUnitContainer}>
-                <Input
-                  containerStyle={styles.inputContainer}
-                  style={styles.inputWithUnit}
-                  placeholder="Height"
-                  keyboardType="numeric"
-                  onChangeText={handleHeightChange}
-                  value={height}
-                  errorMessage={
-                    height && !validateDecimal(height) ? "Invalid height" : ""
-                  }
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Input
+                    containerStyle={styles.smallInputContainer}
+                    style={styles.inputWithUnit}
+                    placeholder="Height"
+                    keyboardType="numeric"
+                    onChangeText={handleHeightChange}
+                    value={height}
+                    errorMessage={
+                      height && !validateDecimal(height) ? "Invalid height" : ""
+                    }
+                  />
+                  <Text style={styles.unitText}>{unitHeight}</Text>
+                </View>
+                <Switch
+                  value={cmIsMetric}
+                  onValueChange={(value) => setCmIsMetric(value)}
                 />
-                <Text style={styles.unitText}>{unitHeight}</Text>
               </View>
               <View style={styles.inputWithUnitContainer}>
-                <Input
-                  containerStyle={styles.inputContainer}
-                  style={styles.inputWithUnit}
-                  placeholder="Weight"
-                  keyboardType="numeric"
-                  onChangeText={handleWeightChange}
-                  value={weight}
-                  errorMessage={
-                    weight && !validateDecimal(weight) ? "Invalid weight" : ""
-                  }
-                />
-                <Text style={styles.unitText}>{unitWeight}</Text>
-              </View>
-              <View style={styles.switchContainer}>
-                <Text style={styles.switchLabel}>Use Metric Units</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Input
+                    containerStyle={styles.smallInputContainer}
+                    style={styles.inputWithUnit}
+                    placeholder="Weight"
+                    keyboardType="numeric"
+                    onChangeText={handleWeightChange}
+                    value={weight}
+                    errorMessage={
+                      weight && !validateDecimal(weight) ? "Invalid weight" : ""
+                    }
+                  />
+                  <Text style={styles.unitText}>{unitWeight}</Text>
+                </View>
                 <Switch
-                  value={isMetric}
-                  onValueChange={(value) => setIsMetric(value)}
+                  value={kgIsMetric}
+                  onValueChange={(value) => setKgIsMetric(value)}
                 />
               </View>
             </View>
@@ -184,11 +191,23 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   inputContainer: {
-    width: 300,
+    width: 254,
+    height: 46,
+    borderRadius: 10,
+    backgroundColor: "#D9D9D9",
+  },
+  smallInputContainer: {
+    width: 254 / 2,
+    height: 46,
+    borderRadius: 10,
+    backgroundColor: "#D9D9D9",
+    borderBottomWidth: 0,
   },
   inputWithUnitContainer: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 25,
   },
   inputWithUnit: {
     borderColor: "white",

@@ -20,7 +20,8 @@ export async function addUser(
   name: string,
   height: string,
   weight: string,
-  isMetric: string
+  cmIsMetric: string,
+  kgIsMetric: string
 ) {
   try {
     const userDocRef = doc(
@@ -31,7 +32,8 @@ export async function addUser(
       name: name,
       email: FIREBASE_AUTH.currentUser.email,
       darkMode: true,
-      metricUnits: isMetric == "true",
+      cmMetricUnits: cmIsMetric == "true",
+      kgMetricUnits: kgIsMetric == "true",
       height: height as unknown as number,
       weight: weight as unknown as number,
       bio: "",

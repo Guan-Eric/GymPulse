@@ -10,6 +10,8 @@
     "ts:check": "tsc"
   },
   "dependencies": {
+    "@expo-google-fonts/alata": "^0.2.3",
+    "@expo-google-fonts/anton": "^0.2.3",
     "@expo-google-fonts/lato": "^0.2.3",
     "@expo-google-fonts/roboto": "^0.2.3",
     "@expo/ngrok": "^4.1.0",
