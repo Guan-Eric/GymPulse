@@ -17,8 +17,15 @@ function SignUpScreen() {
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const { username, name, height, weight, cmIsMetric, kgIsMetric } =
-    useLocalSearchParams();
+  const {
+    username,
+    name,
+    primaryHeight,
+    secondaryHeight,
+    weight,
+    heightIsMetric,
+    weightIsMetric,
+  } = useLocalSearchParams();
 
   const validateEmail = (email) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -71,10 +78,11 @@ function SignUpScreen() {
         password,
         username as string,
         name as string,
-        height as string,
+        primaryHeight as string,
+        secondaryHeight as string,
         weight as string,
-        cmIsMetric as string,
-        kgIsMetric as string
+        heightIsMetric as string,
+        weightIsMetric as string
       )
     ) {
       setLoading(false);

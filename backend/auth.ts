@@ -21,14 +21,23 @@ export async function register(
   password: string,
   username: string,
   name: string,
-  height: string,
+  primaryyHeight: string,
+  secondaryHeight: string,
   weight: string,
-  cmIsMetric: string,
-  kgIsMetric: string
+  heightIsMetric: string,
+  weightIsMetric: string
 ): Promise<boolean> {
   try {
     await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
-    addUser(username, name, height, weight, cmIsMetric, kgIsMetric);
+    addUser(
+      username,
+      name,
+      primaryyHeight,
+      secondaryHeight,
+      weight,
+      heightIsMetric,
+      weightIsMetric
+    );
   } catch (error) {
     console.error(error);
     alert("Sign up failed: " + error.message);

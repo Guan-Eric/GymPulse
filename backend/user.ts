@@ -18,10 +18,11 @@ import axios from "axios";
 export async function addUser(
   username: string,
   name: string,
-  height: string,
+  primaryHeight: string,
+  secondaryHeight: string,
   weight: string,
-  cmIsMetric: string,
-  kgIsMetric: string
+  heightIsMetric: string,
+  weightIsMetric: string
 ) {
   try {
     const userDocRef = doc(
@@ -32,9 +33,10 @@ export async function addUser(
       name: name,
       email: FIREBASE_AUTH.currentUser.email,
       darkMode: true,
-      cmMetricUnits: cmIsMetric == "true",
-      kgMetricUnits: kgIsMetric == "true",
-      height: height as unknown as number,
+      heightMetricUnits: heightIsMetric == "true",
+      weightMetricUnits: weightIsMetric == "true",
+      primaryHeight: primaryHeight as unknown as number,
+      secondaryHeight: secondaryHeight as unknown as number,
       weight: weight as unknown as number,
       bio: "",
       id: FIREBASE_AUTH.currentUser.uid,

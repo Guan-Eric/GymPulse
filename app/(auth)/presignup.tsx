@@ -15,16 +15,18 @@ import { isUsernameExists } from "../../backend/user";
 const PreSignUpScreen = () => {
   const [username, setUsername] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const [height, setHeight] = useState<string>("");
+  const [primaryHeight, setprimaryHeightUnit] = useState<string>("");
+  const [secondaryHeight, setsecondaryHeightUnit] = useState<string>("");
   const [weight, setWeight] = useState<string>("");
-  const [cmIsMetric, setCmIsMetric] = useState<boolean>(true);
-  const [kgIsMetric, setKgIsMetric] = useState<boolean>(true);
+  const [heightIsMetric, setheightIsMetric] = useState<boolean>(true);
+  const [weightIsMetric, setweightIsMetric] = useState<boolean>(true);
   const [isUsernameValid, setIsUsernameValid] = useState<boolean>(true);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("");
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
-  const unitHeight = cmIsMetric ? " cm" : " in";
-  const unitWeight = kgIsMetric ? " kg" : " lbs";
+  const unitPrimaryHeight = heightIsMetric ? " m" : " ft";
+  const unitSecondaryHeight = heightIsMetric ? " cm" : " in";
+  const unitWeight = weightIsMetric ? " kg" : " lbs";
 
   const handleNext = () => {
     router.push({
@@ -32,10 +34,11 @@ const PreSignUpScreen = () => {
       params: {
         username,
         name,
-        height,
+        primaryHeightUnit: primaryHeight,
+        secondaryHeightUnit: secondaryHeight,
         weight,
-        cmIsMetric: cmIsMetric.toString(),
-        kgIsMetric: kgIsMetric.toString(),
+        heightIsMetric: heightIsMetric.toString(),
+        weightIsMetric: weightIsMetric.toString(),
       },
     });
   };
@@ -45,21 +48,29 @@ const PreSignUpScreen = () => {
       !(
         isUsernameValid &&
         name &&
-        validateDecimal(height) &&
+        validateDecimal(primaryHeight) &&
+        validateDecimal(secondaryHeight) &&
         validateDecimal(weight)
       )
     );
-  }, [username, name, height, weight]);
+  }, [username, name, primaryHeight, secondaryHeight, weight]);
 
   const validateDecimal = (value: string) => {
     const decimalPattern = /^\d+(\.\d{0,2})?$/;
     return decimalPattern.test(value) && value !== "";
   };
 
-  const handleHeightChange = (text: string) => {
+  const handlePrimaryHeightChange = (text: string) => {
     const processedText = text.replace(/^0+(?!\.|$)/, ""); // Remove leading zeros
     if (validateDecimal(processedText) || processedText === "") {
-      setHeight(processedText);
+      setprimaryHeightUnit(processedText);
+    }
+  };
+
+  const handleSecondaryHeightChange = (text: string) => {
+    const processedText = text.replace(/^0+(?!\.|$)/, ""); // Remove leading zeros
+    if (validateDecimal(processedText) || processedText === "") {
+      setsecondaryHeightUnit(processedText);
     }
   };
 
@@ -106,23 +117,49 @@ const PreSignUpScreen = () => {
                 onChangeText={(text) => setName(text)}
               />
               <View style={styles.inputWithUnitContainer}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Input
-                    containerStyle={styles.smallInputContainer}
-                    style={styles.inputWithUnit}
-                    placeholder="Height"
-                    keyboardType="numeric"
-                    onChangeText={handleHeightChange}
-                    value={height}
-                    errorMessage={
-                      height && !validateDecimal(height) ? "Invalid height" : ""
-                    }
-                  />
-                  <Text style={styles.unitText}>{unitHeight}</Text>
+                <View>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Input
+                      containerStyle={styles.smallInputContainer}
+                      style={styles.inputWithUnit}
+                      placeholder="Height"
+                      keyboardType="numeric"
+                      onChangeText={handlePrimaryHeightChange}
+                      value={primaryHeight}
+                      errorMessage={
+                        primaryHeight && !validateDecimal(primaryHeight)
+                          ? "Invalid height"
+                          : ""
+                      }
+                    />
+                    <Text style={styles.unitText}>{unitPrimaryHeight}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingTop: 20,
+                    }}
+                  >
+                    <Input
+                      containerStyle={styles.smallInputContainer}
+                      style={styles.inputWithUnit}
+                      placeholder="Height"
+                      keyboardType="numeric"
+                      onChangeText={handleSecondaryHeightChange}
+                      value={secondaryHeight}
+                      errorMessage={
+                        secondaryHeight && !validateDecimal(secondaryHeight)
+                          ? "Invalid height"
+                          : ""
+                      }
+                    />
+                    <Text style={styles.unitText}>{unitSecondaryHeight}</Text>
+                  </View>
                 </View>
                 <Switch
-                  value={cmIsMetric}
-                  onValueChange={(value) => setCmIsMetric(value)}
+                  value={heightIsMetric}
+                  onValueChange={(value) => setheightIsMetric(value)}
                 />
               </View>
               <View style={styles.inputWithUnitContainer}>
@@ -141,8 +178,8 @@ const PreSignUpScreen = () => {
                   <Text style={styles.unitText}>{unitWeight}</Text>
                 </View>
                 <Switch
-                  value={kgIsMetric}
-                  onValueChange={(value) => setKgIsMetric(value)}
+                  value={weightIsMetric}
+                  onValueChange={(value) => setweightIsMetric(value)}
                 />
               </View>
             </View>
@@ -216,9 +253,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   unitText: {
+    paddingLeft: 10,
     color: "white",
     fontSize: 18,
-    marginRight: 10,
+
     fontFamily: "Lato_400Regular",
   },
   switchContainer: {
