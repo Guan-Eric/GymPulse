@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   baseText: {
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     color: "gray",
     fontSize: 15,
   },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   input: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 20,
     width: 24,
   },

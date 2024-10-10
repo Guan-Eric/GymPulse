@@ -209,13 +209,13 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   workoutText: {
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 12,
     paddingLeft: 5,
   },
   caption: {
     textAlign: "justify",
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 15,

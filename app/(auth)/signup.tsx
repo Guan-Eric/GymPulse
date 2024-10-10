@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   baseText: {
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     color: "gray",
     fontSize: 15,
   },
@@ -188,12 +188,12 @@ const styles = StyleSheet.create({
   input: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 20,
   },
   inputText: {
     color: "white",
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 18,
   },
   errorText: {

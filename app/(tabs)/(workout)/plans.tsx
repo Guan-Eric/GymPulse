@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
   },
   baseText: {
     paddingLeft: 10,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 20,
   },
   titleText: {

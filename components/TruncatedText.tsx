@@ -56,7 +56,7 @@ const TruncatedText = ({ theme, children }) => {
 const styles = StyleSheet.create({
   caption: {
     textAlign: "justify",
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
     paddingBottom: 15,

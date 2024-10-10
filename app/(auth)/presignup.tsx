@@ -110,12 +110,14 @@ const PreSignUpScreen = () => {
               {usernameErrorMessage ? (
                 <Text style={styles.errorText}>{usernameErrorMessage}</Text>
               ) : null}
-              <Input
-                containerStyle={styles.inputContainer}
-                style={styles.input}
-                placeholder="Name"
-                onChangeText={(text) => setName(text)}
-              />
+              <View style={{ paddingTop: 25 }}>
+                <Input
+                  containerStyle={styles.inputContainer}
+                  style={styles.input}
+                  placeholder="Name"
+                  onChangeText={(text) => setName(text)}
+                />
+              </View>
               <View style={styles.inputWithUnitContainer}>
                 <View>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -138,7 +140,7 @@ const PreSignUpScreen = () => {
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
-                      paddingTop: 20,
+                      paddingTop: 15,
                     }}
                   >
                     <Input
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
   input: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 20,
   },
   inputContainer: {
@@ -249,7 +251,7 @@ const styles = StyleSheet.create({
   inputWithUnit: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 20,
   },
   unitText: {
@@ -257,7 +259,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
 
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
   },
   switchContainer: {
     flexDirection: "row",
@@ -268,15 +270,15 @@ const styles = StyleSheet.create({
   switchLabel: {
     color: "white",
     fontSize: 18,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
   },
   errorText: {
     color: "red",
-    fontSize: 14,
-    marginLeft: 10,
-    marginTop: -10,
-    marginBottom: 10,
-    fontFamily: "Lato_400Regular",
+    fontSize: 12,
+    paddingTop: 5,
+    marginBottom: -20,
+    alignSelf: "center",
+    fontFamily: "Alata_400Regular",
   },
 });
 

@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   bio: {
     textAlign: "justify",
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
     fontSize: 14,

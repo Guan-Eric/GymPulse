@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   dayText: {
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Alata_400Regular",
     fontSize: 16,
     marginBottom: 5,
   },
