@@ -25,8 +25,8 @@ const PreSignUpScreen = () => {
   const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("");
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
-  const unitPrimaryHeight = heightIsMetric ? " m" : " ft";
-  const unitSecondaryHeight = heightIsMetric ? " cm" : " in";
+  const unitPrimaryHeight = heightIsMetric ? " cm" : " ft";
+  const unitSecondaryHeight = heightIsMetric ? "" : " in";
   const unitWeight = weightIsMetric ? " kg" : " lbs";
 
   const handleNext = () => {

@@ -7,13 +7,14 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Button, Input } from "@rneui/themed";
+import { Button, Icon, Input } from "@rneui/themed";
 import { router, useLocalSearchParams } from "expo-router";
 import { register } from "../../backend/auth";
 
 function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
-  const [password, onChangePassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -32,7 +33,7 @@ function SignUpScreen() {
     return emailPattern.test(email);
   };
 
-  const validatePassword = (password) => {
+  const validatePassword = (password, confirmPassword) => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
@@ -49,6 +50,8 @@ function SignUpScreen() {
       return "Password must contain at least one number.";
     } else if (!hasSpecialChar) {
       return "Password must contain at least one special character.";
+    } else if (password == confirmPassword) {
+      return "Passwords must match.";
     } else {
       return "";
     }
@@ -60,12 +63,15 @@ function SignUpScreen() {
     setPasswordError("");
 
     if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email address.");
+      setEmailError("Please enter a valid email.");
       setLoading(false);
       return;
     }
 
-    const passwordValidationMessage = validatePassword(password);
+    const passwordValidationMessage = validatePassword(
+      password,
+      confirmPassword
+    );
     if (passwordValidationMessage) {
       setPasswordError(passwordValidationMessage);
       setLoading(false);
@@ -93,54 +99,86 @@ function SignUpScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-          <SafeAreaView style={styles.content}>
-            <Image
-              style={styles.logo}
-              source={require("../../assets/newLogo.png")}
-            />
-            <Text style={styles.titleText}>Sign Up</Text>
-            <View>
-              <Input
-                style={styles.input}
-                placeholder="E-mail Address"
-                value={email}
-                onChangeText={(email) => onChangeEmail(email)}
-                autoCapitalize="none"
-                placeholderTextColor="gray"
-                inputStyle={styles.inputText}
-                errorMessage={emailError}
-                errorStyle={styles.errorText}
-              />
-              <Input
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={(password) => onChangePassword(password)}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                placeholderTextColor="gray"
-                inputStyle={styles.inputText}
-                errorMessage={passwordError}
-                errorStyle={styles.errorText}
-              />
-            </View>
-            {loading ? (
-              <Button buttonStyle={styles.signUpButton} loading />
-            ) : (
-              <Button
-                buttonStyle={styles.signUpButton}
-                title="Sign Up"
-                onPress={signUp}
-              />
-            )}
-            <View style={{ alignItems: "center" }}>
-              <Text style={styles.baseText}>Already have an account?</Text>
-              <Button
-                type="clear"
-                buttonStyle={styles.signInButton}
-                title="Sign In"
-                onPress={() => router.push("/(auth)/signin")}
-              />
+          <SafeAreaView style={{ flex: 1 }}>
+            <Button
+              onPress={() => router.back()}
+              style={{ alignSelf: "flex-start" }}
+              type="clear"
+            >
+              <Icon name="chevron-left" size={30} />
+            </Button>
+            <View style={styles.content}>
+              <View style={{ alignItems: "center", paddingBottom: 60 }}>
+                <Image
+                  style={styles.logo}
+                  source={require("../../assets/newLogo.png")}
+                />
+                <Text style={styles.titleText}>Sign Up</Text>
+              </View>
+              <View style={{ paddingBottom: 96 }}>
+                <Input
+                  inputContainerStyle={{ borderBottomWidth: 0 }}
+                  containerStyle={styles.inputContainer}
+                  style={styles.input}
+                  placeholder="E-mail"
+                  value={email}
+                  onChangeText={(email) => onChangeEmail(email)}
+                  autoCapitalize="none"
+                  placeholderTextColor="gray"
+                  inputStyle={styles.inputText}
+                  errorMessage={emailError}
+                />
+                <View style={{ paddingTop: 25 }}>
+                  <Input
+                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    containerStyle={styles.inputContainer}
+                    style={styles.input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={(password) => setPassword(password)}
+                    secureTextEntry={true}
+                    autoCapitalize="none"
+                    placeholderTextColor="gray"
+                    inputStyle={styles.inputText}
+                  />
+                </View>
+                <View style={{ paddingTop: 25 }}>
+                  <Input
+                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    containerStyle={styles.inputContainer}
+                    style={styles.input}
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChangeText={(confirmPassword) =>
+                      setConfirmPassword(confirmPassword)
+                    }
+                    secureTextEntry={true}
+                    autoCapitalize="none"
+                    placeholderTextColor="gray"
+                    inputStyle={styles.inputText}
+                    errorMessage={passwordError}
+                  />
+                </View>
+              </View>
+              {loading ? (
+                <Button buttonStyle={styles.signUpButton} loading />
+              ) : (
+                <Button
+                  buttonStyle={styles.signUpButton}
+                  title="Sign Up"
+                  onPress={signUp}
+                />
+              )}
+              <View style={{ alignItems: "center", paddingTop: 20 }}>
+                <Text style={styles.baseText}>Already have an account?</Text>
+                <Button
+                  type="clear"
+                  titleStyle={styles.signIn}
+                  buttonStyle={styles.signInButton}
+                  title="Sign In"
+                  onPress={() => router.push("/(auth)/signin")}
+                />
+              </View>
             </View>
           </SafeAreaView>
         </KeyboardAvoidingView>
@@ -153,11 +191,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#181818",
-    alignItems: "center",
   },
   content: {
+    alignItems: "center",
+    justifyContent: "center",
     flex: 1,
-    justifyContent: "space-around",
   },
   logo: {
     resizeMode: "contain",
@@ -168,37 +206,40 @@ const styles = StyleSheet.create({
   baseText: {
     fontFamily: "Alata_400Regular",
     color: "gray",
-    fontSize: 15,
+    fontSize: 16,
   },
   titleText: {
     alignSelf: "center",
     fontSize: 40,
     color: "white",
-    fontFamily: "Lato_700Bold",
+    fontFamily: "Alata_400Regular",
   },
   signUpButton: {
-    fontFamily: "Lato_700Bold",
-    borderRadius: 15,
-    alignSelf: "center",
-    width: 200,
+    fontFamily: "Alata_400Regular",
+    borderRadius: 20,
+    width: 240,
+    height: 42,
   },
   signInButton: {
     width: 100,
   },
+  signIn: { fontFamily: "Alata_400Regular", fontSize: 16 },
   input: {
     borderColor: "white",
     flex: 1,
     fontFamily: "Alata_400Regular",
-    fontSize: 20,
+    fontSize: 14,
+  },
+  inputContainer: {
+    width: 254,
+    height: 42,
+    borderRadius: 10,
+    backgroundColor: "#D9D9D9",
   },
   inputText: {
     color: "white",
     fontFamily: "Alata_400Regular",
-    fontSize: 18,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 14,
+    fontSize: 12,
   },
 });
 
