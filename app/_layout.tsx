@@ -7,6 +7,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import React from "react";
 import { useColorScheme } from "react-native";
+
 const theme = createTheme({
   lightColors: {
     primary: "#3490de",

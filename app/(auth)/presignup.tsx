@@ -7,8 +7,9 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  Image,
 } from "react-native";
-import { Button, Input, Switch } from "@rneui/themed";
+import { Button, Icon, Input, Switch } from "@rneui/themed";
 import { router } from "expo-router";
 import { isUsernameExists } from "../../backend/user";
 
@@ -89,7 +90,7 @@ const PreSignUpScreen = () => {
       setUsernameErrorMessage(exists ? "Username is already taken." : "");
     } else {
       setIsUsernameValid(false);
-      setUsernameErrorMessage("Username must be at least 4 characters long.");
+      setUsernameErrorMessage("Must be at least 4 characters long.");
     }
   };
 
@@ -97,103 +98,132 @@ const PreSignUpScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-          <SafeAreaView style={styles.content}>
-            <Text style={styles.titleText}>Sign Up</Text>
-            <View>
-              <Input
-                containerStyle={styles.inputContainer}
-                style={styles.input}
-                placeholder="Username"
-                onChangeText={(text) => checkUsername(text)}
-                autoCapitalize="none"
-              />
-              {usernameErrorMessage ? (
-                <Text style={styles.errorText}>{usernameErrorMessage}</Text>
-              ) : null}
-              <View style={{ paddingTop: 25 }}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <Button
+              onPress={() => router.back()}
+              style={{ alignSelf: "flex-start" }}
+              type="clear"
+            >
+              <Icon name="chevron-left" size={30} />
+            </Button>
+            <View style={styles.content}>
+              <View style={{ alignItems: "center", paddingBottom: 60 }}>
+                <Image
+                  style={{
+                    resizeMode: "contain",
+                    height: 100,
+                    width: 250,
+                  }}
+                  source={require("../../assets/newLogo.png")}
+                />
+                <Text style={styles.titleText}>Sign Up</Text>
+              </View>
+              <View style={{ paddingBottom: 50 }}>
                 <Input
+                  inputContainerStyle={{ borderBottomWidth: 0 }}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
-                  placeholder="Name"
-                  onChangeText={(text) => setName(text)}
+                  placeholder="Username"
+                  onChangeText={(text) => checkUsername(text)}
+                  autoCapitalize="none"
+                  errorMessage={
+                    usernameErrorMessage ? usernameErrorMessage : ""
+                  }
                 />
-              </View>
-              <View style={styles.inputWithUnitContainer}>
-                <View>
+
+                <View style={{ paddingTop: 25 }}>
+                  <Input
+                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    containerStyle={styles.inputContainer}
+                    style={styles.input}
+                    placeholder="Name"
+                    onChangeText={(text) => setName(text)}
+                  />
+                </View>
+                <View style={styles.inputWithUnitContainer}>
+                  <View>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Input
+                        inputContainerStyle={{ borderBottomWidth: 0 }}
+                        containerStyle={styles.smallInputContainer}
+                        style={styles.inputWithUnit}
+                        placeholder="Height"
+                        keyboardType="numeric"
+                        onChangeText={handlePrimaryHeightChange}
+                        value={primaryHeight}
+                        errorMessage={
+                          primaryHeight && !validateDecimal(primaryHeight)
+                            ? "Invalid height"
+                            : ""
+                        }
+                      />
+                      <Text style={styles.unitText}>{unitPrimaryHeight}</Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        paddingTop: 15,
+                      }}
+                    >
+                      <Input
+                        inputContainerStyle={{ borderBottomWidth: 0 }}
+                        containerStyle={styles.smallInputContainer}
+                        style={styles.inputWithUnit}
+                        placeholder="Height"
+                        keyboardType="numeric"
+                        onChangeText={handleSecondaryHeightChange}
+                        value={secondaryHeight}
+                        errorMessage={
+                          secondaryHeight && !validateDecimal(secondaryHeight)
+                            ? "Invalid height"
+                            : ""
+                        }
+                      />
+                      <Text style={styles.unitText}>{unitSecondaryHeight}</Text>
+                    </View>
+                  </View>
+                  <Switch
+                    value={heightIsMetric}
+                    onValueChange={(value) => setheightIsMetric(value)}
+                  />
+                </View>
+                <View style={styles.inputWithUnitContainer}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Input
+                      inputContainerStyle={{ borderBottomWidth: 0 }}
                       containerStyle={styles.smallInputContainer}
                       style={styles.inputWithUnit}
-                      placeholder="Height"
+                      placeholder="Weight"
                       keyboardType="numeric"
-                      onChangeText={handlePrimaryHeightChange}
-                      value={primaryHeight}
+                      onChangeText={handleWeightChange}
+                      value={weight}
                       errorMessage={
-                        primaryHeight && !validateDecimal(primaryHeight)
-                          ? "Invalid height"
+                        weight && !validateDecimal(weight)
+                          ? "Invalid weight"
                           : ""
                       }
                     />
-                    <Text style={styles.unitText}>{unitPrimaryHeight}</Text>
+                    <Text style={styles.unitText}>{unitWeight}</Text>
                   </View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      paddingTop: 15,
-                    }}
-                  >
-                    <Input
-                      containerStyle={styles.smallInputContainer}
-                      style={styles.inputWithUnit}
-                      placeholder="Height"
-                      keyboardType="numeric"
-                      onChangeText={handleSecondaryHeightChange}
-                      value={secondaryHeight}
-                      errorMessage={
-                        secondaryHeight && !validateDecimal(secondaryHeight)
-                          ? "Invalid height"
-                          : ""
-                      }
-                    />
-                    <Text style={styles.unitText}>{unitSecondaryHeight}</Text>
-                  </View>
-                </View>
-                <Switch
-                  value={heightIsMetric}
-                  onValueChange={(value) => setheightIsMetric(value)}
-                />
-              </View>
-              <View style={styles.inputWithUnitContainer}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Input
-                    containerStyle={styles.smallInputContainer}
-                    style={styles.inputWithUnit}
-                    placeholder="Weight"
-                    keyboardType="numeric"
-                    onChangeText={handleWeightChange}
-                    value={weight}
-                    errorMessage={
-                      weight && !validateDecimal(weight) ? "Invalid weight" : ""
-                    }
+                  <Switch
+                    value={weightIsMetric}
+                    onValueChange={(value) => setweightIsMetric(value)}
                   />
-                  <Text style={styles.unitText}>{unitWeight}</Text>
                 </View>
-                <Switch
-                  value={weightIsMetric}
-                  onValueChange={(value) => setweightIsMetric(value)}
-                />
               </View>
+              <Button
+                buttonStyle={[
+                  styles.nextButton,
+                  { opacity: isButtonDisabled ? 0.5 : 1 },
+                ]}
+                title="Continue"
+                onPress={handleNext}
+                disabled={isButtonDisabled}
+              />
             </View>
-            <Button
-              buttonStyle={[
-                styles.nextButton,
-                { opacity: isButtonDisabled ? 0.5 : 1 },
-              ]}
-              title="Next"
-              onPress={handleNext}
-              disabled={isButtonDisabled}
-            />
           </SafeAreaView>
         </KeyboardAvoidingView>
       </View>
@@ -205,42 +235,40 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#181818",
-    alignItems: "center",
   },
   content: {
+    alignItems: "center",
+    justifyContent: "center",
     flex: 1,
-    justifyContent: "space-around",
   },
   titleText: {
-    alignSelf: "center",
     fontSize: 40,
     color: "white",
-    fontFamily: "Lato_700Bold",
+    fontFamily: "Alata_400Regular",
   },
   nextButton: {
-    fontFamily: "Lato_700Bold",
-    borderRadius: 15,
-    alignSelf: "center",
-    width: 200,
+    fontFamily: "Alata_400Regular",
+    borderRadius: 20,
+    width: 240,
+    height: 42,
   },
   input: {
     borderColor: "white",
     flex: 1,
     fontFamily: "Alata_400Regular",
-    fontSize: 20,
+    fontSize: 14,
   },
   inputContainer: {
     width: 254,
-    height: 46,
+    height: 42,
     borderRadius: 10,
     backgroundColor: "#D9D9D9",
   },
   smallInputContainer: {
     width: 254 / 2,
-    height: 46,
+    height: 42,
     borderRadius: 10,
     backgroundColor: "#D9D9D9",
-    borderBottomWidth: 0,
   },
   inputWithUnitContainer: {
     flexDirection: "row",
@@ -252,13 +280,12 @@ const styles = StyleSheet.create({
     borderColor: "white",
     flex: 1,
     fontFamily: "Alata_400Regular",
-    fontSize: 20,
+    fontSize: 14,
   },
   unitText: {
     paddingLeft: 10,
     color: "white",
-    fontSize: 18,
-
+    fontSize: 14,
     fontFamily: "Alata_400Regular",
   },
   switchContainer: {
@@ -275,8 +302,6 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 12,
-    paddingTop: 5,
-    marginBottom: -20,
     alignSelf: "center",
     fontFamily: "Alata_400Regular",
   },
