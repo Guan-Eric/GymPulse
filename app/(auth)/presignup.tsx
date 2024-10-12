@@ -25,8 +25,8 @@ const PreSignUpScreen = () => {
   const [usernameErrorMessage, setUsernameErrorMessage] = useState<string>("");
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
-  const unitPrimaryHeight = heightIsMetric ? " cm" : " ft";
-  const unitSecondaryHeight = heightIsMetric ? "" : " in";
+  const unitPrimaryHeight = heightIsMetric ? " cm" : " '";
+  const unitSecondaryHeight = heightIsMetric ? "" : " ''";
   const unitWeight = weightIsMetric ? " kg" : " lbs";
 
   const handleNext = () => {
@@ -145,44 +145,65 @@ const PreSignUpScreen = () => {
                     <View
                       style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      <Input
-                        inputContainerStyle={{ borderBottomWidth: 0 }}
-                        containerStyle={styles.smallInputContainer}
-                        style={styles.inputWithUnit}
-                        placeholder="Height"
-                        keyboardType="numeric"
-                        onChangeText={handlePrimaryHeightChange}
-                        value={primaryHeight}
-                        errorMessage={
-                          primaryHeight && !validateDecimal(primaryHeight)
-                            ? "Invalid height"
-                            : ""
-                        }
-                      />
-                      <Text style={styles.unitText}>{unitPrimaryHeight}</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        paddingTop: 15,
-                      }}
-                    >
-                      <Input
-                        inputContainerStyle={{ borderBottomWidth: 0 }}
-                        containerStyle={styles.smallInputContainer}
-                        style={styles.inputWithUnit}
-                        placeholder="Height"
-                        keyboardType="numeric"
-                        onChangeText={handleSecondaryHeightChange}
-                        value={secondaryHeight}
-                        errorMessage={
-                          secondaryHeight && !validateDecimal(secondaryHeight)
-                            ? "Invalid height"
-                            : ""
-                        }
-                      />
-                      <Text style={styles.unitText}>{unitSecondaryHeight}</Text>
+                      {heightIsMetric ? (
+                        <>
+                          <Input
+                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            containerStyle={styles.smallInputContainer}
+                            style={styles.inputWithUnit}
+                            placeholder="Height"
+                            keyboardType="numeric"
+                            onChangeText={handlePrimaryHeightChange}
+                            value={primaryHeight}
+                            errorMessage={
+                              primaryHeight && !validateDecimal(primaryHeight)
+                                ? "Invalid height"
+                                : ""
+                            }
+                          />
+                          <Text style={styles.unitText}>
+                            {unitPrimaryHeight}
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Input
+                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            containerStyle={styles.tinyInputContainer}
+                            style={styles.inputWithUnit}
+                            placeholder="Feet"
+                            keyboardType="numeric"
+                            onChangeText={handlePrimaryHeightChange}
+                            value={primaryHeight}
+                            errorMessage={
+                              primaryHeight && !validateDecimal(primaryHeight)
+                                ? "Invalid height"
+                                : ""
+                            }
+                          />
+                          <Text style={styles.unitText}>
+                            {unitPrimaryHeight}
+                          </Text>
+                          <Input
+                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            containerStyle={styles.tinyInputContainer}
+                            style={styles.inputWithUnit}
+                            placeholder="Inches"
+                            keyboardType="numeric"
+                            onChangeText={handleSecondaryHeightChange}
+                            value={secondaryHeight}
+                            errorMessage={
+                              secondaryHeight &&
+                              !validateDecimal(secondaryHeight)
+                                ? "Invalid height"
+                                : ""
+                            }
+                          />
+                          <Text style={styles.unitText}>
+                            {unitSecondaryHeight}
+                          </Text>
+                        </>
+                      )}
                     </View>
                   </View>
                   <Switch
@@ -265,7 +286,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#D9D9D9",
   },
   smallInputContainer: {
-    width: 254 / 2,
+    width: 254 / 1.77,
+    height: 42,
+    borderRadius: 10,
+    backgroundColor: "#D9D9D9",
+  },
+  tinyInputContainer: {
+    width: 254 / 4,
     height: 42,
     borderRadius: 10,
     backgroundColor: "#D9D9D9",
@@ -283,7 +310,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   unitText: {
-    paddingLeft: 10,
+    paddingLeft: 5,
+    paddingRight: 5,
     color: "white",
     fontSize: 14,
     fontFamily: "Alata_400Regular",

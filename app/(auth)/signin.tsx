@@ -48,7 +48,7 @@ function SignInScreen() {
                   inputContainerStyle={{ borderBottomWidth: 0 }}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
-                  placeholder="E-mail Address"
+                  placeholder="E-mail"
                   onChangeText={(email) => onChangeEmail(email)}
                   autoCapitalize="none"
                 />
