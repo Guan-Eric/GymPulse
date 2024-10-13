@@ -16,16 +16,14 @@ const PostItem = ({
   navigateProfile,
   onToggleLike,
   renderComments,
-  showCommentIcon,
   showUser,
   tab,
-  viewPost,
 }) => {
   const formattedDate = format(
     new Date(post?.date),
     "MMMM do, yyyy 'at' h:mm a"
   );
-
+  const backgroundColor = renderComments ? "#181818" : "#282828";
   const [user, setUser] = useState<User>();
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -39,7 +37,7 @@ const PostItem = ({
   }, []);
 
   return (
-    <View style={{ paddingBottom: 5 }}>
+    <View style={{ paddingTop: 10, backgroundColor: backgroundColor }}>
       {showUser ? (
         <View
           style={{
@@ -62,7 +60,7 @@ const PostItem = ({
                 </Text>
               </Pressable>
               <Text style={[styles.workoutText, { color: "gray" }]}>
-                did a workout on {formattedDate}
+                {formattedDate}
               </Text>
             </View>
           </View>
@@ -77,11 +75,7 @@ const PostItem = ({
               } as Href<string>)
             }
           >
-            <Icon
-              size={28}
-              name="clipboard-list-outline"
-              type="material-community"
-            />
+            <Icon size={28} name="weight-lifter" type="material-community" />
           </Button>
         </View>
       ) : (
@@ -108,17 +102,13 @@ const PostItem = ({
               } as Href<string>)
             }
           >
-            <Icon
-              size={28}
-              name="clipboard-list-outline"
-              type="material-community"
-            />
+            <Icon size={28} name="weight-lifter" type="material-community" />
           </Button>
         </View>
       )}
       <Pressable
         onPress={
-          !viewPost
+          !renderComments
             ? () =>
                 router.push({
                   pathname: "/(tabs)/" + tab + "/post",
@@ -146,51 +136,48 @@ const PostItem = ({
           paddingRight: ScreenWidth * 0.04,
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Button
-            disabled={!showUser}
-            type="clear"
-            onPress={onToggleLike}
-            icon={
-              <Icon
-                size={28}
-                name={post.like ? "arm-flex" : "arm-flex-outline"}
-                type="material-community"
-                color={post.like ? "#ffde34" : undefined}
-              />
-            }
-          />
-          <Text
-            style={[
-              styles.likeCount,
-              { fontSize: 16, color: theme.colors.black },
-            ]}
-          >
+          <Button disabled={!showUser} type="clear" onPress={onToggleLike}>
+            <Icon
+              size={28}
+              name={post.like ? "arm-flex" : "arm-flex"}
+              type="material-community"
+              color={post.like ? "#ffde34" : undefined}
+            />
+          </Button>
+          <Text style={[styles.count, { color: theme.colors.black }]}>
             {post.numLikes}
           </Text>
         </View>
-        {showCommentIcon && (
-          <Button
-            type="clear"
-            onPress={() =>
-              router.push({
-                pathname: "/(tabs)/" + tab + "/post",
-                params: {
-                  postId: post.id,
-                  userId: post.userId,
-                },
-              } as Href<string>)
-            }
-          >
-            <Icon name="comment-outline" type="material-community" />
-          </Button>
+        {!renderComments && (
+          <>
+            <Button
+              type="clear"
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/" + tab + "/post",
+                  params: {
+                    postId: post.id,
+                    userId: post.userId,
+                  },
+                } as Href<string>)
+              }
+            >
+              <Icon name="comment" type="material-community" />
+            </Button>
+            <Text style={[styles.count, { color: theme.colors.black }]}>
+              {post.numComments > 0 && post.numComments}
+            </Text>
+          </>
         )}
       </View>
 
       {renderComments && renderComments()}
+      {!renderComments && (
+        <View style={{ height: 10, backgroundColor: "#1B1B1B" }}></View>
+      )}
     </View>
   );
 };
@@ -221,7 +208,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     fontSize: 14,
   },
-  likeCount: {
+  count: {
     fontFamily: "Lato_700Bold",
     fontSize: 16,
   },

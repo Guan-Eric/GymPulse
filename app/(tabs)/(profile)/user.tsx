@@ -87,7 +87,7 @@ function UserScreen() {
             type="clear"
             onPress={() => router.push("/(tabs)/(profile)/settings")}
           >
-            <Icon size={32} name="cog-outline" type="material-community" />
+            <Icon size={32} name="cog" type="material-community" />
           </Button>
         </View>
         <View>
@@ -113,10 +113,8 @@ function UserScreen() {
                   navigateProfile={null}
                   onToggleLike={null}
                   renderComments={false}
-                  showCommentIcon={true}
                   showUser={false}
                   tab={"(profile)"}
-                  viewPost={false}
                 />
               )}
               keyExtractor={(item) => item.id}

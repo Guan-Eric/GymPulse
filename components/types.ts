@@ -18,6 +18,7 @@ export interface Post {
   caption: string;
   like: boolean;
   numLikes: number;
+  numComments: number;
   workoutId: string;
   date: string;
 }

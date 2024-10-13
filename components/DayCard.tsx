@@ -79,7 +79,7 @@ function DayCard({
             type="clear"
             icon={
               <Icon
-                name="plus-circle-outline"
+                name="plus-circle"
                 size={24}
                 color={theme.colors.black}
                 type="material-community"
@@ -101,7 +101,7 @@ function DayCard({
               type="clear"
               icon={
                 <Icon
-                  name="trash-can-outline"
+                  name="trash-can"
                   size={24}
                   color={theme.colors.black}
                   type="material-community"

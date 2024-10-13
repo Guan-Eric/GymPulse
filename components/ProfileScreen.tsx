@@ -108,10 +108,8 @@ function ViewProfileScreen({ theme, userId }) {
                 navigateProfile={null}
                 onToggleLike={null}
                 renderComments={false}
-                showCommentIcon={true}
                 showUser={false}
                 tab={"(profile)"}
-                viewPost={false}
               />
             )}
             keyExtractor={(item) => item.id}

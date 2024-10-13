@@ -64,8 +64,13 @@ export async function getUserPost(
       FIRESTORE_DB,
       `Users/${userId}/Posts/${postId}/Likes/`
     );
+    const numCommentsCollection = collection(
+      FIRESTORE_DB,
+      `Users/${userId}/Posts/${postId}/Comments/`
+    );
 
     const numLikesSnapshot = await getCountFromServer(numLikesCollection);
+    const numCommentsSnapshot = await getCountFromServer(numCommentsCollection);
 
     const userPost: Post = {
       id: postId,
@@ -74,6 +79,7 @@ export async function getUserPost(
       caption: userPostSnapshot.data().caption,
       like: userLikeSnapshot.exists(),
       numLikes: numLikesSnapshot.data().count,
+      numComments: numCommentsSnapshot.data().count,
       workoutId: userPostSnapshot.data().workoutId,
       date: userPostSnapshot.data().date,
     };
@@ -161,7 +167,14 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
           FIRESTORE_DB,
           `Users/${postData.userId}/Posts/${postData.id}/Likes/`
         );
+        const numCommentsCollection = collection(
+          FIRESTORE_DB,
+          `Users/${userId}/Posts/${postData.id}/Comments/`
+        );
         const numLikesSnapshot = await getCountFromServer(numLikesCollection);
+        const numCommentsSnapshot = await getCountFromServer(
+          numCommentsCollection
+        );
         const userLikeSnapshot = await getDoc(userLikeDocRef);
         if (userDocSnapshot.exists()) {
           const userData = userDocSnapshot.data();
@@ -171,6 +184,7 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
             userName: userData.username,
             like: userLikeSnapshot.exists(),
             numLikes: numLikesSnapshot.data().count,
+            numComments: numCommentsSnapshot.data().count,
           };
         }
         return postData;
@@ -242,7 +256,14 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
         FIRESTORE_DB,
         `Users/${postData.userId}/Posts/${postData.id}/Likes/`
       );
+      const numCommentsCollection = collection(
+        FIRESTORE_DB,
+        `Users/${postData.userId}/Posts/${postData.id}/Comments/`
+      );
       const numLikesSnapshot = await getCountFromServer(numLikesCollection);
+      const numCommentsSnapshot = await getCountFromServer(
+        numCommentsCollection
+      );
       const userLikeSnapshot = await getDoc(userLikeDocRef);
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
@@ -252,6 +273,7 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
           userName: userData.username,
           like: userLikeSnapshot.exists(),
           numLikes: numLikesSnapshot.data().count,
+          numComments: numCommentsSnapshot.data().count,
         };
       }
       return postData;

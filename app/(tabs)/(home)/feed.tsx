@@ -92,13 +92,9 @@ const FeedScreen: React.FC = () => {
           <View style={{ flexDirection: "row" }}>
             <Button type="clear" onPress={navigateToNotifications}>
               {hasNewNotification ? (
-                <Icon
-                  size={32}
-                  name="bell-badge-outline"
-                  type="material-community"
-                />
+                <Icon size={32} name="bell-badge" type="material-community" />
               ) : (
-                <Icon size={32} name="bell-outline" type="material-community" />
+                <Icon size={32} name="bell" type="material-community" />
               )}
             </Button>
             <Button
@@ -130,10 +126,8 @@ const FeedScreen: React.FC = () => {
                 navigateProfile={navigateProfile}
                 onToggleLike={() => handleToggleLike(item)}
                 renderComments={false}
-                showCommentIcon={true}
                 showUser={true}
                 tab={"(home)"}
-                viewPost={false}
               />
             )}
             keyExtractor={(item) => item.id}
