@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   bio: {
-    textAlign: "justify",
     fontFamily: "Alata_400Regular",
     paddingLeft: 25,
     paddingRight: 25,

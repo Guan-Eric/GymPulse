@@ -37,16 +37,15 @@ const PostItem = ({
   }, []);
 
   return (
-    <View style={{ paddingTop: 10, backgroundColor: backgroundColor }}>
+    <View style={{ backgroundColor: backgroundColor }}>
       {showUser ? (
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            paddingRight: 10,
             paddingLeft: 15,
-            paddingBottom: 10,
+            padding: 10,
           }}
         >
           <View style={{ flexDirection: "row", gap: 5 }}>
@@ -201,7 +200,6 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   caption: {
-    textAlign: "justify",
     fontFamily: "Alata_400Regular",
     paddingLeft: 15,
     paddingRight: 15,

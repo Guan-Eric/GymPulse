@@ -145,7 +145,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   caption: {
-    textAlign: "justify",
     fontFamily: "Alata_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
@@ -153,7 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   comment: {
-    textAlign: "justify",
     fontFamily: "Alata_400Regular",
     paddingLeft: 5,
     paddingRight: 25,
