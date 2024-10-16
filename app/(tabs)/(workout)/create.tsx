@@ -27,6 +27,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { addNotification } from "../../../backend/user";
 import ImageCarousel from "../../../components/PostCarousel";
+import { fetchLastUserPostDate } from "../../../backend/post";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
@@ -72,6 +73,13 @@ function CreatePostScreen() {
     const hours = String(currentDate.getHours()).padStart(2, "0");
     const minutes = String(currentDate.getMinutes()).padStart(2, "0");
     const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
+
+    const lastPostDate = fetchLastUserPostDate();
+    const currentDateWithoutTime = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
 
     try {
       const postDocRef = doc(
@@ -134,6 +142,7 @@ function CreatePostScreen() {
         "post",
         userPostsDocRef.id
       );
+
       console.log("Post created successfully");
     } catch (error) {
       console.error("Error creating post:", error);

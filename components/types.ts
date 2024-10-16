@@ -4,11 +4,15 @@ export interface User {
   bio: string;
   id: string;
   email: string;
-  height: string;
+  primaryHeight: string;
+  secondaryHeight: string;
   weight: string;
-  metricUnits: boolean;
+  heightIsMetric: boolean;
+  weightIsMetric: boolean;
   darkMode: boolean;
   url: string;
+  currentStreak: number;
+  longestStreak: number;
 }
 
 export interface Post {

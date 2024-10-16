@@ -12,6 +12,8 @@ import {
   setDoc,
   addDoc,
   updateDoc,
+  DocumentData,
+  limit,
 } from "firebase/firestore";
 import { Post } from "../components/types";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../firebaseConfig";
@@ -287,4 +289,34 @@ async function fetchCommentUserName(userId) {
   const userDocRef = doc(FIRESTORE_DB, `Users/${userId}`);
   const userDocSnapshot = await getDoc(userDocRef);
   return userDocSnapshot.data().username;
+}
+
+export async function fetchLastUserPostDate(): Promise<Date | null> {
+  try {
+    const postCollection = collection(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Posts/`
+    );
+    const lastPostQuery = query(
+      postCollection,
+      orderBy("date", "desc"),
+      limit(1)
+    );
+    const querySnapshot = await getDocs(lastPostQuery);
+
+    if (!querySnapshot.empty) {
+      const lastPost = querySnapshot.docs[0];
+      const lastPostData = lastPost.data() as DocumentData;
+
+      const date: string = lastPostData.date;
+
+      const dateObject = new Date(date.substring(0, 10));
+      return dateObject;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching last post date:", error);
+    throw error;
+  }
 }

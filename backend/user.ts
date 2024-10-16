@@ -43,6 +43,8 @@ export async function addUser(
       prefixes: generatePrefixes(username),
       username: username,
       url: "https://firebasestorage.googleapis.com/v0/b/fitai-2e02d.appspot.com/o/profile%2Fprofile.png?alt=media&token=89a32c06-e6df-4bfa-abe9-b9ebf463582a",
+      currentStreak: 0,
+      longestStreak: 0,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -243,15 +245,26 @@ export async function getNotifications() {
   }
 }
 
-export async function getMetric(uid: string): Promise<boolean> {
+export async function getHeightMetric(uid: string): Promise<boolean> {
   try {
     const userDoc = await getDoc(
       doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
     );
     const userData = userDoc.data();
-    return userData.metricUnits;
+    return userData.isHeightMetric;
   } catch (error) {
-    console.error("Error fetching plan data:", error);
+    console.error("Error fetching weight metric boolean:", error);
+  }
+}
+export async function getWeightMetric(uid: string): Promise<boolean> {
+  try {
+    const userDoc = await getDoc(
+      doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
+    );
+    const userData = userDoc.data();
+    return userData.isWeightMetric;
+  } catch (error) {
+    console.error("Error fetching weight metric boolean:", error);
   }
 }
 
@@ -329,4 +342,37 @@ async function pushNotifications(userId: string, type: string) {
       )
     );
   }
+}
+
+export async function incrementStreak(): Promise<void> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    const userSnapshot = await getDoc(userDocRef);
+
+    const userData = userSnapshot.data();
+    const currentStreak = userData.currentStreak;
+    const longestStreak = userData.longestStreak;
+
+    const newLongestStreak = Math.max(longestStreak, currentStreak + 1);
+
+    await updateDoc(userDocRef, {
+      currentStreak: currentStreak + 1,
+      longestStreak: newLongestStreak,
+    });
+  } catch (error) {
+    console.error("Error incrementing streak:", error);
+  }
+}
+
+export async function endStreak() {
+  const userDocRef = doc(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}`
+  );
+  updateDoc(userDocRef, {
+    currentStreak: 0,
+  });
 }
