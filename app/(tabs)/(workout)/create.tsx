@@ -74,20 +74,13 @@ function CreatePostScreen() {
     const minutes = String(currentDate.getMinutes()).padStart(2, "0");
     const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
 
-    const lastPostDate = fetchLastUserPostDate();
-    const currentDateWithoutTime = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      currentDate.getDate()
-    );
-
     try {
-      const postDocRef = doc(
+      const userDocRef = doc(
         FIRESTORE_DB,
         `Users/${FIREBASE_AUTH.currentUser.uid}`
       );
 
-      const userPostsCollection = collection(postDocRef, "Posts");
+      const userPostsCollection = collection(userDocRef, "Posts");
       const userPostsDocRef = await addDoc(userPostsCollection, {
         title: title,
         caption: caption,

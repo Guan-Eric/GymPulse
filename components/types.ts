@@ -13,6 +13,7 @@ export interface User {
   url: string;
   currentStreak: number;
   longestStreak: number;
+  streakResetDate: string;
 }
 
 export interface Post {
