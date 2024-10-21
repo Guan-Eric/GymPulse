@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text, Pressable } from "react-native";
+import { FlatList, View, StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Icon, useTheme, Button } from "@rneui/themed";
@@ -8,14 +8,20 @@ import PostItem from "../../../components/PostItem";
 import { Post } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
-import { savePushToken } from "../../../backend/user";
-import { Instagram } from "react-content-loader/native";
+import {
+  endStreak,
+  savePushToken,
+  updateStreakResetDate,
+} from "../../../backend/user";
 import FeedLoader from "../../../components/FeedLoader";
+import { fetchStreakResetDate } from "../../../backend/user";
+import StreakModal from "../../../components/StreakLossModal";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
   const {
     expoPushToken,
     notification,
@@ -36,6 +42,7 @@ const FeedScreen: React.FC = () => {
 
   useEffect(() => {
     fetchFeed();
+    checkStreakStatus();
   }, []);
 
   useEffect(() => {
@@ -71,6 +78,27 @@ const FeedScreen: React.FC = () => {
     router.push({
       pathname: "/(tabs)/(home)/notification",
     });
+  };
+
+  const checkStreakStatus = async () => {
+    const resetDate = await fetchStreakResetDate();
+    if (resetDate) {
+      const currentDate = new Date();
+
+      if (currentDate > resetDate) {
+        setModalVisible(true);
+      }
+    }
+  };
+
+  const handleContinueStreak = () => {
+    updateStreakResetDate();
+    setModalVisible(false);
+  };
+
+  const handleNewStreak = () => {
+    endStreak();
+    setModalVisible(false);
   };
 
   return (
@@ -133,6 +161,12 @@ const FeedScreen: React.FC = () => {
             keyExtractor={(item) => item.id}
           />
         )}
+        <StreakModal
+          modalVisible={false}
+          onClose={() => setModalVisible(false)}
+          onContinueStreak={handleContinueStreak}
+          onNewStreak={handleNewStreak}
+        />
       </SafeAreaView>
     </View>
   );
@@ -145,5 +179,51 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_700Bold",
     fontSize: 32,
     fontWeight: "bold",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  modalSubText: {
+    fontSize: 14,
+    marginVertical: 10,
+    textAlign: "center",
+  },
+  buttonContainer: {
+    flexDirection: "column",
+    width: "100%",
+  },
+  continueButton: {
+    backgroundColor: "#27ae60",
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+    width: "100%",
+    alignItems: "center",
+  },
+  newStreakButton: {
+    backgroundColor: "#e74c3c",
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+    width: "100%",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

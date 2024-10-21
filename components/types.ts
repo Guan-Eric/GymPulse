@@ -13,7 +13,7 @@ export interface User {
   url: string;
   currentStreak: number;
   longestStreak: number;
-  streakResetDate: string;
+  streakResetDate: Date;
 }
 
 export interface Post {
@@ -25,7 +25,7 @@ export interface Post {
   numLikes: number;
   numComments: number;
   workoutId: string;
-  date: string;
+  date: Date;
 }
 
 export interface Plan {
@@ -44,7 +44,7 @@ export interface Workout {
   id: string;
   name: string;
   duration: number;
-  date: string;
+  date: Date;
   exercises: Exercise[];
 }
 

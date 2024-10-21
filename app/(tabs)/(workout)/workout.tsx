@@ -18,19 +18,13 @@ import DayCard from "../../../components/DayCard";
 import { useTheme } from "@rneui/themed";
 import { setDay } from "date-fns";
 import { getPlan, savePlan } from "../../../backend/plan";
-import { getMetric } from "../../../backend/user";
+import { getWeightMetric } from "../../../backend/user";
 
 function WorkoutScreen() {
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-  const dateDay = String(currentDate.getDate()).padStart(2, "0");
-  const hours = String(currentDate.getHours()).padStart(2, "0");
-  const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-  const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
   const [plan, setPlan] = useState<Plan>();
   const [isDirty, setIsDirty] = useState(false);
-  const [isMetric, setIsMetric] = useState(false);
+  const [isWeightMetric, setIsWeightMetric] = useState(false);
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const intervalRef = useRef(null);
@@ -48,7 +42,7 @@ function WorkoutScreen() {
 
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
-    setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
+    setIsWeightMetric(await getWeightMetric(FIREBASE_AUTH.currentUser.uid));
   };
 
   useEffect(() => {
@@ -77,7 +71,7 @@ function WorkoutScreen() {
         ),
         {
           name: plan?.days[dayIndex as string].name,
-          date: formattedDateTime,
+          date: currentDate,
           duration: time,
           userId: FIREBASE_AUTH.currentUser.uid,
         }
@@ -149,7 +143,7 @@ function WorkoutScreen() {
             day={plan?.days[dayIndex as string]}
             dayIndex={Number(dayIndex)}
             theme={theme}
-            isMetric={isMetric}
+            isWeightMetric={isWeightMetric}
             setPlan={setPlan}
             isWorkout={true}
             isDisabled={false}

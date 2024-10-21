@@ -45,7 +45,7 @@ export async function addUser(
       url: "https://firebasestorage.googleapis.com/v0/b/fitai-2e02d.appspot.com/o/profile%2Fprofile.png?alt=media&token=89a32c06-e6df-4bfa-abe9-b9ebf463582a",
       currentStreak: 0,
       longestStreak: 0,
-      streakResetDate: "",
+      streakResetDate: null,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -126,15 +126,9 @@ export async function sendFollowRequest(userId: string) {
       `Users/${userId}/FollowRequests/${FIREBASE_AUTH.currentUser.uid}`
     );
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const dateDay = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
 
     await setDoc(followRequestsDocRef, {
-      date: formattedDateTime,
+      date: currentDate,
     });
     pushNotifications(userId, "request");
   } catch (error) {
@@ -202,17 +196,11 @@ export async function addNotification(
       `Users/${userId}/Notifications`
     );
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const dateDay = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
 
     const notificationDocRef = await addDoc(notificationsCollectionRef, {
       userId: FIREBASE_AUTH.currentUser.uid,
       type: type,
-      date: formattedDateTime,
+      date: currentDate,
       postId: postId,
     });
     updateDoc(notificationDocRef, { id: notificationDocRef.id });
@@ -362,6 +350,7 @@ export async function incrementStreak(): Promise<void> {
     await updateDoc(userDocRef, {
       currentStreak: currentStreak + 1,
       longestStreak: newLongestStreak,
+      streakResetDate: calculateStreakResetDate(),
     });
   } catch (error) {
     console.error("Error incrementing streak:", error);
@@ -369,21 +358,48 @@ export async function incrementStreak(): Promise<void> {
 }
 
 export async function endStreak() {
-  const userDocRef = doc(
-    FIRESTORE_DB,
-    `Users/${FIREBASE_AUTH.currentUser.uid}`
-  );
-  updateDoc(userDocRef, {
-    currentStreak: 0,
-  });
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    updateDoc(userDocRef, {
+      currentStreak: 0,
+    });
+  } catch (error) {
+    console.error("Error ending streak:", error);
+  }
 }
 
-export async function updateStreakResetDate(date: string) {
-  const userDocRef = doc(
-    FIRESTORE_DB,
-    `Users/${FIREBASE_AUTH.currentUser.uid}`
-  );
-  updateDoc(userDocRef, {
-    streakResetDate: date,
-  });
+export async function updateStreakResetDate(): Promise<void> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    await updateDoc(userDocRef, {
+      streakResetDate: calculateStreakResetDate(),
+    });
+  } catch (error) {
+    console.error("Error saving streak:", error);
+  }
+}
+
+function calculateStreakResetDate(): Date {
+  const streakResetDate = new Date();
+  streakResetDate.setDate(streakResetDate.getDate() + 4);
+  return streakResetDate;
+}
+
+export async function fetchStreakResetDate(): Promise<Date> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    const userSnapshot = await getDoc(userDocRef);
+    return userSnapshot.data().streakResetDate;
+  } catch (error) {
+    console.error("Error fetching streak reset date:", error);
+  }
 }

@@ -9,7 +9,7 @@ function DayCard({
   day,
   dayIndex,
   theme,
-  isMetric,
+  isWeightMetric,
   setPlan,
   isWorkout,
   isDisabled,
@@ -68,7 +68,7 @@ function DayCard({
             dayIndex={dayIndex}
             exercise={exercise}
             theme={theme}
-            isMetric={isMetric}
+            isWeightMetric={isWeightMetric}
             setPlan={setPlan}
             isDisabled={isDisabled}
           />

@@ -13,21 +13,14 @@ import {
   Pressable,
 } from "react-native";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
-import {
-  ref,
-  getDownloadURL,
-  uploadString,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { ScreenWidth } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
-import { addNotification } from "../../../backend/user";
+import { addNotification, incrementStreak } from "../../../backend/user";
 import ImageCarousel from "../../../components/PostCarousel";
-import { fetchLastUserPostDate } from "../../../backend/post";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
@@ -67,24 +60,16 @@ function CreatePostScreen() {
     setLoading(true);
 
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-    const dateDay = String(currentDate.getDate()).padStart(2, "0");
-    const hours = String(currentDate.getHours()).padStart(2, "0");
-    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-    const formattedDateTime = `${year}-${month}-${dateDay} ${hours}:${minutes}`;
 
     try {
-      const userDocRef = doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}`
+      const userPostsCollection = collection(
+        doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`),
+        "Posts"
       );
-
-      const userPostsCollection = collection(userDocRef, "Posts");
       const userPostsDocRef = await addDoc(userPostsCollection, {
         title: title,
         caption: caption,
-        date: formattedDateTime,
+        date: currentDate,
         userId: FIREBASE_AUTH.currentUser.uid,
         workoutId: workoutId,
       });
@@ -135,7 +120,7 @@ function CreatePostScreen() {
         "post",
         userPostsDocRef.id
       );
-
+      incrementStreak();
       console.log("Post created successfully");
     } catch (error) {
       console.error("Error creating post:", error);

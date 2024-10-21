@@ -11,7 +11,7 @@ function ExerciseSetCard({
   dayIndex,
   exercise,
   theme,
-  isMetric,
+  isWeightMetric,
   setPlan,
   isDisabled,
 }) {
@@ -122,17 +122,19 @@ function ExerciseSetCard({
                         exerciseIndex,
                         setIndex,
                         "weight_duration",
-                        isMetric ? parseFloat(value) * 2.205 : parseFloat(value)
+                        isWeightMetric
+                          ? parseFloat(value) * 2.205
+                          : parseFloat(value)
                       )
                     }
                     value={
-                      isMetric
+                      isWeightMetric
                         ? Math.floor(set.weight_duration / 2.205).toString()
                         : Math.floor(set.weight_duration).toString()
                     }
                   />
                   <Text style={{ color: theme.colors.black }}>
-                    {isMetric ? "kg" : "lbs"}
+                    {isWeightMetric ? "kg" : "lbs"}
                   </Text>
                 </>
               ) : (
