@@ -398,8 +398,21 @@ export async function fetchStreakResetDate(): Promise<Date> {
       `Users/${FIREBASE_AUTH.currentUser.uid}`
     );
     const userSnapshot = await getDoc(userDocRef);
-    return userSnapshot.data().streakResetDate;
+    return userSnapshot.data().streakResetDate.toDate() as Date;
   } catch (error) {
     console.error("Error fetching streak reset date:", error);
+  }
+}
+
+export async function fetchCurrentStreak(): Promise<number> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    const userSnapshot = await getDoc(userDocRef);
+    return userSnapshot.data().currentStreak;
+  } catch (error) {
+    console.error("Error fetching streak:", error);
   }
 }

@@ -10,6 +10,7 @@ import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
 import {
   endStreak,
+  fetchCurrentStreak,
   savePushToken,
   updateStreakResetDate,
 } from "../../../backend/user";
@@ -84,8 +85,8 @@ const FeedScreen: React.FC = () => {
     const resetDate = await fetchStreakResetDate();
     if (resetDate) {
       const currentDate = new Date();
-
-      if (currentDate > resetDate) {
+      const currentStreak = await fetchCurrentStreak();
+      if (currentDate > resetDate && currentStreak > 0) {
         setModalVisible(true);
       }
     }
@@ -162,7 +163,7 @@ const FeedScreen: React.FC = () => {
           />
         )}
         <StreakModal
-          modalVisible={false}
+          modalVisible={modalVisible}
           onClose={() => setModalVisible(false)}
           onContinueStreak={handleContinueStreak}
           onNewStreak={handleNewStreak}
