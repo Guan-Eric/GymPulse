@@ -416,3 +416,15 @@ export async function fetchCurrentStreak(): Promise<number> {
     console.error("Error fetching streak:", error);
   }
 }
+
+export async function updateUserAvatar(url: string) {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    updateDoc(userDocRef, { url: url });
+  } catch (error) {
+    console.error("Error updating user avatar:", error);
+  }
+}

@@ -6,30 +6,20 @@ import {
   Image,
   Text,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { ActivityIndicator } from "react-native-paper";
 import { useTheme, Button, Icon, Avatar } from "@rneui/themed";
-import {
-  collection,
-  onSnapshot,
-  setDoc,
-  query,
-  orderBy,
-  addDoc,
-  doc,
-  updateDoc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
-import { getUser } from "../../../backend/user";
+import { getUser, updateUserAvatar } from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import ProfileLoader from "../../../components/ProfileLoader";
+import * as ImagePicker from "expo-image-picker";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -60,6 +50,30 @@ function UserScreen() {
     }, [])
   );
 
+  const updateAvatar = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      Alert.alert(
+        "Permission Denied",
+        "Permission to access the gallery is required."
+      );
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      const newAvatarUrl = result.assets[0].uri;
+      setUser((prevUser) => ({ ...prevUser, url: newAvatarUrl }));
+      await updateUserAvatar(newAvatarUrl);
+    }
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -78,7 +92,9 @@ function UserScreen() {
               alignItems: "center",
             }}
           >
-            <Avatar rounded size={40} source={{ uri: user?.url }} />
+            <Button type="clear" onPress={updateAvatar}>
+              <Avatar rounded size={40} source={{ uri: user?.url }} />
+            </Button>
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.username}
             </Text>
