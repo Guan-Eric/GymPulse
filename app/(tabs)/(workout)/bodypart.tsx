@@ -7,6 +7,8 @@ import {
   StyleSheet,
   FlatList,
   Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_STR } from "../../../firebaseConfig";
@@ -14,12 +16,14 @@ import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Exercise } from "../../../components/types";
 import { Href, router, useLocalSearchParams } from "expo-router";
-import { Card, Divider, useTheme } from "@rneui/themed";
+import { Card, Divider, SearchBar, useTheme } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 
 const screenWidth = Dimensions.get("window").width;
 
 function BodyPartScreen() {
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState<Exercise[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [imageUrls, setImageUrls] = useState({});
   const { bodypart, route, planId, dayId } = useLocalSearchParams();
@@ -40,10 +44,22 @@ function BodyPartScreen() {
         fetchImage(doc.data().id);
       });
       setExercises(data);
+      setResults(data);
     } catch (error) {
       console.error("Error fetching data from Firestore:", error);
     }
   };
+
+  useEffect(() => {
+    if (search.trim() === "") {
+      setResults(exercises);
+    } else {
+      const filteredExercises = exercises.filter((exercise) =>
+        exercise.name.toLowerCase().includes(search.toLowerCase())
+      );
+      setResults(filteredExercises);
+    }
+  }, [search, exercises]);
 
   const fetchImage = async (id) => {
     try {
@@ -65,54 +81,70 @@ function BodyPartScreen() {
   const { theme } = useTheme();
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
-      <SafeAreaView style={{ flex: 1 }}>
-        <Text style={[styles.title, { color: theme.colors.black }]}>
-          {bodypart}
-        </Text>
-        <FlatList
-          style={{ flex: 1 }}
-          data={exercises}
-          renderItem={({ item }) => (
-            <Pressable
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                borderTopWidth: 0.5,
-                borderTopColor: "gray",
-              }}
-              onPress={() =>
-                router.push({
-                  pathname: "/(tabs)/(workout)/exercise",
-                  params: {
-                    exerciseId: item.id,
-                    planId: planId,
-                    dayId: dayId,
-                    route: route,
-                  },
-                } as Href<string>)
-              }
-            >
-              <Image
-                source={{ uri: imageUrls[item.id] }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
+        <SafeAreaView style={{ flex: 1 }}>
+          <SearchBar
+            containerStyle={{
+              backgroundColor: theme.colors.background,
+              borderTopWidth: 0,
+              borderBottomWidth: 0,
+            }}
+            inputContainerStyle={{
+              borderRadius: 10,
+            }}
+            placeholder="Type Here..."
+            onChangeText={(text) => setSearch(text)}
+            onClear={() => setSearch("")}
+            value={search}
+          />
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            {bodypart}
+          </Text>
+          <FlatList
+            style={{ flex: 1 }}
+            data={results}
+            renderItem={({ item }) => (
+              <Pressable
                 style={{
-                  alignSelf: "center",
-                  width: ScreenWidth * 0.2,
-                  height: (ScreenWidth * 0.2) / (195 / 130),
-                  resizeMode: "cover",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  borderTopWidth: 0.5,
+                  borderTopColor: "gray",
                 }}
-              />
-              <Text style={[styles.baseText, { color: theme.colors.black }]}>
-                {item.name}
-              </Text>
-            </Pressable>
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      </SafeAreaView>
-    </View>
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/(workout)/exercise",
+                    params: {
+                      exerciseId: item.id,
+                      planId: planId,
+                      dayId: dayId,
+                      route: route,
+                    },
+                  } as Href<string>)
+                }
+              >
+                <Image
+                  source={{ uri: imageUrls[item.id] }}
+                  style={{
+                    alignSelf: "center",
+                    width: ScreenWidth * 0.2,
+                    height: (ScreenWidth * 0.2) / (195 / 130),
+                    resizeMode: "cover",
+                  }}
+                />
+                <Text style={[styles.baseText, { color: theme.colors.black }]}>
+                  {item.name}
+                </Text>
+              </Pressable>
+            )}
+            keyExtractor={(item) => item.id}
+          />
+        </SafeAreaView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
