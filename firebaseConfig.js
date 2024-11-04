@@ -4,13 +4,15 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCVehi6VMJzEO54C3NEhkVSdDYVTMHeFNo",
+  apiKey: Constants.expoConfig?.extra?.firebaseApiKey,
   authDomain: "fitai-2e02d.firebaseapp.com",
   projectId: "fitai-2e02d",
   storageBucket: "fitai-2e02d.appspot.com",
