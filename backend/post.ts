@@ -83,7 +83,7 @@ export async function getUserPost(
       numLikes: numLikesSnapshot.data().count,
       numComments: numCommentsSnapshot.data().count,
       workoutId: userPostSnapshot.data().workoutId,
-      date: userPostSnapshot.data().date,
+      date: userPostSnapshot.data().date.toDate(),
     };
     return userPost;
   } catch (error) {
@@ -182,11 +182,16 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
           const userData = userDocSnapshot.data();
 
           return {
-            ...postData,
+            id: postData.id,
             userName: userData.username,
             like: userLikeSnapshot.exists(),
             numLikes: numLikesSnapshot.data().count,
             numComments: numCommentsSnapshot.data().count,
+            urls: postData.urls,
+            userId: userId,
+            caption: postData.caption,
+            workoutId: postData.workoutId,
+            date: postData.date.toDate(),
           };
         }
         return postData;
@@ -271,11 +276,16 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
         const userData = userDocSnapshot.data();
 
         return {
-          ...postData,
+          id: postData.id,
           userName: userData.username,
           like: userLikeSnapshot.exists(),
           numLikes: numLikesSnapshot.data().count,
           numComments: numCommentsSnapshot.data().count,
+          urls: postData.urls,
+          userId: userId,
+          caption: postData.caption,
+          workoutId: postData.workoutId,
+          date: postData.date.toDate(),
         };
       }
       return postData;

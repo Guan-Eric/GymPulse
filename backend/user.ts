@@ -177,7 +177,7 @@ export async function getFollowRequests() {
       snapshot.docs.map(async (doc) => ({
         id: doc.id,
         username: (await getUser(doc.id)).username,
-        date: doc.data().date as string,
+        date: doc.data().date.toDate() as string,
       }))
     );
     return requestsList;
@@ -222,7 +222,7 @@ export async function getNotifications() {
       snapshot.docs.map(async (doc) => ({
         id: doc.id,
         username: (await getUser(doc.data().userId)).username,
-        date: doc.data().date as string,
+        date: doc.data().date.toDate() as string,
         userId: doc.data().userId as string,
         type: doc.data().type as string,
         postId: doc.data().postId as string,

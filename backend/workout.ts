@@ -17,7 +17,7 @@ export async function getWorkout(workoutId): Promise<Workout> {
       exerciseDoc.data()
     );
     const workoutData: Workout = {
-      date: workoutDoc.data()?.date,
+      date: workoutDoc.data()?.date.toDate(),
       exercises: exercisesData as Exercise[],
       id: workoutDoc.data()?.id,
       name: workoutDoc.data()?.name,
