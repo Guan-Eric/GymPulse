@@ -83,7 +83,7 @@ export async function getUserPost(
       numLikes: numLikesSnapshot.data().count,
       numComments: numCommentsSnapshot.data().count,
       workoutId: userPostSnapshot.data().workoutId,
-      date: userPostSnapshot.data().date.toDate(),
+      date: userPostSnapshot.data().date,
     };
     return userPost;
   } catch (error) {
@@ -191,7 +191,7 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
             userId: userId,
             caption: postData.caption,
             workoutId: postData.workoutId,
-            date: postData.date.toDate(),
+            date: postData.date,
           };
         }
         return postData;
@@ -285,7 +285,7 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
           userId: userId,
           caption: postData.caption,
           workoutId: postData.workoutId,
-          date: postData.date.toDate(),
+          date: postData.date,
         };
       }
       return postData;

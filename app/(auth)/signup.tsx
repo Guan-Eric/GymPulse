@@ -50,7 +50,7 @@ function SignUpScreen() {
       return "Password must contain at least one number.";
     } else if (!hasSpecialChar) {
       return "Password must contain at least one special character.";
-    } else if (password == confirmPassword) {
+    } else if (!password.equals(confirmPassword)) {
       return "Passwords must match.";
     } else {
       return "";

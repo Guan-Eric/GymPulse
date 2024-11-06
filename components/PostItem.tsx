@@ -20,7 +20,7 @@ const PostItem = ({
   tab,
 }) => {
   const formattedDate = format(
-    new Date(post?.date),
+    post?.date.toDate(),
     "MMMM do, yyyy 'at' h:mm a"
   );
   const backgroundColor = renderComments ? "#181818" : "#282828";

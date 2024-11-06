@@ -17,6 +17,8 @@ import {
 import FeedLoader from "../../../components/FeedLoader";
 import { fetchStreakResetDate } from "../../../backend/user";
 import StreakModal from "../../../components/StreakLossModal";
+import { AdMobBanner } from "expo-ads-admob";
+import Constants from "expo-constants";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -29,6 +31,7 @@ const FeedScreen: React.FC = () => {
     hasNewNotification,
     markNotificationsAsRead,
   } = usePushNotifications();
+  const AD_POSITION_INTERVAL = 5;
 
   async function fetchFeed() {
     try {
@@ -102,6 +105,31 @@ const FeedScreen: React.FC = () => {
     setModalVisible(false);
   };
 
+  const renderItem = ({ item, index }) => {
+    if ((index + 1) % AD_POSITION_INTERVAL === 0) {
+      return (
+        <View style={{ marginVertical: 10 }}>
+          {/* <AdMobBanner
+            bannerSize="mediumRectangle"
+            adUnitID={Constants.expoConfig?.extra?.admobFeedUnitId}
+            onDidFailToReceiveAdWithError={(error) => console.error(error)}
+          /> */}
+        </View>
+      );
+    }
+    return (
+      <PostItem
+        post={item}
+        theme={theme}
+        navigateProfile={navigateProfile}
+        onToggleLike={() => handleToggleLike(item)}
+        renderComments={false}
+        showUser={true}
+        tab={"(home)"}
+      />
+    );
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -148,18 +176,7 @@ const FeedScreen: React.FC = () => {
             numColumns={1}
             horizontal={false}
             data={posts}
-            renderItem={({ item }) => (
-              <PostItem
-                post={item}
-                theme={theme}
-                navigateProfile={navigateProfile}
-                onToggleLike={() => handleToggleLike(item)}
-                renderComments={false}
-                showUser={true}
-                tab={"(home)"}
-              />
-            )}
-            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
           />
         )}
         <StreakModal
