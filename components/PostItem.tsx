@@ -67,11 +67,11 @@ const PostItem = ({
             type="clear"
             onPress={() =>
               router.push({
-                pathname: "(tabs)/" + tab + "/workout",
+                pathname: `(tabs)/${tab}/workout` as `/workout`,
                 params: {
                   workoutId: post.workoutId,
                 },
-              } as Href<string>)
+              })
             }
           >
             <Icon size={28} name="weight-lifter" type="material-community" />
@@ -94,11 +94,11 @@ const PostItem = ({
             type="clear"
             onPress={() =>
               router.push({
-                pathname: "(tabs)/" + tab + "/workout",
+                pathname: `(tabs)/${tab}/workout` as `/workout`,
                 params: {
                   workoutId: post.workoutId,
                 },
-              } as Href<string>)
+              })
             }
           >
             <Icon size={28} name="weight-lifter" type="material-community" />
@@ -110,12 +110,12 @@ const PostItem = ({
           !renderComments
             ? () =>
                 router.push({
-                  pathname: "/(tabs)/" + tab + "/post",
+                  pathname: `/(tabs)/${tab}/post` as `/post`,
                   params: {
                     postId: post.id,
                     userId: post.userId,
                   },
-                } as Href<string>)
+                })
             : null
         }
       >
@@ -156,12 +156,12 @@ const PostItem = ({
               type="clear"
               onPress={() =>
                 router.push({
-                  pathname: "/(tabs)/" + tab + "/post",
+                  pathname: `/(tabs)/${tab}/post` as `/post`,
                   params: {
                     postId: post.id,
                     userId: post.userId,
                   },
-                } as Href<string>)
+                })
               }
             >
               <Icon name="comment" type="material-community" />

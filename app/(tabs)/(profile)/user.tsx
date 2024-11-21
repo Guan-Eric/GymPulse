@@ -98,6 +98,9 @@ function UserScreen() {
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.username}
             </Text>
+            <Button onPress={() => router.push("/(tabs)/(profile)/summary")}>
+              Summary
+            </Button>
           </View>
           <Button
             type="clear"

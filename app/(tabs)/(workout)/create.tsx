@@ -19,7 +19,11 @@ import * as ImagePicker from "expo-image-picker";
 import { Input, useTheme, Button, Card } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
-import { addNotification, incrementStreak } from "../../../backend/user";
+import {
+  addNotification,
+  getUserFollowers,
+  incrementStreak,
+} from "../../../backend/user";
 import ImageCarousel from "../../../components/PostCarousel";
 
 function CreatePostScreen() {
@@ -115,11 +119,12 @@ function CreatePostScreen() {
         urls: downloadUrls,
       });
       console.log("added urls");
-      addNotification(
-        FIREBASE_AUTH.currentUser.uid,
-        "post",
-        userPostsDocRef.id
-      );
+
+      const userFollowers = getUserFollowers(FIREBASE_AUTH.currentUser.uid);
+      for (const userFollower in userFollowers) {
+        addNotification(userFollower, "post", userPostsDocRef.id);
+      }
+
       incrementStreak();
       console.log("Post created successfully");
     } catch (error) {

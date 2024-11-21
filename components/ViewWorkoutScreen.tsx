@@ -7,16 +7,16 @@ import { useLocalSearchParams } from "expo-router";
 import { useTheme } from "@rneui/themed";
 import DayCard from "../components/DayCard";
 import { getWorkout } from "../backend/workout";
-import { getMetric } from "../backend/user";
+import { getWeightMetric } from "../backend/user";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 
 function ViewWorkoutScreen({ theme, workoutId }) {
   const [workout, setWorkout] = useState<Workout>();
-  const [isMetric, setIsMetric] = useState(true);
+  const [isWeightMetric, setIsWeightMetric] = useState(true);
 
   const fetchWorkoutFromFirestore = async () => {
     setWorkout(await getWorkout(workoutId as string));
-    setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
+    setIsWeightMetric(await getWeightMetric(FIREBASE_AUTH.currentUser.uid));
   };
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function ViewWorkoutScreen({ theme, workoutId }) {
             day={workout}
             dayIndex={null}
             theme={theme}
-            isMetric={isMetric}
+            isWeightMetric={isWeightMetric}
             setPlan={null}
             isWorkout={false}
             isDisabled={true}

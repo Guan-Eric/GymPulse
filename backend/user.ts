@@ -35,9 +35,9 @@ export async function addUser(
       darkMode: true,
       heightMetricUnits: heightIsMetric == "true",
       weightMetricUnits: weightIsMetric == "true",
-      primaryHeight: primaryHeight as unknown as number,
-      secondaryHeight: secondaryHeight as unknown as number,
-      weight: weight as unknown as number,
+      primaryHeight: parseFloat(primaryHeight as string),
+      secondaryHeight: parseFloat(secondaryHeight as string),
+      weight: parseFloat(weight as string),
       bio: "",
       id: FIREBASE_AUTH.currentUser.uid,
       prefixes: generatePrefixes(username),
@@ -56,7 +56,6 @@ function generatePrefixes(username) {
   const prefixes = [];
   for (let i = 1; i <= username.length; i++) {
     prefixes.push(username.substring(0, i).toLowerCase());
-    console.log(prefixes);
   }
   return prefixes;
 }
@@ -88,6 +87,26 @@ export async function getUserFollowing(userId: string): Promise<string> {
     return "requested";
   } else {
     return "notFollowing";
+  }
+}
+
+export async function getUserFollowers(userId: string): Promise<string[]> {
+  try {
+    const followersCollectionRef = collection(
+      FIRESTORE_DB,
+      `Users/${userId}/Followers`
+    );
+    const followersSnapshot = await getDocs(followersCollectionRef);
+    const followersList: string[] = [];
+
+    followersSnapshot.forEach((doc) => {
+      followersList.push(doc.id);
+    });
+
+    return followersList;
+  } catch (error) {
+    console.error("Error getting followers: ", error);
+    return [];
   }
 }
 
@@ -185,6 +204,7 @@ export async function getFollowRequests() {
     console.error("Error fetching follow requests:", error);
   }
 }
+
 export async function addNotification(
   userId: string,
   type: string,
@@ -398,7 +418,7 @@ export async function fetchStreakResetDate(): Promise<Date> {
       `Users/${FIREBASE_AUTH.currentUser.uid}`
     );
     const userSnapshot = await getDoc(userDocRef);
-    return userSnapshot.data().streakResetDate.toDate() as Date;
+    return userSnapshot.data().streakResetDate?.toDate() as Date;
   } catch (error) {
     console.error("Error fetching streak reset date:", error);
   }

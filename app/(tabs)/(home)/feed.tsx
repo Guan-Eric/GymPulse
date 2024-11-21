@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text } from "react-native";
+import { FlatList, View, StyleSheet, Text, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Icon, useTheme, Button } from "@rneui/themed";
@@ -111,7 +111,11 @@ const FeedScreen: React.FC = () => {
         <View style={{ marginVertical: 10 }}>
           {/* <AdMobBanner
             bannerSize="mediumRectangle"
-            adUnitID={Constants.expoConfig?.extra?.admobFeedUnitId}
+            adUnitID={
+              Platform.OS === "ios"
+                ? Constants.expoConfig?.extra?.admobIOSFeedUnitId
+                : Constants.expoConfig?.extra?.admobAndroidFeedUnitId
+            }
             onDidFailToReceiveAdWithError={(error) => console.error(error)}
           /> */}
         </View>

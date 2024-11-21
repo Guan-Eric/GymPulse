@@ -42,32 +42,34 @@ function SignUpScreen() {
 
     if (password.length < minLength) {
       return `Password must be at least ${minLength} characters long.`;
-    } else if (!hasUpperCase) {
-      return "Password must contain at least one uppercase letter.";
-    } else if (!hasLowerCase) {
-      return "Password must contain at least one lowercase letter.";
-    } else if (!hasNumber) {
-      return "Password must contain at least one number.";
-    } else if (!hasSpecialChar) {
-      return "Password must contain at least one special character.";
-    } else if (!password.equals(confirmPassword)) {
-      return "Passwords must match.";
-    } else {
-      return "";
     }
+    if (!hasUpperCase) {
+      return "Password must contain at least one uppercase letter.";
+    }
+    if (!hasLowerCase) {
+      return "Password must contain at least one lowercase letter.";
+    }
+    if (!hasNumber) {
+      return "Password must contain at least one number.";
+    }
+    if (!hasSpecialChar) {
+      return "Password must contain at least one special character.";
+    }
+    if (password !== confirmPassword) {
+      return "Passwords must match.";
+    }
+    return "";
   };
 
   const signUp = async () => {
     setLoading(true);
     setEmailError("");
     setPasswordError("");
-
     if (!validateEmail(email)) {
       setEmailError("Please enter a valid email.");
       setLoading(false);
       return;
     }
-
     const passwordValidationMessage = validatePassword(
       password,
       confirmPassword
@@ -77,7 +79,6 @@ function SignUpScreen() {
       setLoading(false);
       return;
     }
-
     if (
       await register(
         email,

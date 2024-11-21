@@ -41,7 +41,8 @@ export default {
         projectId: "0ca3bc1d-ffa0-46b9-986f-7c478192a465",
       },
       firebaseApiKey: process.env.FIREBASE_API_KEY,
-      admobFeedUnitId: process.env.ADMOB_FEED_UNIT_ID,
+      admobIOSFeedUnitId: process.env.ADMOB_IOS_FEED_UNIT_ID,
+      admobAndroidFeedUnitId: process.env.ADMOB_ANDROID_FEED_UNIT_ID,
     },
     experiments: {
       typedRoutes: true,

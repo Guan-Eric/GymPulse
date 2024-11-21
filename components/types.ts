@@ -64,3 +64,9 @@ export interface Set {
   reps: number;
   weight_duration: number;
 }
+
+export interface ChartData {
+  x: number;
+  y: number;
+  label: string;
+}

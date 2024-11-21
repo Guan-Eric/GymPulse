@@ -123,7 +123,7 @@ function BodyPartScreen() {
                       dayId: dayId,
                       route: route,
                     },
-                  } as Href<string>)
+                  })
                 }
               >
                 <Image

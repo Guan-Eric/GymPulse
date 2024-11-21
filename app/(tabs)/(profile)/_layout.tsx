@@ -12,6 +12,7 @@ function ProfileStackLayout(props) {
       <Stack.Screen name="display" options={{ headerShown: false }} />
       <Stack.Screen name="notifications" options={{ headerShown: false }} />
       <Stack.Screen name="personal" options={{ headerShown: false }} />
+      <Stack.Screen name="summary" options={{ headerShown: false }} />
     </Stack>
   );
 }
