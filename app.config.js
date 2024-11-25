@@ -20,6 +20,7 @@ export default {
       config: {
         googleMobileAdsAppId: process.env.ADMOB_IOS_APP_ID,
       },
+      newArchEnabled: true,
     },
     android: {
       adaptiveIcon: {
@@ -31,6 +32,7 @@ export default {
       },
       package: "com.eronkgonk.gympulse",
       googleServicesFile: "./android/app/google-services.json",
+      newArchEnabled: true,
     },
     web: {
       favicon: "./assets/newLogo.png",

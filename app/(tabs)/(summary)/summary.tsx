@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, Button, SafeAreaView } from "react-native";
 import { daysAgo, getWorkoutSummaryData } from "../../../backend/workout";
 import {
@@ -17,10 +17,11 @@ import {
 import { ChartData, Workout } from "../../../components/types";
 import WorkoutSummaryChart from "../../../components/WorkoutSummaryChart";
 import { useTheme } from "@rneui/themed";
+import { useFocusEffect } from "expo-router";
 
 export default function WorkoutSummary() {
   const { theme } = useTheme();
-  const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
+
   const [weeklyWorkoutData, setWeeklyWorkoutData] = useState<ChartData[]>();
   const [monthlyWorkoutData, setMonthlyWorkoutData] = useState<ChartData[]>();
   const [yearlyWorkoutData, setYearlyWorkoutData] = useState<ChartData[]>();
@@ -52,7 +53,6 @@ export default function WorkoutSummary() {
         label: label,
       };
     }
-    console.log(groupedData);
     workouts.forEach((workout) => {
       const workoutDate = workout.date;
       const x =
@@ -69,55 +69,49 @@ export default function WorkoutSummary() {
       y: item.y,
       label: item.label,
     }));
-    console.log(workoutChartData);
     return workoutChartData;
   }
 
+  async function fetchData() {
+    const workoutData = await getWorkoutSummaryData(daysAgo(365), new Date());
+
+    const dailyWorkouts = workoutData.filter(
+      (workout) => differenceInDays(new Date(), workout.date) <= 6
+    );
+
+    const weeklyWorkouts = workoutData.filter(
+      (workout) => differenceInWeeks(new Date(), workout.date) <= 6
+    );
+
+    const monthlyWorkouts = workoutData.filter(
+      (workout) => differenceInMonths(new Date(), workout.date) <= 6
+    );
+
+    setWeeklyWorkoutData(processWorkoutData(dailyWorkouts, "daily"));
+    setMonthlyWorkoutData(processWorkoutData(weeklyWorkouts, "weekly"));
+    setYearlyWorkoutData(processWorkoutData(monthlyWorkouts, "monthly"));
+  }
+
   useEffect(() => {
-    async function fetchData() {
-      const workoutData = await getWorkoutSummaryData(daysAgo(365), new Date());
-
-      const weeklyWorkouts = workoutData.filter((workout) =>
-        isSameWeek(workout.date, new Date())
-      );
-
-      const monthlyWorkouts = workoutData.filter(
-        (workout) => workout.date.getDay() + 49 >= new Date().getDay()
-      );
-
-      setWeeklyWorkoutData(processWorkoutData(weeklyWorkouts, "daily"));
-      setMonthlyWorkoutData(processWorkoutData(monthlyWorkouts, "weekly"));
-      setYearlyWorkoutData(processWorkoutData(workoutData, "monthly"));
-    }
     fetchData();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
         <Text>Workout Summary</Text>
-        <Button
-          title={period}
-          onPress={() =>
-            setPeriod((prevPeriod) =>
-              prevPeriod === "daily"
-                ? "weekly"
-                : prevPeriod === "weekly"
-                ? "monthly"
-                : "daily"
-            )
-          }
-        />
         {yearlyWorkoutData?.length > 0 ? (
           <WorkoutSummaryChart
             theme={theme}
-            chartData={
-              period === "daily"
-                ? weeklyWorkoutData
-                : period === "weekly"
-                ? monthlyWorkoutData
-                : yearlyWorkoutData
-            }
+            dailyChartData={weeklyWorkoutData}
+            weeklyChartData={monthlyWorkoutData}
+            monthlyChartData={yearlyWorkoutData}
           />
         ) : null}
       </SafeAreaView>

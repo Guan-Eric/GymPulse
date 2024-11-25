@@ -13,11 +13,13 @@ const theme = createTheme({
     primary: "#3490de",
     black: "black",
     background: "white",
+    grey0: "darkgrey",
   },
   darkColors: {
     primary: "#3490de",
     black: "white",
     background: "#181818",
+    grey0: "lightgrey",
   },
   mode: "dark" as "light" | "dark",
 });

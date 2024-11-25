@@ -36,6 +36,19 @@ function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="(summary)"
+        options={{
+          title: "Summary",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons
+              name="chart-line"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="(profile)"
         options={{
           title: "Profile",
