@@ -52,8 +52,8 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
     const seconds = timeValue % 60;
 
     if (hours > 0) {
-      return `${hours} h ${minutes} m` as string;
-    } else return `${minutes} m ${seconds} s` as string;
+      return `${hours}h ${minutes}m` as string;
+    } else return `${minutes}m ${seconds}s` as string;
   }, [state]);
 
   return (
@@ -107,8 +107,8 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
               const seconds = label % 60;
 
               if (hours > 0) {
-                return `${hours} h ${minutes} m` as string;
-              } else return `${minutes} m ${seconds} s` as string;
+                return `${hours}h ${minutes}m` as string;
+              } else return `${minutes}m ${seconds}s` as string;
             },
           },
         ]}
