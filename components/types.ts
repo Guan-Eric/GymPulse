@@ -68,5 +68,4 @@ export interface Set {
 export interface ChartData {
   x: number;
   y: number;
-  label: string;
 }

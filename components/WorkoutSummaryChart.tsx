@@ -88,11 +88,11 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
           labelColor: theme.colors.black,
           formatXLabel(label) {
             if (selectedIndex === 0) {
-              return format(subDays(new Date(), 6 - label), "EEEE");
+              return format(subDays(new Date(), 6 - label), "EE");
             } else if (selectedIndex === 1) {
               return format(subWeeks(new Date(), 6 - label), "MMM dd");
             } else {
-              return format(subMonths(new Date(), 6 - label), "MMM yyyy");
+              return format(subMonths(new Date(), 6 - label), "MMM");
             }
           },
         }}

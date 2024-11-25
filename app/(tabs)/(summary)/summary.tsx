@@ -31,26 +31,13 @@ export default function WorkoutSummary() {
     period: "daily" | "weekly" | "monthly"
   ): ChartData[] {
     const groupedData: {
-      [key: number]: { x: number; y: number; label: string };
+      [key: number]: { x: number; y: number };
     } = {};
 
     for (let i = 0; i < 7; i++) {
-      let label: string;
-
-      if (period === "daily") {
-        label = format(subDays(new Date(), 6 - i), "EEEE");
-      } else if (period === "weekly") {
-        const weekStart = startOfWeek(subWeeks(new Date(), 6 - i));
-        label = format(weekStart, "MMM dd");
-      } else if (period === "monthly") {
-        const monthStart = startOfMonth(subMonths(new Date(), 6 - i));
-        label = format(monthStart, "MMM yyyy");
-      }
-
       groupedData[i] = {
         x: i,
         y: 0,
-        label: label,
       };
     }
     workouts.forEach((workout) => {
@@ -67,7 +54,6 @@ export default function WorkoutSummary() {
     const workoutChartData = Object.values(groupedData).map((item) => ({
       x: item.x,
       y: item.y,
-      label: item.label,
     }));
     return workoutChartData;
   }
