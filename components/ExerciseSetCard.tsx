@@ -103,7 +103,13 @@ function ExerciseSetCard({
                 inputContainerStyle={styles.inputRoundedContainer}
                 inputStyle={styles.input}
                 onChangeText={(value) =>
-                  updateSets(dayIndex, exerciseIndex, setIndex, "reps", value)
+                  updateSets(
+                    dayIndex,
+                    exerciseIndex,
+                    setIndex,
+                    "reps",
+                    parseInt(value) ? parseInt(value) : 0
+                  )
                 }
                 value={set.reps.toString()}
               />
@@ -124,7 +130,11 @@ function ExerciseSetCard({
                         "weight_duration",
                         isWeightMetric
                           ? parseFloat(value) * 2.205
+                            ? parseFloat(value) * 2.205
+                            : 0
                           : parseFloat(value)
+                          ? parseFloat(value)
+                          : 0
                       )
                     }
                     value={
@@ -152,7 +162,7 @@ function ExerciseSetCard({
                         exerciseIndex,
                         setIndex,
                         "weight_duration",
-                        value
+                        parseFloat(value) ? parseFloat(value) : 0
                       )
                     }
                     value={set?.weight_duration.toString()}
