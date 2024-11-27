@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { CartesianChart, Line, useChartPressState } from "victory-native";
 import { ChartData } from "./types";
 import { View } from "react-native";
-import { Circle, useFont } from "@shopify/react-native-skia";
-import { SharedValue, useDerivedValue } from "react-native-reanimated";
-import { Lato_400Regular } from "@expo-google-fonts/lato";
+import { Circle, Text, useFont } from "@shopify/react-native-skia";
+import { Lato_400Regular, Lato_700Bold } from "@expo-google-fonts/lato";
 import { ButtonGroup } from "@rneui/themed";
-import { Text } from "react-native";
 import { format, subDays, subMonths, subWeeks } from "date-fns";
+import { useDerivedValue } from "react-native-reanimated";
 
 interface WorkoutSummaryChartProps {
   dailyChartData: ChartData[];
@@ -23,6 +22,8 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
   theme,
 }) => {
   const font = useFont(Lato_400Regular, 12);
+  const chartFont = useFont(Lato_700Bold, 24);
+
   const dailyTransformData = dailyChartData.map(({ x, y }) => ({ x, y }));
   const weeklyTransformData = weeklyChartData.map(({ x, y }) => ({ x, y }));
   const monthlyTransformData = monthlyChartData.map(({ x, y }) => ({ x, y }));
@@ -43,10 +44,7 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
         break;
     }
   }, [selectedIndex, dailyChartData, weeklyChartData, monthlyChartData]);
-
-  const value = useDerivedValue(() => {
-    const timeValue = state.y.y.value.value;
-
+  const timeLabel = (timeValue: number) => {
     const hours = Math.floor(timeValue / 3600);
     const minutes = Math.floor((timeValue % 3600) / 60);
     const seconds = timeValue % 60;
@@ -54,6 +52,14 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
     if (hours > 0) {
       return `${hours}h ${minutes}m` as string;
     } else return `${minutes}m ${seconds}s` as string;
+  };
+  const value = useDerivedValue(() => {
+    if (!isActive) {
+      const latestDataPoint = transformedData[transformedData.length - 1];
+      timeLabel(latestDataPoint?.y || 0);
+    } else {
+      timeLabel(state.y.y.value.value);
+    }
   }, [state]);
 
   return (
@@ -62,14 +68,11 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
         style={{
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
         }}
       >
-        <Text style={{ color: theme.colors.black, fontSize: 24 }}>
-          {value.value}
-        </Text>
         <ButtonGroup
-          containerStyle={{ width: 200 }}
+          containerStyle={{ width: 200, height: 30 }}
           buttons={["Daily", "Weekly", "Monthly"]}
           selectedIndex={selectedIndex}
           onPress={(value) => {
@@ -102,13 +105,7 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
             font: font,
             labelColor: theme.colors.black,
             formatYLabel(label) {
-              const hours = Math.floor(label / 3600);
-              const minutes = Math.floor((label % 3600) / 60);
-              const seconds = label % 60;
-
-              if (hours > 0) {
-                return `${hours}h ${minutes}m` as string;
-              } else return `${minutes}m ${seconds}s` as string;
+              timeLabel(label);
             },
           },
         ]}
@@ -116,6 +113,13 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
       >
         {({ points }) => (
           <>
+            <Text
+              x={100}
+              y={60}
+              font={chartFont}
+              text={value}
+              color={theme.colors.black}
+            />
             <Line
               points={points.y}
               color={theme.colors.primary}
