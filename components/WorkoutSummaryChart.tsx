@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { Circle, Text, useFont } from "@shopify/react-native-skia";
 import { Lato_400Regular, Lato_700Bold } from "@expo-google-fonts/lato";
 import { ButtonGroup } from "@rneui/themed";
-import { format, subDays, subMonths, subWeeks } from "date-fns";
+import { format, startOfWeek, subDays, subMonths, subWeeks } from "date-fns";
 import { useDerivedValue } from "react-native-reanimated";
 
 interface WorkoutSummaryChartProps {
@@ -43,8 +43,20 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
         setTransformedData(monthlyTransformData);
         break;
     }
-  }, [selectedIndex, dailyChartData, weeklyChartData, monthlyChartData]);
-  const timeLabel = (timeValue: number) => {
+  }, [selectedIndex]);
+
+  const value = useDerivedValue(() => {
+    if (!isActive) {
+      const timeValue = transformedData[transformedData.length - 1].y;
+      const hours = Math.floor(timeValue / 3600);
+      const minutes = Math.floor((timeValue % 3600) / 60);
+      const seconds = timeValue % 60;
+
+      if (hours > 0) {
+        return `${hours}h ${minutes}m` as string;
+      } else return `${minutes}m ${seconds}s` as string;
+    }
+    const timeValue = state.y.y.value.value;
     const hours = Math.floor(timeValue / 3600);
     const minutes = Math.floor((timeValue % 3600) / 60);
     const seconds = timeValue % 60;
@@ -52,15 +64,7 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
     if (hours > 0) {
       return `${hours}h ${minutes}m` as string;
     } else return `${minutes}m ${seconds}s` as string;
-  };
-  const value = useDerivedValue(() => {
-    if (!isActive) {
-      const latestDataPoint = transformedData[transformedData.length - 1];
-      timeLabel(latestDataPoint?.y || 0);
-    } else {
-      timeLabel(state.y.y.value.value);
-    }
-  }, [state]);
+  }, [isActive, transformedData]);
 
   return (
     <View style={{ height: 300 }}>
@@ -93,7 +97,10 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
             if (selectedIndex === 0) {
               return format(subDays(new Date(), 6 - label), "EE");
             } else if (selectedIndex === 1) {
-              return format(subWeeks(new Date(), 6 - label), "MMM dd");
+              return format(
+                startOfWeek(subWeeks(new Date(), 6 - label)),
+                "MMM dd"
+              );
             } else {
               return format(subMonths(new Date(), 6 - label), "MMM");
             }
@@ -105,7 +112,13 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
             font: font,
             labelColor: theme.colors.black,
             formatYLabel(label) {
-              timeLabel(label);
+              const hours = Math.floor(label / 3600);
+              const minutes = Math.floor((label % 3600) / 60);
+              const seconds = label % 60;
+
+              if (hours > 0) {
+                return `${hours}h ${minutes}m` as string;
+              } else return `${minutes}m ${seconds}s` as string;
             },
           },
         ]}

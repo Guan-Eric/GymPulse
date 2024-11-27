@@ -1,18 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, Button, SafeAreaView } from "react-native";
+import { View, Text, SafeAreaView } from "react-native";
 import { daysAgo, getWorkoutSummaryData } from "../../../backend/workout";
 import {
   differenceInDays,
   differenceInMonths,
   differenceInWeeks,
-  format,
-  isSameWeek,
-  parseISO,
-  startOfMonth,
   startOfWeek,
-  subDays,
-  subMonths,
-  subWeeks,
 } from "date-fns";
 import { ChartData, Workout } from "../../../components/types";
 import WorkoutSummaryChart from "../../../components/WorkoutSummaryChart";
@@ -46,7 +39,8 @@ export default function WorkoutSummary() {
         period === "daily"
           ? 6 - differenceInDays(new Date(), workoutDate)
           : period === "weekly"
-          ? 6 - differenceInWeeks(new Date(), workoutDate)
+          ? 6 -
+            differenceInWeeks(startOfWeek(new Date()), startOfWeek(workoutDate))
           : 6 - differenceInMonths(new Date(), workoutDate);
       groupedData[x].y += workout.duration;
     });
