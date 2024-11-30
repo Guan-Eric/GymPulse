@@ -54,3 +54,4 @@ Contributions are welcome! Please follow these guidelines when contributing:
 ## Attributions
 
 - Icon by cube29 from [source](https://www.freepik.com/author/cube29)
+- Streak icon from [source](https://www.flaticon.com/free-icons/fire) - Fire icons created by Bahu Icons - Flaticon
