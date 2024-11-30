@@ -15,8 +15,8 @@ import { FIRESTORE_DB, FIREBASE_STR } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { Exercise } from "../../../components/types";
-import { Href, router, useLocalSearchParams } from "expo-router";
-import { Card, Divider, SearchBar, useTheme } from "@rneui/themed";
+import { router, useLocalSearchParams } from "expo-router";
+import { Card, SearchBar, useTheme } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 
 const screenWidth = Dimensions.get("window").width;
@@ -109,10 +109,8 @@ function BodyPartScreen() {
             renderItem={({ item }) => (
               <Pressable
                 style={{
-                  flexDirection: "row",
+                  flexDirection: "column",
                   alignItems: "center",
-                  borderTopWidth: 0.5,
-                  borderTopColor: "gray",
                 }}
                 onPress={() =>
                   router.push({
@@ -126,18 +124,30 @@ function BodyPartScreen() {
                   })
                 }
               >
-                <Image
-                  source={{ uri: imageUrls[item.id] }}
-                  style={{
-                    alignSelf: "center",
-                    width: ScreenWidth * 0.2,
-                    height: (ScreenWidth * 0.2) / (195 / 130),
-                    resizeMode: "cover",
+                <Card
+                  containerStyle={{
+                    borderColor: theme.colors.grey0,
+                    backgroundColor: theme.colors.grey0,
+                    borderRadius: 20,
                   }}
-                />
-                <Text style={[styles.baseText, { color: theme.colors.black }]}>
-                  {item.name}
-                </Text>
+                >
+                  <Image
+                    source={{ uri: imageUrls[item.id] }}
+                    style={{
+                      borderRadius: 12,
+                      alignSelf: "center",
+                      width: ScreenWidth * 0.85,
+                      height: (ScreenWidth * 0.85) / (195 / 130),
+                      resizeMode: "cover",
+                      paddingBottom: 10,
+                    }}
+                  />
+                  <Text
+                    style={[styles.baseText, { color: theme.colors.black }]}
+                  >
+                    {item.name}
+                  </Text>
+                </Card>
               </Pressable>
             )}
             keyExtractor={(item) => item.id}
@@ -156,6 +166,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontSize: 16,
     textAlign: "center",
+    fontFamily: "Lato_400Regular",
   },
   title: {
     fontFamily: "Lato_700Bold",

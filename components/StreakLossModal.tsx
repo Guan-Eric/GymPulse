@@ -23,7 +23,7 @@ const StreakModal: React.FC<StreakModalProps> = ({
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalText}>Your streak has ended!</Text>
+          <Text style={styles.modalText}>Oh no! Your streak has ended!</Text>
           <Text style={styles.modalSubText}>
             Pay $1 to continue your streak or start a new one.
           </Text>

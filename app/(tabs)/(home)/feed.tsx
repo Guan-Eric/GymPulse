@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text, Platform } from "react-native";
+import { FlatList, View, StyleSheet, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Icon, useTheme, Button } from "@rneui/themed";
@@ -150,7 +150,13 @@ const FeedScreen: React.FC = () => {
           <Text style={[styles.title, { color: theme.colors.black }]}>
             Feed
           </Text>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Button type="clear">
+              <Image
+                source={require("../../../assets/fire.png")}
+                style={{ width: 32, height: 32 }}
+              />
+            </Button>
             <Button type="clear" onPress={navigateToNotifications}>
               {hasNewNotification ? (
                 <Icon size={32} name="bell-badge" type="material-community" />

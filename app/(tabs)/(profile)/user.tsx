@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  FlatList,
-  Pressable,
-  Image,
-  Text,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, FlatList, Text, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
-import { ActivityIndicator } from "react-native-paper";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { useTheme, Button, Icon, Avatar } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
@@ -98,9 +89,6 @@ function UserScreen() {
             <Text style={[styles.userName, { color: theme.colors.black }]}>
               {user?.username}
             </Text>
-            <Button onPress={() => router.push("/(tabs)/(profile)/summary")}>
-              Summary
-            </Button>
           </View>
           <Button
             type="clear"
