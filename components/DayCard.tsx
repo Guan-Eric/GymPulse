@@ -1,4 +1,4 @@
-import { Input, Button, Icon } from "@rneui/themed";
+import { Input, Button, Icon, Card } from "@rneui/themed";
 import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import ExerciseSetCard from "./ExerciseSetCard";
@@ -23,13 +23,23 @@ function DayCard({
   };
 
   return (
-    <View style={{ padding: 10 }}>
+    <Card
+      containerStyle={{
+        padding: 10,
+        borderRadius: 20,
+        backgroundColor: theme.colors.grey0,
+        borderColor: theme.colors.grey0,
+      }}
+    >
       <View style={styles.dayHeader}>
         <Input
           disabled={isDisabled}
           containerStyle={styles.nameInput}
-          inputContainerStyle={styles.nameInput}
-          style={styles.nameInput}
+          inputContainerStyle={[
+            styles.inputRoundedContainer,
+            { borderColor: theme.colors.greyOutline },
+          ]}
+          style={{ paddingLeft: 10 }}
           onChangeText={(newDayName) => updateDayName(dayIndex, newDayName)}
           value={day?.name}
         />
@@ -112,7 +122,7 @@ function DayCard({
           )}
         </>
       )}
-    </View>
+    </Card>
   );
 }
 
@@ -120,11 +130,18 @@ const styles = StyleSheet.create({
   dayHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
+    alignContent: "center",
+    marginBottom: -15,
+    marginTop: 10,
   },
   nameInput: {
     width: 200,
+  },
+  inputRoundedContainer: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    overflow: "hidden",
   },
 });
 

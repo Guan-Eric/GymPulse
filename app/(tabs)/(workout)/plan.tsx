@@ -7,7 +7,7 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
 import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
-import { getMetric } from "../../../backend/user";
+import { getWeightMetric } from "../../../backend/user";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 
@@ -21,7 +21,7 @@ function ViewPlanScreen() {
   const fetchPlanFromFirestore = async () => {
     try {
       setPlan(await getPlan(planId as string));
-      setIsMetric(await getMetric(FIREBASE_AUTH.currentUser.uid));
+      setIsMetric(await getWeightMetric(FIREBASE_AUTH.currentUser.uid));
     } catch (error) {
       console.error("Error fetching plan:", error);
     } finally {
@@ -72,15 +72,17 @@ function ViewPlanScreen() {
         </SafeAreaView>
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
-          <Input
-            containerStyle={styles.nameInput}
-            inputContainerStyle={styles.nameInput}
-            style={styles.nameInput}
-            onChangeText={handleSaveName}
-            value={plan?.name}
-          />
-
           <ScrollView>
+            <Input
+              containerStyle={styles.nameInput}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { borderColor: theme.colors.greyOutline },
+              ]}
+              style={{ paddingLeft: 10 }}
+              onChangeText={handleSaveName}
+              value={plan?.name}
+            />
             {plan?.days.length > 0
               ? plan?.days?.map((day, dayIndex) => (
                   <DayCard
@@ -89,7 +91,7 @@ function ViewPlanScreen() {
                     day={day}
                     dayIndex={dayIndex}
                     theme={theme}
-                    isMetric={isMetric}
+                    isWeightMetric={isMetric}
                     setPlan={setPlan}
                     isWorkout={false}
                     isDisabled={false}
@@ -129,6 +131,17 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     width: "100%",
+    marginBottom: -20,
+  },
+  inputContainer: {
+    width: 70,
+    height: 40,
+  },
+  inputRoundedContainer: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    overflow: "hidden",
   },
 });
 

@@ -118,15 +118,14 @@ function CreatePostScreen() {
         id: userPostsDocRef.id,
         urls: downloadUrls,
       });
-      console.log("added urls");
 
-      const userFollowers = getUserFollowers(FIREBASE_AUTH.currentUser.uid);
+      const userFollowers = await getUserFollowers(
+        FIREBASE_AUTH.currentUser.uid
+      );
       for (const userFollower in userFollowers) {
         addNotification(userFollower, "post", userPostsDocRef.id);
       }
-
       incrementStreak();
-      console.log("Post created successfully");
     } catch (error) {
       console.error("Error creating post:", error);
     } finally {

@@ -19,7 +19,10 @@ function PlanCard({ plan, theme }) {
       <Card
         containerStyle={[
           styles.card,
-          { backgroundColor: theme.colors.background },
+          {
+            backgroundColor: theme.colors.grey0,
+            borderColor: theme.colors.greyOutline,
+          },
         ]}
       >
         <Card.Title style={[styles.planName, { color: theme.colors.black }]}>

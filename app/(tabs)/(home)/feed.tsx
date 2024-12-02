@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
-import { Icon, useTheme, Button } from "@rneui/themed";
+import { Icon, useTheme, Button, Tooltip } from "@rneui/themed";
 import { getFeed, toggleLike } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import { Post } from "../../../components/types";
@@ -11,12 +11,13 @@ import { usePushNotifications } from "../../../components/usePushNotifications";
 import {
   endStreak,
   fetchCurrentStreak,
+  fetchLongestStreak,
   savePushToken,
   updateStreakResetDate,
 } from "../../../backend/user";
 import FeedLoader from "../../../components/FeedLoader";
 import { fetchStreakResetDate } from "../../../backend/user";
-import StreakModal from "../../../components/StreakLossModal";
+import StreakResetModal from "../../../components/StreakLossModal";
 import { AdMobBanner } from "expo-ads-admob";
 import Constants from "expo-constants";
 
@@ -24,7 +25,11 @@ const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [streakResetModalVisible, setStreakResetModalVisible] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [longestStreak, setLongestStreak] = useState(0);
+  const [openToolTip, setOpenToolTip] = useState(false);
+
   const {
     expoPushToken,
     notification,
@@ -47,6 +52,7 @@ const FeedScreen: React.FC = () => {
   useEffect(() => {
     fetchFeed();
     checkStreakStatus();
+    getStreakInformation();
   }, []);
 
   useEffect(() => {
@@ -58,6 +64,7 @@ const FeedScreen: React.FC = () => {
   useFocusEffect(
     useCallback(() => {
       fetchFeed();
+      getStreakInformation();
     }, [])
   );
 
@@ -90,19 +97,24 @@ const FeedScreen: React.FC = () => {
       const currentDate = new Date();
       const currentStreak = await fetchCurrentStreak();
       if (currentDate > resetDate && currentStreak > 0) {
-        setModalVisible(true);
+        setStreakResetModalVisible(true);
       }
     }
   };
 
+  const getStreakInformation = async () => {
+    setCurrentStreak(await fetchCurrentStreak());
+    setLongestStreak(await fetchLongestStreak());
+  };
+
   const handleContinueStreak = () => {
     updateStreakResetDate();
-    setModalVisible(false);
+    setStreakResetModalVisible(false);
   };
 
   const handleNewStreak = () => {
     endStreak();
-    setModalVisible(false);
+    setStreakResetModalVisible(false);
   };
 
   const renderItem = ({ item, index }) => {
@@ -150,13 +162,29 @@ const FeedScreen: React.FC = () => {
           <Text style={[styles.title, { color: theme.colors.black }]}>
             Feed
           </Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Button type="clear">
-              <Image
-                source={require("../../../assets/fire.png")}
-                style={{ width: 32, height: 32 }}
-              />
-            </Button>
+          <View style={{ flexDirection: "row" }}>
+            <Tooltip
+              visible={openToolTip}
+              onOpen={() => setOpenToolTip(true)}
+              onClose={() => setOpenToolTip(false)}
+              popover={
+                <>
+                  <Text style={{ color: theme.colors.grey0 }}>
+                    Current Streak: {currentStreak}
+                  </Text>
+                  <Text style={{ color: theme.colors.grey0 }}>
+                    Longest Streak: {longestStreak}
+                  </Text>
+                </>
+              }
+            >
+              <Button type="clear" onPress={() => setOpenToolTip(true)}>
+                <Image
+                  source={require("../../../assets/fire.png")}
+                  style={{ width: 32, height: 32 }}
+                />
+              </Button>
+            </Tooltip>
             <Button type="clear" onPress={navigateToNotifications}>
               {hasNewNotification ? (
                 <Icon size={32} name="bell-badge" type="material-community" />
@@ -189,11 +217,12 @@ const FeedScreen: React.FC = () => {
             renderItem={renderItem}
           />
         )}
-        <StreakModal
-          modalVisible={modalVisible}
-          onClose={() => setModalVisible(false)}
+        <StreakResetModal
+          modalVisible={streakResetModalVisible}
+          onClose={() => setStreakResetModalVisible(false)}
           onContinueStreak={handleContinueStreak}
           onNewStreak={handleNewStreak}
+          theme={theme}
         />
       </SafeAreaView>
     </View>

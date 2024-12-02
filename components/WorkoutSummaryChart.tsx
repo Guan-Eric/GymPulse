@@ -108,7 +108,7 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
         }}
         yAxis={[
           {
-            lineColor: theme.colors.grey0,
+            lineColor: theme.colors.greyOutline,
             font: font,
             labelColor: theme.colors.black,
             formatYLabel(label) {

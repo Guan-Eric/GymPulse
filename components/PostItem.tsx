@@ -23,7 +23,6 @@ const PostItem = ({
     post?.date.toDate(),
     "MMMM do, yyyy 'at' h:mm a"
   );
-  const backgroundColor = renderComments ? "#181818" : "#282828";
   const [user, setUser] = useState<User>();
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -37,7 +36,7 @@ const PostItem = ({
   }, []);
 
   return (
-    <View style={{ backgroundColor: backgroundColor }}>
+    <View style={{ backgroundColor: theme.colors.grey1 }}>
       {showUser ? (
         <View
           style={{
@@ -58,7 +57,7 @@ const PostItem = ({
                   {user?.username}
                 </Text>
               </Pressable>
-              <Text style={[styles.workoutText, { color: "gray" }]}>
+              <Text style={[styles.workoutText, { color: theme.colors.grey3 }]}>
                 {formattedDate}
               </Text>
             </View>
@@ -87,7 +86,7 @@ const PostItem = ({
             paddingRight: 10,
           }}
         >
-          <Text style={[styles.workoutText, { color: "gray" }]}>
+          <Text style={[styles.workoutText, { color: theme.colors.grey3 }]}>
             {formattedDate}
           </Text>
           <Button
@@ -175,7 +174,9 @@ const PostItem = ({
 
       {renderComments && renderComments()}
       {!renderComments && (
-        <View style={{ height: 10, backgroundColor: "#1B1B1B" }}></View>
+        <View
+          style={{ height: 10, backgroundColor: theme.colors.grey0 }}
+        ></View>
       )}
     </View>
   );

@@ -10,10 +10,15 @@ function EmptyPlanCard({ onPress }) {
       <Card
         containerStyle={[
           styles.card,
-          { backgroundColor: theme.colors.background },
+          {
+            backgroundColor: theme.colors.grey0,
+            borderColor: theme.colors.greyOutline,
+          },
         ]}
       >
-        <Card.Title style={styles.planName}>New Plan</Card.Title>
+        <Card.Title style={[styles.planName, { color: theme.colors.black }]}>
+          New Plan
+        </Card.Title>
         <View style={styles.iconContainer}>
           <Icon
             name="plus"

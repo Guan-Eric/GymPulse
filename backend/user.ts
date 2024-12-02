@@ -433,7 +433,20 @@ export async function fetchCurrentStreak(): Promise<number> {
     const userSnapshot = await getDoc(userDocRef);
     return userSnapshot.data().currentStreak;
   } catch (error) {
-    console.error("Error fetching streak:", error);
+    console.error("Error fetching current streak:", error);
+  }
+}
+
+export async function fetchLongestStreak(): Promise<number> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    const userSnapshot = await getDoc(userDocRef);
+    return userSnapshot.data().longestStreak;
+  } catch (error) {
+    console.error("Error fetching longest streak:", error);
   }
 }
 

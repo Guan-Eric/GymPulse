@@ -17,7 +17,6 @@ function UserScreen() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(true);
-  const imageWidth = ScreenWidth / 3;
 
   const fetchUserAndUserPostsFirestore = async () => {
     try {

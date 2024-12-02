@@ -51,7 +51,10 @@ function ExerciseSetCard({
     <Card
       containerStyle={[
         styles.card,
-        { backgroundColor: theme.colors.background },
+        {
+          backgroundColor: theme.colors.grey1,
+          borderColor: theme.colors.grey1,
+        },
       ]}
     >
       <View style={styles.exerciseHeader}>
@@ -211,8 +214,8 @@ function ExerciseSetCard({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 8,
-    marginVertical: 8,
+    borderRadius: 16,
+    margin: 10,
   },
   exerciseHeader: {
     flexDirection: "row",

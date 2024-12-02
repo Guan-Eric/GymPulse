@@ -27,7 +27,10 @@ function BodyPartCard({ bodypart, theme }) {
     <Card
       containerStyle={[
         styles.card,
-        { backgroundColor: theme.colors.background },
+        {
+          backgroundColor: theme.colors.grey0,
+          borderColor: theme.colors.greyOutline,
+        },
       ]}
     >
       <Card.Title style={[styles.text, { color: theme.colors.black }]}>
