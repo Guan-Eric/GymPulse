@@ -7,13 +7,13 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
 import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
-import { getWeightMetric } from "../../../backend/user";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
+import { getUser } from "../../../backend/user";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
-  const [isMetric, setIsMetric] = useState(true);
+  const [isWeightMetric, setIsWeightMetric] = useState(true);
   const { planId } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -21,7 +21,9 @@ function ViewPlanScreen() {
   const fetchPlanFromFirestore = async () => {
     try {
       setPlan(await getPlan(planId as string));
-      setIsMetric(await getWeightMetric(FIREBASE_AUTH.currentUser.uid));
+      setIsWeightMetric(
+        (await getUser(FIREBASE_AUTH.currentUser.uid)).weightMetricUnits
+      );
     } catch (error) {
       console.error("Error fetching plan:", error);
     } finally {
@@ -91,7 +93,7 @@ function ViewPlanScreen() {
                     day={day}
                     dayIndex={dayIndex}
                     theme={theme}
-                    isWeightMetric={isMetric}
+                    isWeightMetric={isWeightMetric}
                     setPlan={setPlan}
                     isWorkout={false}
                     isDisabled={false}

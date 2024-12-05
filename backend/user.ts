@@ -46,6 +46,8 @@ export async function addUser(
       currentStreak: 0,
       longestStreak: 0,
       streakResetDate: null,
+      showStreak: false,
+      showWorkout: false,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -254,29 +256,6 @@ export async function getNotifications() {
   }
 }
 
-export async function getHeightMetric(uid: string): Promise<boolean> {
-  try {
-    const userDoc = await getDoc(
-      doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
-    );
-    const userData = userDoc.data();
-    return userData.isHeightMetric;
-  } catch (error) {
-    console.error("Error fetching weight metric boolean:", error);
-  }
-}
-export async function getWeightMetric(uid: string): Promise<boolean> {
-  try {
-    const userDoc = await getDoc(
-      doc(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}`)
-    );
-    const userData = userDoc.data();
-    return userData.isWeightMetric;
-  } catch (error) {
-    console.error("Error fetching weight metric boolean:", error);
-  }
-}
-
 export async function isUsernameExists(username: string): Promise<boolean> {
   try {
     const userCollection = collection(FIRESTORE_DB, "Users");
@@ -409,45 +388,6 @@ function calculateStreakResetDate(): Date {
   const streakResetDate = new Date();
   streakResetDate.setDate(streakResetDate.getDate() + 4);
   return streakResetDate;
-}
-
-export async function fetchStreakResetDate(): Promise<Date> {
-  try {
-    const userDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}`
-    );
-    const userSnapshot = await getDoc(userDocRef);
-    return userSnapshot.data().streakResetDate?.toDate() as Date;
-  } catch (error) {
-    console.error("Error fetching streak reset date:", error);
-  }
-}
-
-export async function fetchCurrentStreak(): Promise<number> {
-  try {
-    const userDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}`
-    );
-    const userSnapshot = await getDoc(userDocRef);
-    return userSnapshot.data().currentStreak;
-  } catch (error) {
-    console.error("Error fetching current streak:", error);
-  }
-}
-
-export async function fetchLongestStreak(): Promise<number> {
-  try {
-    const userDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}`
-    );
-    const userSnapshot = await getDoc(userDocRef);
-    return userSnapshot.data().longestStreak;
-  } catch (error) {
-    console.error("Error fetching longest streak:", error);
-  }
 }
 
 export async function updateUserAvatar(url: string) {

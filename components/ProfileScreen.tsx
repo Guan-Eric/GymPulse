@@ -24,12 +24,15 @@ import PostItem from "./PostItem";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import TruncatedText from "./TruncatedText";
 import ProfileLoader from "./ProfileLoader";
+import StreakTooltip from "./StreakTooltip";
 
 function ViewProfileScreen({ theme, userId }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [following, setFollowing] = useState("");
   const [loading, setLoading] = useState(true);
+  const [currentStreak, setCurrentStreak] = useState<number>();
+  const [longestStreak, setLongestStreak] = useState<number>();
 
   useEffect(() => {
     setLoading(true);
@@ -38,6 +41,12 @@ function ViewProfileScreen({ theme, userId }) {
         setUser(await getUser(userId as string));
         setFollowing(await getUserFollowing(userId as string));
         setPosts(await getUserPosts(userId as string));
+        setCurrentStreak(
+          (await getUser(FIREBASE_AUTH.currentUser.uid)).currentStreak
+        );
+        setLongestStreak(
+          (await getUser(FIREBASE_AUTH.currentUser.uid)).longestStreak
+        );
       } catch (error) {
         console.error("Error fetching user and userPosts:", error);
       } finally {
@@ -87,6 +96,12 @@ function ViewProfileScreen({ theme, userId }) {
           ) : (
             <Button size="sm" title="Follow" onPress={handleToggleFollow} />
           )}
+          {user?.showStreak ? (
+            <StreakTooltip
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+            />
+          ) : null}
         </View>
         {user?.bio != "" ? (
           <TruncatedText theme={theme} children={user?.bio} />

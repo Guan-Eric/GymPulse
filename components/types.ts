@@ -7,13 +7,15 @@ export interface User {
   primaryHeight: string;
   secondaryHeight: string;
   weight: string;
-  heightIsMetric: boolean;
-  weightIsMetric: boolean;
+  heightMetricUnits: boolean;
+  weightMetricUnits: boolean;
   darkMode: boolean;
   url: string;
   currentStreak: number;
   longestStreak: number;
   streakResetDate: Date;
+  showStreak: boolean;
+  showWorkout: boolean;
 }
 
 export interface Post {

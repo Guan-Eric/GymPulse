@@ -11,17 +11,26 @@ import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import ProfileLoader from "../../../components/ProfileLoader";
 import * as ImagePicker from "expo-image-picker";
+import StreakTooltip from "../../../components/StreakTooltip";
 
 function UserScreen() {
   const { theme } = useTheme();
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
+  const [currentStreak, setCurrentStreak] = useState<number>();
+  const [longestStreak, setLongestStreak] = useState<number>();
   const [loading, setLoading] = useState(true);
 
   const fetchUserAndUserPostsFirestore = async () => {
     try {
       setUser(await getUser(FIREBASE_AUTH.currentUser.uid));
       setPosts(await getUserPosts(FIREBASE_AUTH.currentUser.uid));
+      setCurrentStreak(
+        (await getUser(FIREBASE_AUTH.currentUser.uid)).currentStreak
+      );
+      setLongestStreak(
+        (await getUser(FIREBASE_AUTH.currentUser.uid)).longestStreak
+      );
     } catch (error) {
       console.error("Error fetching user and userPosts:", error);
     } finally {
@@ -89,12 +98,18 @@ function UserScreen() {
               {user?.username}
             </Text>
           </View>
-          <Button
-            type="clear"
-            onPress={() => router.push("/(tabs)/(profile)/settings")}
-          >
-            <Icon size={32} name="cog" type="material-community" />
-          </Button>
+          <View style={{ flexDirection: "row" }}>
+            <StreakTooltip
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+            />
+            <Button
+              type="clear"
+              onPress={() => router.push("/(tabs)/(profile)/settings")}
+            >
+              <Icon size={32} name="cog" type="material-community" />
+            </Button>
+          </View>
         </View>
         <View>
           {user?.bio != "" ? (

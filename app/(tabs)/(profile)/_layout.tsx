@@ -9,9 +9,9 @@ function ProfileStackLayout(props) {
       <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen name="post" options={{ headerShown: false }} />
       <Stack.Screen name="workout" options={{ headerShown: false }} />
-      <Stack.Screen name="display" options={{ headerShown: false }} />
+      <Stack.Screen name="displaySettings" options={{ headerShown: false }} />
       <Stack.Screen name="notifications" options={{ headerShown: false }} />
-      <Stack.Screen name="personal" options={{ headerShown: false }} />
+      <Stack.Screen name="profileSettings" options={{ headerShown: false }} />
     </Stack>
   );
 }
