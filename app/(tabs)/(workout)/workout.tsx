@@ -18,7 +18,8 @@ import DayCard from "../../../components/DayCard";
 import { useTheme } from "@rneui/themed";
 import { setDay } from "date-fns";
 import { getPlan, savePlan } from "../../../backend/plan";
-import { getWeightMetric } from "../../../backend/user";
+import { getUser } from "../../../backend/user";
+import FinishWorkoutModal from "../../../components/FinishWorkoutModal";
 
 function WorkoutScreen() {
   const currentDate = new Date();
@@ -30,6 +31,7 @@ function WorkoutScreen() {
   const intervalRef = useRef(null);
   const startTimeRef = useRef(0);
   const { dayIndex, planId, dayId } = useLocalSearchParams();
+  const [isModal, setIsModal] = useState<boolean>(false);
   const { theme } = useTheme();
 
   const startStopwatch = () => {
@@ -42,7 +44,9 @@ function WorkoutScreen() {
 
   const fetchPlanFromFirestore = async () => {
     setPlan(await getPlan(planId as string));
-    setIsWeightMetric(await getWeightMetric(FIREBASE_AUTH.currentUser.uid));
+    setIsWeightMetric(
+      (await getUser(FIREBASE_AUTH.currentUser.uid)).weightMetricUnits
+    );
   };
 
   useEffect(() => {
@@ -114,19 +118,6 @@ function WorkoutScreen() {
     }
   };
 
-  const handleEndWorkout = () =>
-    Alert.alert("Finished Workout?", "", [
-      {
-        text: "Yes",
-        onPress: () => handleSaveWorkout(),
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      { text: "Delete Workout", onPress: () => router.back() },
-    ]);
-
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -135,7 +126,7 @@ function WorkoutScreen() {
         <Text style={[styles.titleText, { color: theme.colors.black }]}>
           {Math.floor(time / 60)}:{time % 60}
         </Text>
-        <Button title="End Workout" onPress={handleEndWorkout} />
+        <Button title="End Workout" onPress={() => setIsModal(true)} />
         <ScrollView>
           <DayCard
             key={dayId as string}
@@ -149,6 +140,13 @@ function WorkoutScreen() {
             isDisabled={false}
           />
         </ScrollView>
+        <FinishWorkoutModal
+          modalVisible={isModal}
+          onClose={() => setIsModal(false)}
+          onSaveWorkout={() => handleSaveWorkout}
+          onDeleteWorkout={() => router.back()}
+          theme={theme}
+        />
       </SafeAreaView>
     </View>
   );
