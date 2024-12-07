@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, FlatList, Text, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIREBASE_STR } from "../../../firebaseConfig";
 import { useTheme, Button, Icon, Avatar } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "../../../components/types";
@@ -12,6 +12,7 @@ import PostItem from "../../../components/PostItem";
 import ProfileLoader from "../../../components/ProfileLoader";
 import * as ImagePicker from "expo-image-picker";
 import StreakTooltip from "../../../components/StreakTooltip";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -59,6 +60,7 @@ function UserScreen() {
       );
       return;
     }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -67,9 +69,27 @@ function UserScreen() {
     });
 
     if (!result.canceled) {
-      const newAvatarUrl = result.assets[0].uri;
-      setUser((prevUser) => ({ ...prevUser, url: newAvatarUrl }));
-      await updateUserAvatar(newAvatarUrl);
+      const localUri = result.assets[0].uri;
+
+      try {
+        const response = await fetch(localUri);
+        const blob = await response.blob();
+        const userId = FIREBASE_AUTH.currentUser?.uid;
+
+        const avatarRef = ref(FIREBASE_STR, `profile/${userId}.jpg`);
+
+        await uploadBytes(avatarRef, blob);
+
+        const newAvatarUrl = await getDownloadURL(avatarRef);
+
+        setUser((prevUser) => ({ ...prevUser, url: newAvatarUrl }));
+        await updateUserAvatar(newAvatarUrl);
+
+        Alert.alert("Success", "Avatar updated successfully!");
+      } catch (error) {
+        console.error("Error updating avatar:", error);
+        Alert.alert("Error", "Failed to update avatar. Please try again.");
+      }
     }
   };
 
