@@ -1,18 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import React from "react";
+import { Text, View, StyleSheet } from "react-native";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useThemeMode,
-  useTheme,
-  CheckBox,
-  Card,
-  Icon,
-  Button,
-} from "@rneui/themed";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { useTheme, Card, Icon, Button } from "@rneui/themed";
 import { logOut } from "../../../backend/auth";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 
 function SettingScreen() {
   const { theme } = useTheme();
@@ -25,69 +17,46 @@ function SettingScreen() {
         <Text style={[styles.title, { color: theme.colors.black }]}>
           Settings
         </Text>
-        <Card
-          containerStyle={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.grey0,
-              borderColor: theme.colors.grey0,
-            },
-          ]}
-        >
-          <Pressable
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-            onPress={() => router.push("/(tabs)/(profile)/profileSettings")}
+        {[
+          {
+            title: "Profile Settings",
+            route: "/(tabs)/(profile)/profileSettings",
+          },
+          {
+            title: "Display Settings",
+            route: "/(tabs)/(profile)/displaySettings",
+          },
+          { title: "App Settings", route: "/(tabs)/(profile)/notifications" },
+        ].map((item, index) => (
+          <Card
+            key={index}
+            containerStyle={[
+              styles.card,
+              {
+                backgroundColor: theme.colors.grey0,
+                borderColor: theme.colors.grey0,
+              },
+            ]}
           >
-            <Text style={{ color: theme.colors.black }}>Profile Settings</Text>
-            <Icon name="chevron-right" type="material-community" size={20} />
-          </Pressable>
-        </Card>
-        <Card
-          containerStyle={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.grey0,
-              borderColor: theme.colors.grey0,
-            },
-          ]}
-        >
-          <Pressable
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-            onPress={() => router.push("/(tabs)/(profile)/displaySettings")}
-          >
-            <Text style={{ color: theme.colors.black }}>Display Settings</Text>
-            <Icon name="chevron-right" type="material-community" size={20} />
-          </Pressable>
-        </Card>
-        <Card
-          containerStyle={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.grey0,
-              borderColor: theme.colors.grey0,
-            },
-          ]}
-        >
-          <Pressable
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-            onPress={() => router.push("/(tabs)/(profile)/notifications")}
-          >
-            <Text style={{ color: theme.colors.black }}>App Settings</Text>
-            <Icon name="chevron-right" type="material-community" size={20} />
-          </Pressable>
-        </Card>
+            <Button
+              type="clear"
+              title={item.title}
+              onPress={() => router.push(item.route as Href)}
+              containerStyle={styles.buttonContainer}
+              buttonStyle={styles.buttonStyle}
+              titleStyle={[styles.buttonTitle, { color: theme.colors.black }]}
+              iconPosition="right"
+              icon={
+                <Icon
+                  name="chevron-right"
+                  type="material-community"
+                  size={20}
+                  color={theme.colors.black}
+                />
+              }
+            />
+          </Card>
+        ))}
 
         <Button
           style={{ padding: 20, width: 200, alignSelf: "center" }}
@@ -102,19 +71,25 @@ function SettingScreen() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   card: {
-    borderRadius: 8,
+    borderRadius: 20,
   },
-  content: {
-    flex: 1,
-    flexDirection: "column",
+  buttonContainer: {
+    width: "100%",
   },
-  baseText: {
-    fontSize: 20,
+  buttonStyle: {
+    justifyContent: "space-between",
+    paddingHorizontal: 0,
+  },
+  buttonTitle: {
+    textAlign: "left",
+    fontSize: 16,
+    fontFamily: "Lato_400Regular",
   },
   title: {
     paddingLeft: 20,
@@ -122,20 +97,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
   },
-  logoText: {
-    fontFamily: "Roboto_700Bold",
-    fontSize: 50,
-  },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 8,
-  },
 });
+
 export default SettingScreen;

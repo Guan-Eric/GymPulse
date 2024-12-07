@@ -94,7 +94,6 @@ function CreatePostScreen() {
               (snapshot) => {
                 const progress =
                   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log(`Upload is ${progress}% done for image ${i + 1}`);
               },
               (error) => {
                 console.error(`Error uploading image ${i + 1}:`, error);
@@ -108,7 +107,6 @@ function CreatePostScreen() {
           });
 
           downloadUrls.push(downloadUrl);
-          console.log(`Image ${i + 1} uploaded successfully`);
         } catch (imageError) {
           console.error(`Error uploading image ${i + 1}:`, imageError);
         }
