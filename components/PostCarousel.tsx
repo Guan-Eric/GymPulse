@@ -13,9 +13,10 @@ const ImageCarousel = ({ data, theme }) => {
         source={{ uri: item }}
         style={{
           alignSelf: "center",
-          width: ScreenWidth,
-          height: ScreenWidth * 1.25,
+          width: ScreenWidth * 0.9,
+          height: ScreenWidth * 0.9 * 1.25,
           resizeMode: "cover",
+          borderRadius: 20,
         }}
       />
     </View>
@@ -73,9 +74,10 @@ const ImageCarousel = ({ data, theme }) => {
           source={{ uri: data[0] }}
           style={{
             alignSelf: "center",
-            width: ScreenWidth,
-            height: ScreenWidth * 1.25,
+            width: ScreenWidth * 0.9,
+            height: ScreenWidth * 0.9 * 1.25,
             resizeMode: "cover",
+            borderRadius: 20,
           }}
         />
       ) : null}

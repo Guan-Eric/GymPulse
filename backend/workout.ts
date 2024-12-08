@@ -5,6 +5,7 @@ import {
   getDocs,
   query,
   where,
+  deleteDoc,
 } from "firebase/firestore";
 import { Exercise, Workout } from "../components/types";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
@@ -62,6 +63,19 @@ export async function getWorkoutSummaryData(
   });
 
   return workouts;
+}
+
+export function deleteWorkout(workoutId: string) {
+  try {
+    deleteDoc(
+      doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${workoutId}`
+      )
+    );
+  } catch (error) {
+    console.error("Error deleting workout", error);
+  }
 }
 
 export function daysAgo(days: number): Date {

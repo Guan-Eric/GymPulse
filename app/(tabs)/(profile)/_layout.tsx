@@ -4,7 +4,10 @@ import React from "react";
 function ProfileStackLayout(props) {
   return (
     <Stack initialRouteName="user">
-      <Stack.Screen name="user" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="user"
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
       <Stack.Screen name="settings" options={{ headerShown: false }} />
       <Stack.Screen name="profile" options={{ headerShown: false }} />
       <Stack.Screen name="post" options={{ headerShown: false }} />

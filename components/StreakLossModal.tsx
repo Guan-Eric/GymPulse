@@ -18,7 +18,7 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
 }) => {
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={modalVisible}
       onRequestClose={onClose}

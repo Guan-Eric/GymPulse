@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FIREBASE_AUTH,
   FIRESTORE_DB,
@@ -8,15 +8,17 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   View,
+  Text,
   StyleSheet,
   ScrollView,
   Pressable,
+  KeyboardAvoidingView,
 } from "react-native";
 import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { ScreenWidth } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
-import { Input, useTheme, Button, Card } from "@rneui/themed";
+import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -25,6 +27,8 @@ import {
   incrementStreak,
 } from "../../../backend/user";
 import ImageCarousel from "../../../components/PostCarousel";
+import { setParams } from "expo-router/build/global-state/routing";
+import { deleteWorkout, getWorkout } from "../../../backend/workout";
 
 function CreatePostScreen() {
   const [caption, setCaption] = useState("");
@@ -32,8 +36,17 @@ function CreatePostScreen() {
   const [blobs, setBlobs] = useState([]);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { workoutId, planName, dayName } = useLocalSearchParams();
+  const [workoutTime, setWorkoutTime] = useState(0);
+  const { workoutId, planName, dayName, dayIndex, planId, dayId } =
+    useLocalSearchParams();
   const [title, setTitle] = useState(planName + " - " + dayName);
+
+  const fetchWorkoutTime = async () => {
+    setWorkoutTime((await getWorkout(workoutId as string)).duration);
+  };
+  useEffect(() => {
+    fetchWorkoutTime();
+  }, []);
 
   const pickImages = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -140,65 +153,102 @@ function CreatePostScreen() {
           backgroundColor: theme.colors.background,
         }}
       >
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: theme.colors.background,
-          }}
-        >
-          <Input
-            inputContainerStyle={styles.caption}
-            maxLength={50}
-            onChangeText={(text) => setTitle(text)}
-            value={title}
-          />
-          <ScrollView>
-            <Pressable onPress={pickImages}>
-              {images.length > 0 ? (
-                <ImageCarousel data={images} theme={theme} />
-              ) : (
-                <Card
-                  wrapperStyle={{
-                    width: ScreenWidth * 0.9,
-                    height: ScreenWidth * 0.9 * 1.25,
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <ScrollView>
+              <View
+                style={{
+                  paddingLeft: 10,
+                  paddingRight: 20,
+                  flexDirection: "row",
+                }}
+              >
+                <Button
+                  type="clear"
+                  buttonStyle={[styles.cancelButton]}
+                  onPress={() => {
+                    deleteWorkout(workoutId as string);
+                    router.push({
+                      pathname: "/(tabs)/(workout)/workout",
+                      params: {
+                        dayIndex: dayIndex,
+                        planId: planId,
+                        dayId: dayId,
+                        workoutTime: workoutTime,
+                      },
+                    });
                   }}
-                ></Card>
-              )}
-            </Pressable>
-            <View
-              style={{
-                paddingTop: 20,
-                paddingLeft: 20,
-                paddingRight: 20,
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Button
-                type="outline"
-                buttonStyle={styles.cancelButton}
-                title="Cancel"
-                onPress={() => router.back()}
-              />
-              <Button
-                buttonStyle={styles.postButton}
-                title="Post"
-                loading={loading}
-                onPress={createPost}
-                disabled={loading}
-              />
-            </View>
-            <View style={{ paddingTop: 10, paddingLeft: 15, paddingRight: 15 }}>
-              <Input
-                inputContainerStyle={styles.caption}
-                multiline
-                maxLength={200}
-                onChangeText={(text) => setCaption(text)}
-                placeholder="Write caption here"
-              />
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+                  icon={<Icon name="chevron-left" size={30} />}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Input
+                  inputContainerStyle={[
+                    styles.inputContainer,
+                    {
+                      backgroundColor: theme.colors.grey0,
+                      borderColor: theme.colors.grey1,
+                    },
+                  ]}
+                  containerStyle={{
+                    width: 200,
+                    paddingLeft: 20,
+                  }}
+                  maxLength={50}
+                  onChangeText={(text) => setTitle(text)}
+                  value={title}
+                  label={"Post Title"}
+                />
+                <Button
+                  buttonStyle={styles.postButton}
+                  title="Post"
+                  loading={loading}
+                  onPress={createPost}
+                  disabled={loading}
+                />
+              </View>
+              <Pressable onPress={pickImages}>
+                {images.length > 0 ? (
+                  <ImageCarousel data={images} theme={theme} />
+                ) : (
+                  <Card
+                    containerStyle={{
+                      alignSelf: "center",
+                      borderRadius: 20,
+                      backgroundColor: theme.colors.grey0,
+                      borderColor: theme.colors.grey0,
+                      width: ScreenWidth * 0.9,
+                      height: ScreenWidth * 0.9 * 1.25,
+                    }}
+                  >
+                    <Card.Title>
+                      <Text>Click to Add Pictures</Text>
+                    </Card.Title>
+                  </Card>
+                )}
+              </Pressable>
+
+              <View
+                style={{ paddingTop: 10, paddingLeft: 15, paddingRight: 15 }}
+              >
+                <Input
+                  inputContainerStyle={styles.caption}
+                  multiline
+                  numberOfLines={3}
+                  maxLength={200}
+                  onChangeText={(text) => setCaption(text)}
+                  placeholder="Write caption here"
+                />
+              </View>
+            </ScrollView>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -207,11 +257,23 @@ function CreatePostScreen() {
 const styles = StyleSheet.create({
   postButton: {
     borderRadius: 10,
+    width: 85,
+    height: 40,
+    marginBottom: 3,
+    marginRight: 20,
   },
   cancelButton: {
     borderRadius: 10,
   },
   caption: { borderColor: "transparent" },
+  inputContainer: {
+    borderWidth: 2,
+    borderBottomWidth: 2,
+    width: 240,
+    height: 40,
+    borderRadius: 10,
+    paddingLeft: 5,
+  },
 });
 
 export default CreatePostScreen;

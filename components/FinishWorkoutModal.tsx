@@ -1,5 +1,6 @@
+import { Button } from "@rneui/themed";
 import React from "react";
-import { Modal, View, Text, Pressable, StyleSheet } from "react-native";
+import { Modal, View, Text, StyleSheet } from "react-native";
 
 interface StreakModalProps {
   modalVisible: boolean;
@@ -18,7 +19,7 @@ const FinishWorkoutModal: React.FC<StreakModalProps> = ({
 }) => {
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={modalVisible}
       onRequestClose={onClose}
@@ -31,9 +32,9 @@ const FinishWorkoutModal: React.FC<StreakModalProps> = ({
             Finished Your Workout?
           </Text>
           <View style={styles.buttonContainer}>
-            <Pressable
+            <Button
               onPress={onSaveWorkout}
-              style={[
+              buttonStyle={[
                 styles.continueButton,
                 { backgroundColor: theme.colors.primary },
               ]}
@@ -41,10 +42,10 @@ const FinishWorkoutModal: React.FC<StreakModalProps> = ({
               <Text style={[styles.buttonText, { color: theme.colors.black }]}>
                 Yes
               </Text>
-            </Pressable>
-            <Pressable
+            </Button>
+            <Button
               onPress={onClose}
-              style={[
+              buttonStyle={[
                 styles.newStreakButton,
                 { backgroundColor: theme.colors.grey2 },
               ]}
@@ -52,10 +53,10 @@ const FinishWorkoutModal: React.FC<StreakModalProps> = ({
               <Text style={[styles.buttonText, { color: theme.colors.black }]}>
                 No
               </Text>
-            </Pressable>
-            <Pressable
+            </Button>
+            <Button
               onPress={onDeleteWorkout}
-              style={[
+              buttonStyle={[
                 styles.newStreakButton,
                 { backgroundColor: theme.colors.error },
               ]}
@@ -63,7 +64,7 @@ const FinishWorkoutModal: React.FC<StreakModalProps> = ({
               <Text style={[styles.buttonText, { color: theme.colors.black }]}>
                 Delete Workout
               </Text>
-            </Pressable>
+            </Button>
           </View>
         </View>
       </View>

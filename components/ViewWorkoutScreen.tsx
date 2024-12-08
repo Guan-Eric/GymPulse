@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Workout } from "../components/types";
@@ -7,8 +7,8 @@ import { useLocalSearchParams } from "expo-router";
 import { useTheme } from "@rneui/themed";
 import DayCard from "../components/DayCard";
 import { getWorkout } from "../backend/workout";
-import { getWeightMetric } from "../backend/user";
 import { FIREBASE_AUTH } from "../firebaseConfig";
+import { getUser } from "../backend/user";
 
 function ViewWorkoutScreen({ theme, workoutId }) {
   const [workout, setWorkout] = useState<Workout>();
@@ -16,7 +16,9 @@ function ViewWorkoutScreen({ theme, workoutId }) {
 
   const fetchWorkoutFromFirestore = async () => {
     setWorkout(await getWorkout(workoutId as string));
-    setIsWeightMetric(await getWeightMetric(FIREBASE_AUTH.currentUser.uid));
+    setIsWeightMetric(
+      (await getUser(FIREBASE_AUTH.currentUser.uid)).weightMetricUnits
+    );
   };
 
   useEffect(() => {
@@ -31,6 +33,10 @@ function ViewWorkoutScreen({ theme, workoutId }) {
       }}
     >
       <SafeAreaView style={{ flex: 1 }}>
+        <Text style={[styles.titleText, { color: theme.colors.black }]}>
+          {String(Math.floor(workout?.duration / 60)).padStart(2, "0")}:
+          {String(workout?.duration % 60).padStart(2, "0")}
+        </Text>
         <ScrollView>
           <DayCard
             plan={null}
@@ -56,6 +62,11 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     width: "100%",
+  },
+  titleText: {
+    paddingLeft: 20,
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
 

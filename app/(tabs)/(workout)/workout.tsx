@@ -1,22 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
-import {
-  updateDoc,
-  getDoc,
-  doc,
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-} from "firebase/firestore";
-import { Day, Plan } from "../../../components/types";
+import { updateDoc, doc, collection, addDoc } from "firebase/firestore";
+import { Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import DayCard from "../../../components/DayCard";
-import { useTheme } from "@rneui/themed";
-import { setDay } from "date-fns";
+import { Button, useTheme } from "@rneui/themed";
 import { getPlan, savePlan } from "../../../backend/plan";
 import { getUser } from "../../../backend/user";
 import FinishWorkoutModal from "../../../components/FinishWorkoutModal";
@@ -24,22 +15,23 @@ import FinishWorkoutModal from "../../../components/FinishWorkoutModal";
 function WorkoutScreen() {
   const currentDate = new Date();
   const [plan, setPlan] = useState<Plan>();
-  const [isDirty, setIsDirty] = useState(false);
   const [isWeightMetric, setIsWeightMetric] = useState(false);
   const [time, setTime] = useState(0);
-  const [running, setRunning] = useState(false);
   const intervalRef = useRef(null);
   const startTimeRef = useRef(0);
-  const { dayIndex, planId, dayId } = useLocalSearchParams();
+  const { dayIndex, planId, dayId, workoutTime } = useLocalSearchParams();
   const [isModal, setIsModal] = useState<boolean>(false);
   const { theme } = useTheme();
 
   const startStopwatch = () => {
-    startTimeRef.current = Date.now() - time * 1000;
+    startTimeRef.current = Date.now() - Number(workoutTime as string) * 1000;
     intervalRef.current = setInterval(() => {
       setTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
     }, 1000);
-    setRunning(true);
+  };
+
+  const pauseStopwatch = () => {
+    clearInterval(intervalRef.current);
   };
 
   const fetchPlanFromFirestore = async () => {
@@ -58,6 +50,7 @@ function WorkoutScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchPlanFromFirestore();
+      startStopwatch();
     }, [])
   );
 
@@ -68,6 +61,8 @@ function WorkoutScreen() {
 
   const handleSaveWorkout = async () => {
     try {
+      pauseStopwatch();
+      setIsModal(false);
       const docRef = await addDoc(
         collection(
           FIRESTORE_DB,
@@ -111,6 +106,9 @@ function WorkoutScreen() {
           workoutId: docRef.id,
           planName: plan.name,
           dayName: plan.days[dayIndex as string].name,
+          dayIndex: dayIndex,
+          planId: planId,
+          dayId: dayId,
         },
       });
     } catch (error) {
@@ -123,10 +121,28 @@ function WorkoutScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <Text style={[styles.titleText, { color: theme.colors.black }]}>
-          {Math.floor(time / 60)}:{time % 60}
-        </Text>
-        <Button title="End Workout" onPress={() => setIsModal(true)} />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={[styles.titleText, { color: theme.colors.black }]}>
+            {String(Math.floor(time / 60)).padStart(2, "0")}:
+            {String(time % 60).padStart(2, "0")}
+          </Text>
+          <Button
+            style={{ paddingRight: 20 }}
+            buttonStyle={{
+              width: 150,
+              borderRadius: 20,
+              backgroundColor: theme.colors.error,
+            }}
+            title="End Workout"
+            onPress={() => setIsModal(true)}
+          />
+        </View>
         <ScrollView>
           <DayCard
             key={dayId as string}
@@ -143,8 +159,11 @@ function WorkoutScreen() {
         <FinishWorkoutModal
           modalVisible={isModal}
           onClose={() => setIsModal(false)}
-          onSaveWorkout={() => handleSaveWorkout}
-          onDeleteWorkout={() => router.back()}
+          onSaveWorkout={handleSaveWorkout}
+          onDeleteWorkout={() => {
+            setIsModal(false);
+            router.push("/(tabs)/(workout)/plans");
+          }}
           theme={theme}
         />
       </SafeAreaView>
@@ -163,6 +182,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   titleText: {
+    paddingLeft: 20,
     fontSize: 24,
     fontWeight: "bold",
   },

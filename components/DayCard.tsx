@@ -61,6 +61,7 @@ function DayCard({
                   planId: plan.id,
                   dayId: day.id,
                   dayIndex: dayIndex,
+                  workoutTime: 0,
                 },
               })
             }

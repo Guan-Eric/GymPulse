@@ -4,7 +4,10 @@ import React from "react";
 function SummaryStackLayout(props) {
   return (
     <Stack initialRouteName="summary">
-      <Stack.Screen name="summary" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="summary"
+        options={{ headerShown: false, gestureEnabled: false }}
+      />
     </Stack>
   );
 }
