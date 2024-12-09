@@ -18,7 +18,6 @@ function ViewPlanScreen() {
   const { planId } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
-  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const fetchPlanFromFirestore = async () => {
     try {
@@ -105,6 +104,8 @@ function ViewPlanScreen() {
                 flexDirection: "row",
                 alignItems: "center",
                 marginBottom: -20,
+                justifyContent: "space-between",
+                paddingRight: 20,
               }}
             >
               <Input
@@ -134,24 +135,6 @@ function ViewPlanScreen() {
                   />
                 ))
               : null}
-            <Button
-              type="clear"
-              icon={
-                <Icon
-                  name="plus-circle"
-                  size={24}
-                  color={theme.colors.black}
-                  type="material-community"
-                />
-              }
-              onPress={handleAddDay}
-            />
-            <Button
-              type="clear"
-              title="Delete Plan"
-              onPress={handleDeletePlan}
-              color={theme.colors.error}
-            />
           </ScrollView>
         </SafeAreaView>
       )}
@@ -178,7 +161,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "gray",
   },
 });
 

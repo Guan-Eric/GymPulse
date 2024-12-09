@@ -8,7 +8,12 @@ import Carousel, { ICarouselInstance } from "react-native-reanimated-carousel";
 const ImageCarousel = ({ data, theme }) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const renderCarouselItem = ({ item }) => (
-    <View style={{ width: ScreenWidth, height: ScreenWidth }}>
+    <View
+      style={{
+        width: ScreenWidth,
+        height: ScreenWidth * 1.25,
+      }}
+    >
       <Image
         source={{ uri: item }}
         style={{
@@ -23,7 +28,7 @@ const ImageCarousel = ({ data, theme }) => {
   );
 
   return (
-    <View style={{ alignItems: "center" }}>
+    <View style={{ alignItems: "center", paddingVertical: 10 }}>
       {data?.length > 1 ? (
         <>
           <Carousel
@@ -33,7 +38,7 @@ const ImageCarousel = ({ data, theme }) => {
             data={data}
             renderItem={renderCarouselItem}
             width={ScreenWidth}
-            height={ScreenWidth * 1.29}
+            height={ScreenWidth * 0.93 * 1.25}
             loop={false}
             onProgressChange={(_offsetProgress, absoluteProgress) => {
               const index = Math.round(absoluteProgress);

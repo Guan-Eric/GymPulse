@@ -2,6 +2,7 @@ import { Input, Button, Card, Icon } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import { Day, Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
+import BottomSheetMenu from "./BottomSheetMenu";
 
 function ExerciseSetCard({
   plan,
@@ -47,6 +48,29 @@ function ExerciseSetCard({
     setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
   };
 
+  const exerciseBottomSheetOptions = [
+    {
+      title: "Add Set",
+      onPress: () => {
+        handleAddSet(day.id, exercise.id, plan?.days);
+      },
+      containerStyle: { backgroundColor: theme.colors.grey0 },
+    },
+    {
+      title: "Delete Exercise",
+      onPress: () => {
+        handleDeleteExercise(day.id, exercise.id);
+      },
+      containerStyle: { backgroundColor: theme.colors.error },
+      titleStyle: { color: theme.colors.black },
+    },
+    {
+      title: "Cancel",
+      onPress: null,
+      containerStyle: { backgroundColor: theme.colors.grey1 },
+    },
+  ];
+
   return (
     <Card
       containerStyle={[
@@ -62,33 +86,36 @@ function ExerciseSetCard({
           {exercise.name}
         </Text>
         {!isDisabled && (
-          <Button
-            type="clear"
-            icon={
-              <Icon
-                name="trash-can"
-                size={24}
-                color={theme.colors.black}
-                type="material-community"
-              />
-            }
-            onPress={() => handleDeleteExercise(day.id, exercise.id)}
-          />
+          <BottomSheetMenu options={exerciseBottomSheetOptions} theme={theme} />
         )}
       </View>
       <View>
         <View style={styles.setHeader}>
           {!exercise.cardio ? (
-            <>
+            <View
+              style={{
+                alignItems: "center",
+                flex: 1,
+                flexDirection: "row",
+                paddingLeft: "24%",
+                justifyContent: "space-between",
+                paddingRight: "30%",
+              }}
+            >
               <Text style={[styles.baseText, { color: theme.colors.black }]}>
                 Reps
               </Text>
               <Text style={[styles.baseText, { color: theme.colors.black }]}>
                 Weight
               </Text>
-            </>
+            </View>
           ) : (
-            <Text style={[styles.baseText, { color: theme.colors.black }]}>
+            <Text
+              style={[
+                styles.baseText,
+                { color: theme.colors.black, paddingLeft: "34%" },
+              ]}
+            >
               Duration
             </Text>
           )}
@@ -175,39 +202,28 @@ function ExerciseSetCard({
               )}
             </>
             {!isDisabled && (
-              <Button
-                type="clear"
-                icon={
-                  <Icon
-                    name="trash-can"
-                    size={24}
-                    color={theme.colors.black}
-                    type="material-community"
-                  />
-                }
-                onPress={() =>
-                  handleDeleteSet(dayIndex, exerciseIndex, setIndex)
-                }
+              <BottomSheetMenu
+                options={[
+                  {
+                    title: "Delete Set",
+                    onPress: () => {
+                      handleDeleteSet(dayIndex, exerciseIndex, setIndex);
+                    },
+                    containerStyle: { backgroundColor: theme.colors.error },
+                    titleStyle: { color: theme.colors.black },
+                  },
+                  {
+                    title: "Cancel",
+                    onPress: null,
+                    containerStyle: { backgroundColor: theme.colors.grey1 },
+                  },
+                ]}
+                theme={theme}
               />
             )}
           </View>
         ))}
       </View>
-      {!isDisabled && (
-        <Button
-          size="sm"
-          type="clear"
-          icon={
-            <Icon
-              name="plus-circle"
-              size={24}
-              color={theme.colors.black}
-              type="material-community"
-            />
-          }
-          onPress={() => handleAddSet(day.id, exercise.id, plan?.days)}
-        />
-      )}
     </Card>
   );
 }

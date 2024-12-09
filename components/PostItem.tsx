@@ -36,7 +36,13 @@ const PostItem = ({
   }, []);
 
   return (
-    <View style={{ backgroundColor: theme.colors.grey1 }}>
+    <View
+      style={{
+        backgroundColor: theme.colors.grey0,
+        paddingBottom: 5,
+        marginBottom: 20,
+      }}
+    >
       {showUser ? (
         <View
           style={{
@@ -126,7 +132,9 @@ const PostItem = ({
         {post.caption ? (
           <TruncatedText theme={theme}>{post.caption}</TruncatedText>
         ) : null}
-        <ImageCarousel data={post.urls} theme={theme} />
+        {post?.urls.length > 0 ? (
+          <ImageCarousel data={post.urls} theme={theme} />
+        ) : null}
       </Pressable>
       <View
         style={{
@@ -173,11 +181,6 @@ const PostItem = ({
       </View>
 
       {renderComments && renderComments()}
-      {!renderComments && (
-        <View
-          style={{ height: 10, backgroundColor: theme.colors.grey0 }}
-        ></View>
-      )}
     </View>
   );
 };

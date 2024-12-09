@@ -21,6 +21,7 @@ import {
 } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import CommentsSection from "../../../components/CommentSection";
 
 function ViewPostScreen() {
   const { theme } = useTheme();
@@ -83,51 +84,13 @@ function ViewPostScreen() {
                 showUser={true}
                 tab={"(home)"}
                 renderComments={() => (
-                  <>
-                    {comments.map((item, index) => (
-                      <View
-                        key={index}
-                        style={{ flexDirection: "row", paddingLeft: 15 }}
-                      >
-                        <Text
-                          style={[
-                            styles.commentUserName,
-                            { color: theme.colors.black },
-                          ]}
-                        >
-                          {item.userName}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.comment,
-                            { color: theme.colors.black },
-                          ]}
-                        >
-                          {item.comment}
-                        </Text>
-                      </View>
-                    ))}
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        paddingLeft: 15,
-                        paddingRight: 25,
-                      }}
-                    >
-                      <Input
-                        containerStyle={{ width: 300 }}
-                        onChangeText={setComment}
-                        value={comment}
-                        placeholder="Comment here"
-                        autoCapitalize="none"
-                      />
-                      <Button
-                        disabled={comment === ""}
-                        title="Comment"
-                        onPress={handleAddComment}
-                      />
-                    </View>
-                  </>
+                  <CommentsSection
+                    comments={comments}
+                    comment={comment}
+                    onCommentChange={setComment}
+                    onAddComment={handleAddComment}
+                    theme={theme}
+                  />
                 )}
               />
             )}
