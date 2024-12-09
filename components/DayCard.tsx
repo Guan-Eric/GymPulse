@@ -11,7 +11,7 @@ import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
-import BottomSheetMenu from "./BottomSheetView";
+import BottomSheetMenu from "./BottomSheetMenu";
 
 function DayCard({
   plan,
@@ -23,8 +23,6 @@ function DayCard({
   isWorkout,
   isDisabled,
 }) {
-  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
-
   const handleDeleteDay = async (dayId: string) => {
     setPlan(await deleteDay(plan, dayId));
   };
@@ -37,7 +35,6 @@ function DayCard({
     {
       title: "Start Workout",
       onPress: () => {
-        setBottomSheetVisible(false);
         router.push({
           pathname: "/(tabs)/(workout)/workout",
           params: {
@@ -53,7 +50,6 @@ function DayCard({
     {
       title: "Add Exercise",
       onPress: () => {
-        setBottomSheetVisible(false);
         router.push({
           pathname: "/(tabs)/(workout)/exercises",
           params: {
@@ -68,7 +64,6 @@ function DayCard({
     {
       title: "Delete Day",
       onPress: () => {
-        setBottomSheetVisible(false);
         handleDeleteDay(day.id);
       },
       containerStyle: { backgroundColor: theme.colors.error },
@@ -76,7 +71,7 @@ function DayCard({
     },
     {
       title: "Cancel",
-      onPress: () => setBottomSheetVisible(false),
+      onPress: null,
       containerStyle: { backgroundColor: theme.colors.grey1 },
     },
   ];

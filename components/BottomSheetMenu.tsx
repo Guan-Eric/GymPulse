@@ -48,6 +48,7 @@ const BottomSheetMenu: React.FC<BottomSheetMenuProps> = ({
             key={index}
             containerStyle={option.containerStyle}
             onPress={option.onPress}
+            onPressOut={() => setIsBottomSheetVisible(false)}
           >
             <ListItem.Content>
               <ListItem.Title style={option.titleStyle}>

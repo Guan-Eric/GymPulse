@@ -10,7 +10,7 @@ import DayCard from "../../../components/DayCard";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
-import BottomSheetMenu from "../../../components/BottomSheetView";
+import BottomSheetMenu from "../../../components/BottomSheetMenu";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -66,7 +66,6 @@ function ViewPlanScreen() {
     {
       title: "Add Day",
       onPress: () => {
-        setBottomSheetVisible(false);
         handleAddDay();
       },
       containerStyle: { backgroundColor: theme.colors.grey0 },
@@ -74,7 +73,6 @@ function ViewPlanScreen() {
     {
       title: "Delete Plan",
       onPress: () => {
-        setBottomSheetVisible(false);
         handleDeletePlan();
       },
       containerStyle: { backgroundColor: theme.colors.error },
@@ -82,7 +80,7 @@ function ViewPlanScreen() {
     },
     {
       title: "Cancel",
-      onPress: () => setBottomSheetVisible(false),
+      onPress: null,
       containerStyle: { backgroundColor: theme.colors.grey1 },
     },
   ];
@@ -102,7 +100,13 @@ function ViewPlanScreen() {
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
           <ScrollView>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: -20,
+              }}
+            >
               <Input
                 label={"Plan Name"}
                 containerStyle={styles.nameInput}
@@ -163,7 +167,6 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     width: "85%",
-    marginBottom: -20,
     paddingLeft: 15,
   },
   inputContainer: {
