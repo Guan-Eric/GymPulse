@@ -17,6 +17,8 @@ import {
 import FeedLoader from "../../../components/FeedLoader";
 import StreakResetModal from "../../../components/StreakLossModal";
 import StreakTooltip from "../../../components/StreakTooltip";
+import { isAfter, isBefore } from "date-fns";
+import { Timestamp } from "firebase/firestore";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -100,11 +102,12 @@ const FeedScreen: React.FC = () => {
   const checkStreakStatus = async () => {
     const resetDate = (await getUser(FIREBASE_AUTH.currentUser.uid))
       .streakResetDate;
-    if (resetDate) {
+    if (resetDate instanceof Timestamp) {
       const currentDate = new Date();
+      const resetDateAsDate = resetDate.toDate();
       const currentStreak = (await getUser(FIREBASE_AUTH.currentUser.uid))
         .currentStreak;
-      if (currentDate > resetDate && currentStreak > 0) {
+      if (isAfter(currentDate, resetDateAsDate) && currentStreak > 0) {
         setStreakResetModalVisible(true);
       }
     }

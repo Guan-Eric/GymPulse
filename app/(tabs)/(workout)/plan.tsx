@@ -10,6 +10,7 @@ import DayCard from "../../../components/DayCard";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
+import BottomSheetMenu from "../../../components/BottomSheetView";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -17,6 +18,7 @@ function ViewPlanScreen() {
   const { planId } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
+  const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
 
   const fetchPlanFromFirestore = async () => {
     try {
@@ -60,6 +62,31 @@ function ViewPlanScreen() {
     router.back();
   };
 
+  const bottomSheetOptions = [
+    {
+      title: "Add Day",
+      onPress: () => {
+        setBottomSheetVisible(false);
+        handleAddDay();
+      },
+      containerStyle: { backgroundColor: theme.colors.grey0 },
+    },
+    {
+      title: "Delete Plan",
+      onPress: () => {
+        setBottomSheetVisible(false);
+        handleDeletePlan();
+      },
+      containerStyle: { backgroundColor: theme.colors.error },
+      titleStyle: { color: theme.colors.black },
+    },
+    {
+      title: "Cancel",
+      onPress: () => setBottomSheetVisible(false),
+      containerStyle: { backgroundColor: theme.colors.grey1 },
+    },
+  ];
+
   return (
     <KeyboardAvoidingView
       style={{
@@ -75,16 +102,19 @@ function ViewPlanScreen() {
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
           <ScrollView>
-            <Input
-              containerStyle={styles.nameInput}
-              inputContainerStyle={[
-                styles.inputRoundedContainer,
-                { borderColor: theme.colors.greyOutline },
-              ]}
-              style={{ paddingLeft: 10 }}
-              onChangeText={handleSaveName}
-              value={plan?.name}
-            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Input
+                label={"Plan Name"}
+                containerStyle={styles.nameInput}
+                inputContainerStyle={[
+                  styles.inputRoundedContainer,
+                  { borderColor: theme.colors.greyOutline },
+                ]}
+                onChangeText={handleSaveName}
+                value={plan?.name}
+              />
+              <BottomSheetMenu options={bottomSheetOptions} theme={theme} />
+            </View>
             {plan?.days.length > 0
               ? plan?.days?.map((day, dayIndex) => (
                   <DayCard
@@ -132,18 +162,20 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   nameInput: {
-    width: "100%",
+    width: "85%",
     marginBottom: -20,
+    paddingLeft: 15,
   },
   inputContainer: {
     width: 70,
     height: 40,
   },
   inputRoundedContainer: {
+    marginTop: 6,
+    paddingLeft: 10,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "gray",
-    overflow: "hidden",
   },
 });
 
