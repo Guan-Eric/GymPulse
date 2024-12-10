@@ -9,6 +9,7 @@ import DayCard from "../components/DayCard";
 import { getWorkout } from "../backend/workout";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { getUser } from "../backend/user";
+import BackButton from "./BackButton";
 
 function ViewWorkoutScreen({ theme, workoutId }) {
   const [workout, setWorkout] = useState<Workout>();
@@ -33,6 +34,7 @@ function ViewWorkoutScreen({ theme, workoutId }) {
       }}
     >
       <SafeAreaView style={{ flex: 1 }}>
+        <BackButton />
         <Text style={[styles.titleText, { color: theme.colors.black }]}>
           {String(Math.floor(workout?.duration / 60)).padStart(2, "0")}:
           {String(workout?.duration % 60).padStart(2, "0")}

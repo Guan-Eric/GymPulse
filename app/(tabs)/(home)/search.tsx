@@ -12,6 +12,7 @@ import { Avatar, SearchBar, useTheme } from "@rneui/themed";
 import { query, collection, where, limit, getDocs } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { router } from "expo-router";
+import BackButton from "../../../components/BackButton";
 
 function SearchScreen() {
   const [search, setSearch] = useState("");
@@ -80,6 +81,19 @@ function SearchScreen() {
         }}
       >
         <SafeAreaView>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <BackButton />
+            <Text
+              style={{
+                color: theme.colors.black,
+                fontFamily: "Lato_700Bold",
+                fontSize: 32,
+                fontWeight: "bold",
+              }}
+            >
+              Search User
+            </Text>
+          </View>
           <SearchBar
             containerStyle={{
               backgroundColor: theme.colors.background,

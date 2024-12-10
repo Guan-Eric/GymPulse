@@ -16,6 +16,7 @@ import {
 } from "../../../backend/user";
 import { Tab, TabView, useTheme } from "@rneui/themed";
 import { router } from "expo-router";
+import BackButton from "../../../components/BackButton";
 
 const NotificationsScreen = () => {
   const [notifications, setNotifications] = useState([]);
@@ -98,6 +99,7 @@ const NotificationsScreen = () => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView style={{ flex: 1 }}>
+        <BackButton />
         <Tab
           value={index}
           onChange={(e) => setIndex(e)}

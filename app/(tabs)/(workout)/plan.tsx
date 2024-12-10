@@ -11,6 +11,7 @@ import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
 import BottomSheetMenu from "../../../components/BottomSheetMenu";
+import BackButton from "../../../components/BackButton";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -99,6 +100,7 @@ function ViewPlanScreen() {
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
           <ScrollView>
+            <BackButton />
             <View
               style={{
                 flexDirection: "row",

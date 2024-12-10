@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import BackButton from "../../../components/BackButton";
 
 function profileSettings(props) {
   const { theme } = useTheme();
@@ -38,9 +39,12 @@ function profileSettings(props) {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView>
-        <Text style={[styles.title, { color: theme.colors.black }]}>
-          Profile Settings
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <BackButton />
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            Profile Settings
+          </Text>
+        </View>
         <Card
           containerStyle={[
             styles.section,
@@ -132,7 +136,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    paddingLeft: 20,
     fontFamily: "Lato_700Bold",
     fontSize: 32,
     fontWeight: "bold",

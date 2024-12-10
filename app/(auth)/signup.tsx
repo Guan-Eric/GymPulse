@@ -10,6 +10,7 @@ import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Button, Icon, Input } from "@rneui/themed";
 import { router, useLocalSearchParams } from "expo-router";
 import { register } from "../../backend/auth";
+import BackButton from "../../components/BackButton";
 
 function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
@@ -101,13 +102,7 @@ function SignUpScreen() {
       <View style={styles.container}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <SafeAreaView style={{ flex: 1 }}>
-            <Button
-              onPress={() => router.back()}
-              style={{ alignSelf: "flex-start" }}
-              type="clear"
-            >
-              <Icon name="chevron-left" size={30} />
-            </Button>
+            <BackButton />
             <View style={styles.content}>
               <View style={{ alignItems: "center", paddingBottom: 60 }}>
                 <Image

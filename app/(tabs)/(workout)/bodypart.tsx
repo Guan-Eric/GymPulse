@@ -18,6 +18,7 @@ import { Exercise } from "../../../components/types";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card, SearchBar, useTheme } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
+import BackButton from "../../../components/BackButton";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -86,6 +87,12 @@ function BodyPartScreen() {
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
         <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flexDirection: "row" }}>
+            <BackButton />
+            <Text style={[styles.title, { color: theme.colors.black }]}>
+              {bodypart}
+            </Text>
+          </View>
           <SearchBar
             containerStyle={{
               backgroundColor: theme.colors.background,
@@ -100,9 +107,7 @@ function BodyPartScreen() {
             onClear={() => setSearch("")}
             value={search}
           />
-          <Text style={[styles.title, { color: theme.colors.black }]}>
-            {bodypart}
-          </Text>
+
           <FlatList
             style={{ flex: 1 }}
             data={results}

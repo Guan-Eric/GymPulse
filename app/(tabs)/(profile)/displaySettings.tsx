@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Card, Switch, useTheme, useThemeMode } from "@rneui/themed";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
+import BackButton from "../../../components/BackButton";
 
 function displaySettings() {
   const { theme } = useTheme();
@@ -51,9 +52,12 @@ function displaySettings() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView>
-        <Text style={[styles.title, { color: theme.colors.black }]}>
-          Display Settings
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <BackButton />
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            Display Settings
+          </Text>
+        </View>
         <Card
           containerStyle={[
             styles.section,
@@ -121,7 +125,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    paddingLeft: 20,
     fontFamily: "Lato_700Bold",
     fontSize: 32,
     fontWeight: "bold",

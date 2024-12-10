@@ -26,6 +26,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
 import ExerciseCard from "../../../components/ExerciseCard";
 import { useTheme } from "@rneui/themed";
+import BackButton from "../../../components/BackButton";
 
 function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
@@ -81,10 +82,12 @@ function AddExerciseScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         {exercise && (
           <View>
-            {route == "add" ? (
-              <Button title="Add Exercise" onPress={handleAddExercise} />
-            ) : null}
-            <ExerciseCard exercise={exercise} imageUrls={imageUrls} />
+            <ExerciseCard
+              exercise={exercise}
+              imageUrls={imageUrls}
+              route={route}
+              handleAddExercise={handleAddExercise}
+            />
           </View>
         )}
       </SafeAreaView>

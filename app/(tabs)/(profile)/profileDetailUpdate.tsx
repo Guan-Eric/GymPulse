@@ -22,6 +22,7 @@ import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
 import { isUsernameExists } from "../../../backend/user";
+import BackButton from "../../../components/BackButton";
 
 function profileDetailUpdate(props) {
   const { theme } = useTheme();
@@ -61,10 +62,13 @@ function profileDetailUpdate(props) {
         style={[styles.container, { backgroundColor: theme.colors.background }]}
       >
         <SafeAreaView style={{ flex: 1, justifyContent: "space-between" }}>
-          <View>
+          <View style={{ flexDirection: "row" }}>
+            <BackButton />
             <Text style={[styles.title, { color: theme.colors.black }]}>
               Update {detailType}
             </Text>
+          </View>
+          <View>
             <Input
               inputContainerStyle={[
                 styles.inputContainer,
@@ -103,7 +107,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    paddingLeft: 20,
     fontFamily: "Lato_700Bold",
     fontSize: 32,
     fontWeight: "bold",

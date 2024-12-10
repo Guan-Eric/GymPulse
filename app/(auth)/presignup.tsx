@@ -12,6 +12,7 @@ import {
 import { Button, Icon, Input, Switch } from "@rneui/themed";
 import { router } from "expo-router";
 import { isUsernameExists } from "../../backend/user";
+import BackButton from "../../components/BackButton";
 
 const PreSignUpScreen = () => {
   const [username, setUsername] = useState<string>("");
@@ -99,13 +100,7 @@ const PreSignUpScreen = () => {
       <View style={styles.container}>
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <SafeAreaView style={{ flex: 1 }}>
-            <Button
-              onPress={() => router.back()}
-              style={{ alignSelf: "flex-start" }}
-              type="clear"
-            >
-              <Icon name="chevron-left" size={30} />
-            </Button>
+            <BackButton />
             <View style={styles.content}>
               <View style={{ alignItems: "center", paddingBottom: 60 }}>
                 <Image

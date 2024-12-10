@@ -1,12 +1,13 @@
 import React from "react";
 import { ScrollView, Text, View, StyleSheet } from "react-native";
-import { useTheme } from "@rneui/themed";
+import { Button, Icon, useTheme } from "@rneui/themed";
 import ExerciseCarousel from "./ExerciseCarousel";
+import BackButton from "./BackButton";
 
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
-function ExerciseCard({ exercise, imageUrls }) {
+function ExerciseCard({ exercise, imageUrls, route, handleAddExercise }) {
   const { theme } = useTheme();
 
   const instructions = exercise?.instructions.map((item, index) => (
@@ -27,10 +28,35 @@ function ExerciseCard({ exercise, imageUrls }) {
 
   return (
     <View>
-      <ScrollView>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingRight: 10,
+        }}
+      >
+        <BackButton />
         <Text style={[styles.title, { color: theme.colors.black }]}>
           {capitalizeFirstLetter(exercise?.name)}
         </Text>
+        {route == "add" ? (
+          <Button
+            type="clear"
+            icon={
+              <Icon
+                name="plus"
+                type="material-community"
+                color={theme.colors.primary}
+              />
+            }
+            onPress={handleAddExercise}
+          />
+        ) : (
+          <Button type="clear" buttonStyle={{ width: 45 }} />
+        )}
+      </View>
+      <ScrollView>
         <ExerciseCarousel data={imageUrls} theme={theme} />
         <View style={styles.contentContainer}>
           <Text style={[styles.heading, { color: theme.colors.black }]}>
@@ -68,11 +94,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    alignSelf: "center",
     fontSize: 24,
     fontFamily: "Lato_700Bold",
     fontWeight: "bold",
-    marginBottom: 16,
   },
   heading: {
     fontSize: 18,

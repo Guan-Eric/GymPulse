@@ -21,6 +21,7 @@ import {
 import PostItem from "../../../components/PostItem";
 import CommentsSection from "../../../components/CommentSection";
 import { getUser } from "../../../backend/user";
+import BackButton from "../../../components/BackButton";
 
 function ViewPostScreen() {
   const { theme } = useTheme();
@@ -76,6 +77,7 @@ function ViewPostScreen() {
       <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
         <SafeAreaView>
           <ScrollView>
+            <BackButton />
             {post && (
               <PostItem
                 post={post}

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, Text, SafeAreaView } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import { daysAgo, getWorkoutSummaryData } from "../../../backend/workout";
 import {
   differenceInDays,
@@ -85,7 +85,9 @@ export default function WorkoutSummary() {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaView>
-        <Text>Workout Summary</Text>
+        <Text style={[styles.title, { color: theme.colors.black }]}>
+          Workout Summary
+        </Text>
         {yearlyWorkoutData?.length > 0 ? (
           <WorkoutSummaryChart
             theme={theme}
@@ -98,3 +100,12 @@ export default function WorkoutSummary() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    paddingLeft: 20,
+    fontFamily: "Lato_700Bold",
+    fontSize: 32,
+    fontWeight: "bold",
+  },
+});

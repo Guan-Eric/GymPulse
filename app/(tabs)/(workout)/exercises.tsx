@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BodyPartCard from "../../../components/BodyPartCard";
 import { useTheme } from "@rneui/themed";
+import BackButton from "../../../components/BackButton";
 
 function ExerciseListScreen() {
   const [bodyPart] = useState([
@@ -32,9 +33,18 @@ function ExerciseListScreen() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <Text style={[styles.titleText, { color: theme.colors.black }]}>
-        Body Part
-      </Text>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          paddingBottom: 10,
+        }}
+      >
+        <BackButton />
+        <Text style={[styles.titleText, { color: theme.colors.black }]}>
+          Body Part
+        </Text>
+      </View>
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.planContainer}>
           {bodyPart.map((item) => (
@@ -67,10 +77,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleText: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "bold",
-    paddingBottom: 10,
-    paddingLeft: 25,
+    fontFamily: "Lato_700Bold",
   },
   planContainer: {
     flexDirection: "row",

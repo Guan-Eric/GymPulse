@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Card, Icon, Button } from "@rneui/themed";
 import { logOut } from "../../../backend/auth";
 import { Href, router } from "expo-router";
+import BackButton from "../../../components/BackButton";
 
 function SettingScreen() {
   const { theme } = useTheme();
@@ -14,9 +15,12 @@ function SettingScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView>
-        <Text style={[styles.title, { color: theme.colors.black }]}>
-          Settings
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <BackButton />
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            Settings
+          </Text>
+        </View>
         {[
           {
             title: "Profile Settings",
@@ -92,7 +96,6 @@ const styles = StyleSheet.create({
     fontFamily: "Lato_400Regular",
   },
   title: {
-    paddingLeft: 20,
     fontFamily: "Lato_700Bold",
     fontSize: 32,
     fontWeight: "bold",

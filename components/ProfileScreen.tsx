@@ -25,6 +25,7 @@ import { FIREBASE_AUTH } from "../firebaseConfig";
 import TruncatedText from "./TruncatedText";
 import ProfileLoader from "./ProfileLoader";
 import StreakTooltip from "./StreakTooltip";
+import BackButton from "./BackButton";
 
 function ViewProfileScreen({ theme, userId }) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -78,6 +79,7 @@ function ViewProfileScreen({ theme, userId }) {
       }}
     >
       <SafeAreaView style={{ flex: 1 }}>
+        <BackButton />
         <View
           style={{
             flexDirection: "row",
