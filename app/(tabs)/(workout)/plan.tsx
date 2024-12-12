@@ -12,6 +12,7 @@ import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
 import BottomSheetMenu from "../../../components/BottomSheetMenu";
 import BackButton from "../../../components/BackButton";
+import PlanLoader from "../../../components/loader/PlanLoader";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -80,7 +81,9 @@ function ViewPlanScreen() {
     },
     {
       title: "Cancel",
-      onPress: null,
+      onPress: () => {
+        null;
+      },
       containerStyle: { backgroundColor: theme.colors.grey1 },
     },
   ];
@@ -90,12 +93,13 @@ function ViewPlanScreen() {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
+        marginBottom: Platform.OS == "ios" ? -35 : 0,
       }}
       behavior="padding"
     >
       {loading ? (
         <SafeAreaView style={{ flex: 1 }}>
-          <Instagram />
+          <PlanLoader theme={theme} />
         </SafeAreaView>
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
@@ -134,6 +138,7 @@ function ViewPlanScreen() {
                     setPlan={setPlan}
                     isWorkout={false}
                     isDisabled={false}
+                    workoutTime={null}
                   />
                 ))
               : null}

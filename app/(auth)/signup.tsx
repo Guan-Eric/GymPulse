@@ -111,12 +111,13 @@ function SignUpScreen() {
                 />
                 <Text style={styles.titleText}>Sign Up</Text>
               </View>
-              <View style={{ paddingBottom: 96 }}>
+              <View style={{ paddingBottom: 90 }}>
                 <Input
-                  inputContainerStyle={{ borderBottomWidth: 0 }}
+                  inputContainerStyle={styles.inputRoundedContainer}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
-                  placeholder="E-mail"
+                  label="E-mail"
+                  placeholder="e.g. johnsmith@email.com"
                   value={email}
                   onChangeText={(email) => onChangeEmail(email)}
                   autoCapitalize="none"
@@ -124,26 +125,25 @@ function SignUpScreen() {
                   inputStyle={styles.inputText}
                   errorMessage={emailError}
                 />
-                <View style={{ paddingTop: 25 }}>
+                <View style={{ paddingTop: 40 }}>
                   <Input
-                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    inputContainerStyle={styles.inputRoundedContainer}
                     containerStyle={styles.inputContainer}
                     style={styles.input}
-                    placeholder="Password"
+                    label="Password"
                     value={password}
                     onChangeText={(password) => setPassword(password)}
                     secureTextEntry={true}
                     autoCapitalize="none"
-                    placeholderTextColor="gray"
                     inputStyle={styles.inputText}
                   />
                 </View>
-                <View style={{ paddingTop: 25 }}>
+                <View style={{ paddingTop: 40 }}>
                   <Input
-                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    inputContainerStyle={styles.inputRoundedContainer}
                     containerStyle={styles.inputContainer}
                     style={styles.input}
-                    placeholder="Confirm Password"
+                    label="Confirm Password"
                     value={confirmPassword}
                     onChangeText={(confirmPassword) =>
                       setConfirmPassword(confirmPassword)
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   baseText: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     color: "gray",
     fontSize: 16,
   },
@@ -208,10 +208,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 40,
     color: "white",
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
   },
   signUpButton: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     borderRadius: 20,
     width: 240,
     height: 42,
@@ -219,23 +219,29 @@ const styles = StyleSheet.create({
   signInButton: {
     width: 100,
   },
-  signIn: { fontFamily: "Alata_400Regular", fontSize: 16 },
+  signIn: { fontFamily: "Lato_400Regular", fontSize: 16 },
   input: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 14,
   },
   inputContainer: {
     width: 254,
     height: 42,
     borderRadius: 10,
-    backgroundColor: "#D9D9D9",
   },
   inputText: {
     color: "white",
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 12,
+  },
+  inputRoundedContainer: {
+    marginTop: 2,
+    paddingLeft: 10,
+    borderRadius: 10,
+    borderBottomWidth: 0,
+    backgroundColor: "#1f1f1f",
   },
 });
 

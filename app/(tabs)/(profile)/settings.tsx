@@ -68,6 +68,7 @@ function SettingScreen() {
             borderRadius: 20,
             backgroundColor: theme.colors.error,
           }}
+          titleStyle={{ fontFamily: "Lato_700Bold" }}
           onPress={() => logOut()}
           title="Log Out"
         />
@@ -93,12 +94,11 @@ const styles = StyleSheet.create({
   buttonTitle: {
     textAlign: "left",
     fontSize: 16,
-    fontFamily: "Lato_400Regular",
+    fontFamily: "Lato_700Bold",
   },
   title: {
     fontFamily: "Lato_700Bold",
     fontSize: 32,
-    fontWeight: "bold",
   },
 });
 

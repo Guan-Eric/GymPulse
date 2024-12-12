@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   StyleSheet,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Button, Avatar } from "@rneui/themed";
@@ -23,14 +24,16 @@ import { getUserPosts } from "../backend/post";
 import PostItem from "./PostItem";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import TruncatedText from "./TruncatedText";
-import ProfileLoader from "./ProfileLoader";
 import StreakTooltip from "./StreakTooltip";
 import BackButton from "./BackButton";
+import FeedLoader from "./loader/FeedLoader";
 
 function ViewProfileScreen({ theme, userId }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
-  const [following, setFollowing] = useState("");
+  const [following, setFollowing] = useState<
+    "following" | "requested" | "notFollowing"
+  >("notFollowing");
   const [loading, setLoading] = useState(true);
   const [currentStreak, setCurrentStreak] = useState<number>();
   const [longestStreak, setLongestStreak] = useState<number>();
@@ -40,14 +43,15 @@ function ViewProfileScreen({ theme, userId }) {
     const fetchUserAndUserPostsFirestore = async () => {
       try {
         setUser(await getUser(userId as string));
-        setFollowing(await getUserFollowing(userId as string));
+        setFollowing(
+          (await getUserFollowing(userId as string)) as
+            | "following"
+            | "requested"
+            | "notFollowing"
+        );
         setPosts(await getUserPosts(userId as string));
-        setCurrentStreak(
-          (await getUser(FIREBASE_AUTH.currentUser.uid)).currentStreak
-        );
-        setLongestStreak(
-          (await getUser(FIREBASE_AUTH.currentUser.uid)).longestStreak
-        );
+        setCurrentStreak((await getUser(userId)).currentStreak);
+        setLongestStreak((await getUser(userId)).longestStreak);
       } catch (error) {
         console.error("Error fetching user and userPosts:", error);
       } finally {
@@ -76,28 +80,38 @@ function ViewProfileScreen({ theme, userId }) {
         flex: 1,
         backgroundColor: theme.colors.background,
         paddingTop: 10,
+        marginBottom: Platform.OS == "ios" ? -35 : 0,
       }}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <BackButton />
         <View
           style={{
             flexDirection: "row",
             alignItems: "center",
+            justifyContent: "space-between",
             paddingBottom: 5,
-            paddingLeft: 25,
+            paddingRight: 10,
           }}
         >
-          <Avatar rounded size={40} source={{ uri: user?.url }} />
-          <Text style={[styles.userName, { color: theme.colors.black }]}>
-            {user?.username}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <BackButton />
+            <Avatar rounded size={40} source={{ uri: user?.url }} />
+            <Text style={[styles.userName, { color: theme.colors.black }]}>
+              {user?.username}
+            </Text>
+            {following == "following" ? (
+              <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
+            ) : following == "notFollowing" ? (
+              <Button size="sm" title="Follow" onPress={handleToggleFollow} />
+            ) : (
+              <Button
+                size="sm"
+                title="requested"
+                onPress={handleToggleFollow}
+              />
+            )}
+          </View>
 
-          {following ? (
-            <Button size="sm" title="Unfollow" onPress={handleToggleFollow} />
-          ) : (
-            <Button size="sm" title="Follow" onPress={handleToggleFollow} />
-          )}
           {user?.showStreak ? (
             <StreakTooltip
               currentStreak={currentStreak}
@@ -110,10 +124,10 @@ function ViewProfileScreen({ theme, userId }) {
         ) : null}
         {loading ? (
           <>
-            <ProfileLoader theme={theme} />
-            <ProfileLoader theme={theme} />
+            <FeedLoader theme={theme} />
+            <FeedLoader theme={theme} />
           </>
-        ) : (
+        ) : posts.length > 0 ? (
           <FlatList
             numColumns={1}
             horizontal={false}
@@ -131,6 +145,12 @@ function ViewProfileScreen({ theme, userId }) {
             )}
             keyExtractor={(item) => item.id}
           />
+        ) : (
+          <View style={{ alignItems: "center", paddingTop: 100 }}>
+            <Text style={[styles.message, { color: theme.colors.black }]}>
+              No posts...
+            </Text>
+          </View>
         )}
       </SafeAreaView>
     </View>
@@ -145,11 +165,15 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   bio: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
     fontSize: 14,
     paddingBottom: 15,
+  },
+  message: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 16,
   },
 });
 export default ViewProfileScreen;

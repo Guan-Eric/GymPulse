@@ -40,7 +40,9 @@ const PostItem = ({
       style={{
         backgroundColor: theme.colors.grey0,
         paddingBottom: 5,
+        marginHorizontal: 15,
         marginBottom: 20,
+        borderRadius: 20,
       }}
     >
       {showUser ? (
@@ -90,6 +92,7 @@ const PostItem = ({
             justifyContent: "space-between",
             paddingLeft: 15,
             paddingRight: 10,
+            paddingTop: 5,
           }}
         >
           <Text style={[styles.workoutText, { color: theme.colors.grey3 }]}>
@@ -199,12 +202,12 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   workoutText: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 12,
     paddingLeft: 5,
   },
   caption: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 15,

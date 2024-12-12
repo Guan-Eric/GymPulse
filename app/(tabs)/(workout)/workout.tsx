@@ -154,6 +154,7 @@ function WorkoutScreen() {
             setPlan={setPlan}
             isWorkout={true}
             isDisabled={false}
+            workoutTime={null}
           />
         </ScrollView>
         <FinishWorkoutModal

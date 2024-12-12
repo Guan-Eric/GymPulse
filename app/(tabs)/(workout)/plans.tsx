@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Text, View, Pressable, FlatList, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  Pressable,
+  FlatList,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Tab, TabView, useTheme } from "@rneui/themed";
@@ -9,7 +16,7 @@ import EmptyPlanCard from "../../../components/EmptyPlanCard";
 import BodyPartCard from "../../../components/BodyPartCard";
 import { Plan } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
-import PlansLoader from "../../../components/PlansLoader";
+import PlansLoader from "../../../components/loader/PlansLoader";
 
 const bodyParts = [
   { name: "Chest", key: "1" },
@@ -63,7 +70,13 @@ function PlanScreen() {
 
   return (
     <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          marginBottom: Platform.OS == "ios" ? -35 : 0,
+        },
+      ]}
     >
       <SafeAreaView style={[styles.container, { flex: 1 }]}>
         <Tab
@@ -75,11 +88,19 @@ function PlanScreen() {
         >
           <Tab.Item
             title="Exercises"
-            titleStyle={{ fontSize: 18, color: theme.colors.black }}
+            titleStyle={{
+              fontSize: 24,
+              color: theme.colors.black,
+              fontFamily: "Lato_700Bold",
+            }}
           />
           <Tab.Item
             title="Plans"
-            titleStyle={{ fontSize: 18, color: theme.colors.black }}
+            titleStyle={{
+              fontSize: 24,
+              color: theme.colors.black,
+              fontFamily: "Lato_700Bold",
+            }}
           />
         </Tab>
         <TabView value={index} onChange={setIndex}>
@@ -143,7 +164,7 @@ const styles = StyleSheet.create({
   },
   baseText: {
     paddingLeft: 10,
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 20,
   },
   titleText: {

@@ -21,7 +21,7 @@ import {
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useLocalSearchParams } from "expo-router";
-import { isUsernameExists } from "../../../backend/user";
+import { isUsernameExists, updateUsername } from "../../../backend/user";
 import BackButton from "../../../components/BackButton";
 
 function profileDetailUpdate(props) {
@@ -42,7 +42,7 @@ function profileDetailUpdate(props) {
         if (value.length > 3) {
           if (!(await isUsernameExists(value))) {
             setErrorMessage("");
-            await updateDoc(userDocRef, { [field.toLowerCase()]: value });
+            await updateUsername(value.toLowerCase());
             router.back();
           } else {
             setErrorMessage("Username already exists.");
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   },
   inputText: {
     color: "white",
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 16,
     marginLeft: 5,
   },

@@ -54,7 +54,21 @@ export async function addUser(
   }
 }
 
-function generatePrefixes(username) {
+export async function updateUsername(username: string) {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    await updateDoc(userDocRef, {
+      username: username,
+      prefixes: generatePrefixes(username),
+    });
+  } catch (error) {
+    console.error("Error updating username", error);
+  }
+}
+function generatePrefixes(username: string) {
   const prefixes = [];
   for (let i = 1; i <= username.length; i++) {
     prefixes.push(username.substring(0, i).toLowerCase());

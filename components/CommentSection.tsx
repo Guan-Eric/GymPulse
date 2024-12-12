@@ -39,7 +39,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
         }}
       >
         <Input
-          containerStyle={{ width: 300 }}
+          containerStyle={{ width: 270 }}
           inputContainerStyle={{
             paddingLeft: 10,
             borderRadius: 10,

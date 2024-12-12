@@ -1,36 +1,19 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Appearance,
-  Image,
-  ScrollView,
-  Button,
-  FlatList,
-} from "react-native";
-import { StyleSheet } from "react-native";
+import { Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { FIREBASE_STR } from "../../../firebaseConfig";
-import {
-  updateDoc,
-  getDoc,
-  doc,
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-} from "firebase/firestore";
+import { updateDoc, getDoc, doc, collection, addDoc } from "firebase/firestore";
 import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
 import ExerciseCard from "../../../components/ExerciseCard";
 import { useTheme } from "@rneui/themed";
-import BackButton from "../../../components/BackButton";
 
 function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
-  const { exerciseId, planId, dayId, route } = useLocalSearchParams();
+  const { exerciseId, planId, dayId, route, workoutTime, dayIndex } =
+    useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
 
   const { theme } = useTheme();
@@ -73,12 +56,33 @@ function AddExerciseScreen() {
     });
     const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
     await updateDoc(exerciseDoc, { id: exerciseDoc.id });
-    router.back();
-    router.back();
-    router.back();
+    if (workoutTime != null) {
+      router.push({
+        pathname: "/(tabs)/(workout)/workout",
+        params: {
+          dayIndex: dayIndex,
+          planId: planId,
+          dayId: dayId,
+          workoutTime: workoutTime,
+        },
+      });
+    } else {
+      router.push({
+        pathname: "/(tabs)/(workout)/plan",
+        params: {
+          planId: planId,
+        },
+      });
+    }
   };
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        paddingBottom: Platform.OS == "ios" ? 40 : 0,
+      }}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         {exercise && (
           <View>

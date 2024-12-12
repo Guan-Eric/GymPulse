@@ -22,6 +22,7 @@ function DayCard({
   setPlan,
   isWorkout,
   isDisabled,
+  workoutTime,
 }) {
   const handleDeleteDay = async (dayId: string) => {
     setPlan(await deleteDay(plan, dayId));
@@ -56,6 +57,8 @@ function DayCard({
             planId: plan.id,
             dayId: day.id,
             route: "add",
+            dayIndex: dayIndex,
+            workoutTime: workoutTime,
           },
         });
       },
@@ -71,7 +74,32 @@ function DayCard({
     },
     {
       title: "Cancel",
-      onPress: null,
+      onPress: () => {
+        null;
+      },
+      containerStyle: { backgroundColor: theme.colors.grey1 },
+    },
+  ];
+  const workoutBottomSheetOptions = [
+    {
+      title: "Add Exercise",
+      onPress: () => {
+        router.push({
+          pathname: "/(tabs)/(workout)/exercises",
+          params: {
+            planId: plan.id,
+            dayId: day.id,
+            route: "add",
+          },
+        });
+      },
+      containerStyle: { backgroundColor: theme.colors.primary },
+    },
+    {
+      title: "Cancel",
+      onPress: () => {
+        null;
+      },
       containerStyle: { backgroundColor: theme.colors.grey1 },
     },
   ];
@@ -99,7 +127,10 @@ function DayCard({
           value={day?.name}
         />
         {!isWorkout && !isDisabled ? (
-          <BottomSheetMenu options={bottomSheetOptions} theme={theme} />
+          <BottomSheetMenu
+            options={isWorkout ? workoutBottomSheetOptions : bottomSheetOptions}
+            theme={theme}
+          />
         ) : null}
       </View>
       {day?.exercises &&

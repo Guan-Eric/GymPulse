@@ -49,6 +49,7 @@ function ViewWorkoutScreen({ theme, workoutId }) {
             setPlan={null}
             isWorkout={false}
             isDisabled={true}
+            workoutTime={null}
           />
         </ScrollView>
       </SafeAreaView>

@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   caption: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
     paddingBottom: 10,
     fontSize: 14,
   },
   comment: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     paddingLeft: 5,
     paddingRight: 25,
     fontSize: 16,

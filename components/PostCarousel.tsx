@@ -18,8 +18,8 @@ const ImageCarousel = ({ data, theme }) => {
         source={{ uri: item }}
         style={{
           alignSelf: "center",
-          width: ScreenWidth * 0.9,
-          height: ScreenWidth * 0.9 * 1.25,
+          width: ScreenWidth * 0.85,
+          height: ScreenWidth * 0.85 * 1.25,
           resizeMode: "cover",
           borderRadius: 20,
         }}
@@ -38,7 +38,7 @@ const ImageCarousel = ({ data, theme }) => {
             data={data}
             renderItem={renderCarouselItem}
             width={ScreenWidth}
-            height={ScreenWidth * 0.93 * 1.25}
+            height={ScreenWidth * 0.88 * 1.25}
             loop={false}
             onProgressChange={(_offsetProgress, absoluteProgress) => {
               const index = Math.round(absoluteProgress);
@@ -79,8 +79,8 @@ const ImageCarousel = ({ data, theme }) => {
           source={{ uri: data[0] }}
           style={{
             alignSelf: "center",
-            width: ScreenWidth * 0.9,
-            height: ScreenWidth * 0.9 * 1.25,
+            width: ScreenWidth * 0.85,
+            height: ScreenWidth * 0.85 * 1.25,
             resizeMode: "cover",
             borderRadius: 20,
           }}

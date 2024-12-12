@@ -9,6 +9,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIRESTORE_DB, FIREBASE_STR } from "../../../firebaseConfig";
@@ -27,7 +28,8 @@ function BodyPartScreen() {
   const [results, setResults] = useState<Exercise[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [imageUrls, setImageUrls] = useState({});
-  const { bodypart, route, planId, dayId } = useLocalSearchParams();
+  const { bodypart, route, planId, dayId, dayIndex, workoutTime } =
+    useLocalSearchParams();
 
   const bodyPartQuery = (bodypart as string)?.toLowerCase();
 
@@ -84,7 +86,13 @@ function BodyPartScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        style={[
+          styles.container,
+          {
+            backgroundColor: theme.colors.background,
+            marginBottom: Platform.OS == "ios" ? -35 : 0,
+          },
+        ]}
       >
         <SafeAreaView style={{ flex: 1 }}>
           <View style={{ flexDirection: "row" }}>
@@ -125,6 +133,8 @@ function BodyPartScreen() {
                       planId: planId,
                       dayId: dayId,
                       route: route,
+                      dayIndex: dayIndex,
+                      workoutTime: workoutTime,
                     },
                   })
                 }

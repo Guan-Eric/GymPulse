@@ -51,11 +51,11 @@ const PreSignUpScreen = () => {
         isUsernameValid &&
         name &&
         validateDecimal(primaryHeight) &&
-        validateDecimal(secondaryHeight) &&
+        (validateDecimal(secondaryHeight) || heightIsMetric) &&
         validateDecimal(weight)
       )
     );
-  }, [username, name, primaryHeight, secondaryHeight, weight]);
+  }, [username, name, primaryHeight, secondaryHeight, weight, heightIsMetric]);
 
   const validateDecimal = (value: string) => {
     const decimalPattern = /^\d+(\.\d{0,2})?$/;
@@ -102,7 +102,7 @@ const PreSignUpScreen = () => {
           <SafeAreaView style={{ flex: 1 }}>
             <BackButton />
             <View style={styles.content}>
-              <View style={{ alignItems: "center", paddingBottom: 60 }}>
+              <View style={{ alignItems: "center", paddingBottom: 40 }}>
                 <Image
                   style={{
                     resizeMode: "contain",
@@ -113,12 +113,12 @@ const PreSignUpScreen = () => {
                 />
                 <Text style={styles.titleText}>Sign Up</Text>
               </View>
-              <View style={{ paddingBottom: 50 }}>
+              <View style={{ paddingBottom: 70 }}>
                 <Input
-                  inputContainerStyle={{ borderBottomWidth: 0 }}
+                  inputContainerStyle={styles.inputRoundedContainer}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
-                  placeholder="Username"
+                  label="Username"
                   onChangeText={(text) => checkUsername(text)}
                   autoCapitalize="none"
                   errorMessage={
@@ -128,25 +128,28 @@ const PreSignUpScreen = () => {
 
                 <View style={{ paddingTop: 25 }}>
                   <Input
-                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    inputContainerStyle={styles.inputRoundedContainer}
                     containerStyle={styles.inputContainer}
                     style={styles.input}
-                    placeholder="Name"
+                    label="Name"
                     onChangeText={(text) => setName(text)}
                   />
                 </View>
                 <View style={styles.inputWithUnitContainer}>
                   <View>
-                    <View
-                      style={{ flexDirection: "row", alignItems: "center" }}
-                    >
+                    <View>
                       {heightIsMetric ? (
-                        <>
+                        <View
+                          style={{
+                            alignItems: "center",
+                            flexDirection: "row",
+                          }}
+                        >
                           <Input
-                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            inputContainerStyle={styles.inputRoundedContainer}
                             containerStyle={styles.smallInputContainer}
                             style={styles.inputWithUnit}
-                            placeholder="Height"
+                            label="Height"
                             keyboardType="numeric"
                             onChangeText={handlePrimaryHeightChange}
                             value={primaryHeight}
@@ -159,14 +162,20 @@ const PreSignUpScreen = () => {
                           <Text style={styles.unitText}>
                             {unitPrimaryHeight}
                           </Text>
-                        </>
+                        </View>
                       ) : (
-                        <>
+                        <View
+                          style={{
+                            alignItems: "center",
+                            flexDirection: "row",
+                          }}
+                        >
                           <Input
-                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            inputContainerStyle={styles.inputRoundedContainer}
                             containerStyle={styles.tinyInputContainer}
                             style={styles.inputWithUnit}
-                            placeholder="Feet"
+                            label="Height"
+                            labelStyle={{ width: 200 }}
                             keyboardType="numeric"
                             onChangeText={handlePrimaryHeightChange}
                             value={primaryHeight}
@@ -180,10 +189,10 @@ const PreSignUpScreen = () => {
                             {unitPrimaryHeight}
                           </Text>
                           <Input
-                            inputContainerStyle={{ borderBottomWidth: 0 }}
+                            inputContainerStyle={styles.inputRoundedContainer}
                             containerStyle={styles.tinyInputContainer}
                             style={styles.inputWithUnit}
-                            placeholder="Inches"
+                            label={" "}
                             keyboardType="numeric"
                             onChangeText={handleSecondaryHeightChange}
                             value={secondaryHeight}
@@ -197,11 +206,12 @@ const PreSignUpScreen = () => {
                           <Text style={styles.unitText}>
                             {unitSecondaryHeight}
                           </Text>
-                        </>
+                        </View>
                       )}
                     </View>
                   </View>
                   <Switch
+                    style={{ paddingTop: 14 }}
                     value={heightIsMetric}
                     onValueChange={(value) => setheightIsMetric(value)}
                   />
@@ -209,10 +219,10 @@ const PreSignUpScreen = () => {
                 <View style={styles.inputWithUnitContainer}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Input
-                      inputContainerStyle={{ borderBottomWidth: 0 }}
+                      inputContainerStyle={styles.inputRoundedContainer}
                       containerStyle={styles.smallInputContainer}
                       style={styles.inputWithUnit}
-                      placeholder="Weight"
+                      label="Weight"
                       keyboardType="numeric"
                       onChangeText={handleWeightChange}
                       value={weight}
@@ -225,6 +235,7 @@ const PreSignUpScreen = () => {
                     <Text style={styles.unitText}>{unitWeight}</Text>
                   </View>
                   <Switch
+                    style={{ paddingTop: 14 }}
                     value={weightIsMetric}
                     onValueChange={(value) => setweightIsMetric(value)}
                   />
@@ -260,10 +271,10 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 40,
     color: "white",
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_700Bold",
   },
   nextButton: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     borderRadius: 20,
     width: 240,
     height: 42,
@@ -271,62 +282,61 @@ const styles = StyleSheet.create({
   input: {
     borderColor: "white",
     flex: 1,
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 14,
   },
   inputContainer: {
     width: 254,
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: "#D9D9D9",
+    height: 55,
   },
   smallInputContainer: {
     width: 254 / 1.77,
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: "#D9D9D9",
+    height: 55,
   },
   tinyInputContainer: {
     width: 254 / 4,
-    height: 42,
-    borderRadius: 10,
-    backgroundColor: "#D9D9D9",
+    height: 55,
   },
   inputWithUnitContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingTop: 25,
+    marginTop: 25,
   },
   inputWithUnit: {
-    borderColor: "white",
-    flex: 1,
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     fontSize: 14,
   },
   unitText: {
+    paddingTop: 22,
     paddingLeft: 5,
     paddingRight: 5,
     color: "white",
     fontSize: 14,
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginVertical: 10,
   },
   switchLabel: {
     color: "white",
     fontSize: 18,
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
   },
   errorText: {
-    color: "red",
+    color: "#dc3545",
     fontSize: 12,
     alignSelf: "center",
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
+  },
+  inputRoundedContainer: {
+    marginTop: 2,
+    paddingLeft: 10,
+    borderRadius: 10,
+    borderBottomWidth: 0,
+    backgroundColor: "#1f1f1f",
   },
 });
 

@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, FlatList, Text, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  Alert,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH, FIREBASE_STR } from "../../../firebaseConfig";
 import { useTheme, Button, Icon, Avatar } from "@rneui/themed";
@@ -9,10 +16,10 @@ import { router, useFocusEffect } from "expo-router";
 import { getUser, updateUserAvatar } from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
-import ProfileLoader from "../../../components/ProfileLoader";
 import * as ImagePicker from "expo-image-picker";
 import StreakTooltip from "../../../components/StreakTooltip";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import FeedLoader from "../../../components/loader/FeedLoader";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -94,7 +101,13 @@ function UserScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        paddingBottom: Platform.OS == "ios" ? 20 : 0,
+      }}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
@@ -139,10 +152,10 @@ function UserScreen() {
           ) : null}
           {loading ? (
             <>
-              <ProfileLoader theme={theme} />
-              <ProfileLoader theme={theme} />
+              <FeedLoader theme={theme} />
+              <FeedLoader theme={theme} />
             </>
-          ) : (
+          ) : posts.length > 0 ? (
             <FlatList
               numColumns={1}
               horizontal={false}
@@ -160,6 +173,15 @@ function UserScreen() {
               )}
               keyExtractor={(item) => item.id}
             />
+          ) : (
+            <View style={{ alignItems: "center", paddingTop: 100 }}>
+              <Text style={[styles.message, { color: theme.colors.black }]}>
+                No posts yet...
+              </Text>
+              <Text style={[styles.message, { color: theme.colors.black }]}>
+                Start a workout!
+              </Text>
+            </View>
           )}
         </View>
       </SafeAreaView>
@@ -174,10 +196,14 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   bio: {
-    fontFamily: "Alata_400Regular",
+    fontFamily: "Lato_400Regular",
     paddingLeft: 25,
     paddingRight: 25,
     fontSize: 14,
+  },
+  message: {
+    fontFamily: "Lato_700Bold",
+    fontSize: 16,
   },
 });
 

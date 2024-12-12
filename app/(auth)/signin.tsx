@@ -40,19 +40,19 @@ function SignInScreen() {
               </View>
               <View style={{ paddingBottom: 96 }}>
                 <Input
-                  inputContainerStyle={{ borderBottomWidth: 0 }}
+                  inputContainerStyle={styles.inputRoundedContainer}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
-                  placeholder="E-mail"
+                  label="E-mail"
                   onChangeText={(email) => onChangeEmail(email)}
                   autoCapitalize="none"
                 />
-                <View style={{ paddingTop: 25 }}>
+                <View style={{ paddingTop: 35 }}>
                   <Input
-                    inputContainerStyle={{ borderBottomWidth: 0 }}
+                    inputContainerStyle={styles.inputRoundedContainer}
                     containerStyle={styles.inputContainer}
                     style={styles.input}
-                    placeholder="Password"
+                    label="Password"
                     onChangeText={(password) => onChangePassword(password)}
                     secureTextEntry={true}
                     autoCapitalize="none"
@@ -132,12 +132,18 @@ const styles = StyleSheet.create({
     width: 254,
     height: 42,
     borderRadius: 10,
-    backgroundColor: "#D9D9D9",
   },
   inputText: {
     color: "white",
     fontFamily: "Alata_400Regular",
     fontSize: 12,
+  },
+  inputRoundedContainer: {
+    marginTop: 2,
+    paddingLeft: 10,
+    borderRadius: 10,
+    borderBottomWidth: 0,
+    backgroundColor: "#1f1f1f",
   },
 });
 export default SignInScreen;

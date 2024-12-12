@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text } from "react-native";
+import { FlatList, View, StyleSheet, Text, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Icon, useTheme, Button, useThemeMode } from "@rneui/themed";
@@ -14,7 +14,7 @@ import {
   savePushToken,
   updateStreakResetDate,
 } from "../../../backend/user";
-import FeedLoader from "../../../components/FeedLoader";
+import FeedLoader from "../../../components/loader/FeedLoader";
 import StreakResetModal from "../../../components/StreakLossModal";
 import StreakTooltip from "../../../components/StreakTooltip";
 import { isAfter, isBefore } from "date-fns";
@@ -162,7 +162,13 @@ const FeedScreen: React.FC = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: theme.colors.background,
+        marginBottom: Platform.OS == "ios" ? -35 : 0,
+      }}
+    >
       <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
@@ -206,13 +212,19 @@ const FeedScreen: React.FC = () => {
             <FeedLoader theme={theme} />
             <FeedLoader theme={theme} />
           </View>
-        ) : (
+        ) : posts.length > 0 ? (
           <FlatList
             numColumns={1}
             horizontal={false}
             data={posts}
             renderItem={renderItem}
           />
+        ) : (
+          <View style={{ alignItems: "center", paddingTop: 100 }}>
+            <Text style={[styles.message, { color: theme.colors.black }]}>
+              No posts...
+            </Text>
+          </View>
         )}
         <StreakResetModal
           modalVisible={streakResetModalVisible}
@@ -278,6 +290,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontSize: 16,
+  },
+  message: {
+    fontFamily: "Lato_700Bold",
     fontSize: 16,
   },
 });

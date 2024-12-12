@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { Text, View, Pressable, ScrollView } from "react-native";
+import { Text, View, Pressable, ScrollView, Platform } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BodyPartCard from "../../../components/BodyPartCard";
@@ -28,10 +28,18 @@ function ExerciseListScreen() {
     { name: "Traps", key: "17" },
   ]);
   const { theme } = useTheme();
-  const { route, planId, dayId } = useLocalSearchParams();
+  const { route, planId, dayId, dayIndex, workoutTime } =
+    useLocalSearchParams();
+  console.log(workoutTime);
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          marginBottom: Platform.OS == "ios" ? -35 : 0,
+        },
+      ]}
     >
       <View
         style={{
@@ -59,6 +67,8 @@ function ExerciseListScreen() {
                     route: route,
                     planId: planId,
                     dayId: dayId,
+                    dayIndex: dayIndex,
+                    workoutTime: workoutTime,
                   },
                 })
               }
@@ -87,7 +97,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 10,
-    paddingBottom: 10,
   },
   cardWrapper: {
     width: "48%",

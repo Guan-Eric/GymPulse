@@ -66,7 +66,9 @@ function ExerciseSetCard({
     },
     {
       title: "Cancel",
-      onPress: null,
+      onPress: () => {
+        null;
+      },
       containerStyle: { backgroundColor: theme.colors.grey1 },
     },
   ];
