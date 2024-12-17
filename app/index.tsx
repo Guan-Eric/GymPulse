@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
-import { View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import WelcomeScreen from "./(auth)/welcome";
 
 function App() {
   const router = useRouter();
 
   const auth = getAuth();
+
   onAuthStateChanged(auth, (user) => {
     if (user) {
       router.replace("/(tabs)/(home)/feed");
@@ -15,7 +17,7 @@ function App() {
     }
   });
 
-  return <View style={{ flex: 1 }}></View>;
+  return <WelcomeScreen />;
 }
 
 export default App;

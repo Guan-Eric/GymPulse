@@ -9,6 +9,10 @@ import { Post } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
 import {
+  RewardedAd,
+  RewardedAdEventType,
+} from "react-native-google-mobile-ads";
+import {
   endStreak,
   getUser,
   savePushToken,
@@ -17,15 +21,16 @@ import {
 import FeedLoader from "../../../components/loader/FeedLoader";
 import StreakResetModal from "../../../components/StreakLossModal";
 import StreakTooltip from "../../../components/StreakTooltip";
-import { isAfter, isBefore } from "date-fns";
+import { isAfter } from "date-fns";
 import { Timestamp } from "firebase/firestore";
+import Constants from "expo-constants";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
   const { mode, setMode } = useThemeMode();
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [streakResetModalVisible, setStreakResetModalVisible] = useState(false);
+  const [streakResetModalVisible, setStreakResetModalVisible] = useState(true);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
 
@@ -53,6 +58,31 @@ const FeedScreen: React.FC = () => {
       ? "dark"
       : "light";
     setMode(themeMode);
+  }
+
+  function handleLoadAndShowAd() {
+    try {
+      const adUnitId =
+        Platform.OS === "ios"
+          ? Constants.expoConfig?.extra?.admobIOSStreakUnitId
+          : Constants.expoConfig?.extra?.admobAndroidStreakUnitId;
+
+      const ad = RewardedAd.createForAdRequest(adUnitId, {
+        requestNonPersonalizedAdsOnly: true,
+      });
+      console.log(ad);
+      ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
+        ad.show();
+      });
+
+      ad.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
+        handleContinueStreak();
+      });
+
+      ad.load();
+    } catch (error) {
+      console.error("Error showing reward ad", error);
+    }
   }
 
   useEffect(() => {
@@ -229,7 +259,7 @@ const FeedScreen: React.FC = () => {
         <StreakResetModal
           modalVisible={streakResetModalVisible}
           onClose={() => setStreakResetModalVisible(false)}
-          onContinueStreak={handleContinueStreak}
+          onContinueStreak={handleLoadAndShowAd}
           onNewStreak={handleNewStreak}
           theme={theme}
         />

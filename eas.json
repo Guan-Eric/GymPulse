@@ -4,13 +4,35 @@
   },
   "build": {
     "development": {
+      "environment": "development",
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "FIREBASE_API_KEY": "@FIREBASE_API_KEY",
+        "ADMOB_IOS_APP_ID": "@ADMOB_IOS_APP_ID",
+        "ADMOB_ANDROID_APP_ID": "@ADMOB_ANDROID_APP_ID",
+        "ADMOB_FEED_UNIT_ID": "@ADMOB_FEED_UNIT_ID",
+        "ADMOB_STREAK_UNIT_ID_IOS": "@ADMOB_STREAK_UNIT_ID_IOS"
+      }
     },
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "environment": "production",
+      "env": {
+        "FIREBASE_API_KEY": "@FIREBASE_API_KEY",
+        "ADMOB_IOS_APP_ID": "@ADMOB_IOS_APP_ID",
+        "ADMOB_ANDROID_APP_ID": "@ADMOB_ANDROID_APP_ID",
+        "ADMOB_FEED_UNIT_ID": "@ADMOB_FEED_UNIT_ID",
+        "ADMOB_STREAK_UNIT_ID_IOS": "@ADMOB_STREAK_UNIT_ID_IOS"
+      }
+    },
+    "android": {
+      "env": {
+        "GOOGLE_SERVICES_JSON": "@GOOGLE_SERVICES_JSON"
+      }
+    }
   },
   "submit": {
     "production": {}
