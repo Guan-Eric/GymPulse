@@ -30,7 +30,7 @@ const FeedScreen: React.FC = () => {
   const { mode, setMode } = useThemeMode();
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [streakResetModalVisible, setStreakResetModalVisible] = useState(true);
+  const [streakResetModalVisible, setStreakResetModalVisible] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [longestStreak, setLongestStreak] = useState(0);
 
