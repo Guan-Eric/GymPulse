@@ -2,15 +2,15 @@ import "dotenv/config";
 
 export default {
   expo: {
-    name: "GymPulse",
+    name: "Gym Pulse",
     slug: "gympulse",
-    version: "1.0.0",
+    version: "1.0.1",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "automatic",
     splash: {
-      image: "./assets/icon.png",
+      image: "./assets/iconSplash.png",
       resizeMode: "contain",
       backgroundColor: "#181818",
     },
@@ -25,7 +25,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#181818",
       },
       config: {
         googleMobileAdsAppId: process.env.ADMOB_ANDROID_APP_ID,
