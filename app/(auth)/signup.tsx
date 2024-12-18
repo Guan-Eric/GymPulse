@@ -107,7 +107,7 @@ function SignUpScreen() {
               <View style={{ alignItems: "center", paddingBottom: 60 }}>
                 <Image
                   style={styles.logo}
-                  source={require("../../assets/newLogo.png")}
+                  source={require("../../assets/newLogoWhite.png")}
                 />
                 <Text style={styles.titleText}>Sign Up</Text>
               </View>

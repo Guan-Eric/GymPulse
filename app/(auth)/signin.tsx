@@ -34,7 +34,7 @@ function SignInScreen() {
               <View style={{ alignItems: "center", paddingBottom: 84 }}>
                 <Image
                   style={styles.logo}
-                  source={require("../../assets/newLogo.png")}
+                  source={require("../../assets/newLogoWhite.png")}
                 />
                 <Text style={styles.titleText}>Sign In</Text>
               </View>

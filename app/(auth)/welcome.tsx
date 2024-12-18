@@ -14,7 +14,7 @@ function WelcomeScreen() {
               height: 100,
               width: 250,
             }}
-            source={require("../../assets/newLogo.png")}
+            source={require("../../assets/newLogoWhite.png")}
           />
           <Text style={styles.logoText}>GymPulse</Text>
           <Text style={styles.sloganText}>Power Up Your Fitness</Text>
