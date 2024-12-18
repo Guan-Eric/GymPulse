@@ -1,3 +1,4 @@
+import "dotenv/config";
 export default {
   expo: {
     name: "Gym Pulse",
@@ -48,5 +49,11 @@ export default {
       typedRoutes: true,
     },
     owner: "eronkgonk",
+    updates: {
+      url: "https://u.expo.dev/0ca3bc1d-ffa0-46b9-986f-7c478192a465",
+    },
+    runtimeVersion: {
+      policy: "appVersion",
+    },
   },
 };
