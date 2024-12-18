@@ -242,7 +242,7 @@ const FeedScreen: React.FC = () => {
             <FeedLoader theme={theme} />
             <FeedLoader theme={theme} />
           </View>
-        ) : posts.length > 0 ? (
+        ) : posts?.length > 0 ? (
           <FlatList
             numColumns={1}
             horizontal={false}
