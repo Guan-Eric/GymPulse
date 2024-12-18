@@ -1,10 +1,8 @@
-import "dotenv/config";
-
 export default {
   expo: {
     name: "Gym Pulse",
     slug: "gympulse",
-    version: "1.0.1",
+    version: "1.0.2",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",

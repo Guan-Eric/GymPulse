@@ -27,11 +27,6 @@
         "ADMOB_FEED_UNIT_ID": "@ADMOB_FEED_UNIT_ID",
         "ADMOB_STREAK_UNIT_ID_IOS": "@ADMOB_STREAK_UNIT_ID_IOS"
       }
-    },
-    "android": {
-      "env": {
-        "GOOGLE_SERVICES_JSON": "@GOOGLE_SERVICES_JSON"
-      }
     }
   },
   "submit": {
