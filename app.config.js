@@ -3,7 +3,7 @@ export default {
   expo: {
     name: "Gym Pulse",
     slug: "gympulse",
-    version: "1.0.2",
+    version: "1.0.3",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
