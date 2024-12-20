@@ -9,15 +9,15 @@ function App() {
 
   const auth = getAuth();
 
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user) {
-  //     router.replace("/(tabs)/(home)/feed");
-  //   } else {
-  //     router.replace("/(auth)/welcome");
-  //   }
-  // });
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      router.replace("/(tabs)/(home)/feed");
+    } else {
+      router.replace("/(auth)/welcome");
+    }
+  });
 
-  return <View />;
+  return <WelcomeScreen />;
 }
 
 export default App;
