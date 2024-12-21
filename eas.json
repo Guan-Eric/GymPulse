@@ -1,12 +1,13 @@
 {
   "cli": {
-    "version": ">= 10.2.1"
+    "version": "14.1.0"
   },
   "build": {
     "development": {
       "environment": "development",
       "developmentClient": true,
       "distribution": "internal",
+      "withoutGoogleServices": true,
       "env": {
         "FIREBASE_API_KEY": "@FIREBASE_API_KEY",
         "ADMOB_IOS_APP_ID": "@ADMOB_IOS_APP_ID",
@@ -20,6 +21,7 @@
       "ios": {
         "simulator": true
       },
+      "withoutGoogleServices": true,
       "env": {
         "FIREBASE_API_KEY": "@FIREBASE_API_KEY",
         "ADMOB_IOS_APP_ID": "@ADMOB_IOS_APP_ID",
@@ -30,6 +32,7 @@
     },
     "production": {
       "environment": "production",
+      "withoutGoogleServices": true,
       "env": {
         "FIREBASE_API_KEY": "@FIREBASE_API_KEY",
         "ADMOB_IOS_APP_ID": "@ADMOB_IOS_APP_ID",

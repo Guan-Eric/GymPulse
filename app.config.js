@@ -29,6 +29,7 @@ export default {
       config: {
         googleMobileAdsAppId: process.env.ADMOB_ANDROID_APP_ID,
       },
+      versionCode: 1,
       package: "com.eronkgonk.gympulse",
       googleServicesFile: "./android/app/google-services.json",
       newArchEnabled: true,
