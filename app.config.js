@@ -2,8 +2,8 @@ import "dotenv/config";
 export default {
   expo: {
     name: "Gym Pulse",
-    slug: "gympulse",
-    version: "1.0.0",
+    slug: "gym-pulse",
+    version: "1.0.4",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -40,7 +40,7 @@ export default {
     plugins: [["expo-font"], "expo-router"],
     extra: {
       eas: {
-        projectId: "0ca3bc1d-ffa0-46b9-986f-7c478192a465",
+        projectId: "931123fa-8703-4a70-ba2a-8d02f9cd7dc9",
       },
       firebaseApiKey: process.env.FIREBASE_API_KEY,
       admobIOSStreakUnitId: process.env.ADMOB_STREAK_UNIT_ID_IOS,
@@ -49,7 +49,7 @@ export default {
     experiments: {
       typedRoutes: true,
     },
-    owner: "eronkgonk",
+    owner: "guan-eric",
     updates: {
       url: "https://u.expo.dev/0ca3bc1d-ffa0-46b9-986f-7c478192a465",
     },
