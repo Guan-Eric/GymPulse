@@ -31,7 +31,7 @@ export default {
       },
       versionCode: 1,
       package: "com.eronkgonk.gympulse",
-      googleServicesFile: "./android/app/google-services.json",
+      googleServicesFile: "",
       newArchEnabled: true,
     },
     web: {
