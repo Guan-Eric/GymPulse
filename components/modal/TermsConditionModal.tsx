@@ -145,14 +145,19 @@ const TermsConditionModal = ({ modalVisible, onClose, theme }) => {
             </Text>
             <CheckBox
               checked={isCheck}
-              containerStyle={styles.checkboxContainer}
+              textStyle={{ color: theme.colors.black }}
+              containerStyle={[
+                styles.checkboxContainer,
+                { backgroundColor: theme.colors.grey0 },
+              ]}
               onPress={() => setIsCheck(!isCheck)}
-              checkedTitle="I declare that I have read the EULA and Terms of Service"
+              title="I declare that I have read the EULA and Terms of Service"
             />
             <Button
               disabled={!isCheck}
               buttonStyle={styles.closeButton}
               onPress={onClose}
+              title={"Agree"}
             ></Button>
           </ScrollView>
         </View>
@@ -169,7 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContainer: {
-    width: 300,
+    width: "86%",
     height: "80%",
     borderRadius: 20,
     padding: 20,
@@ -194,11 +199,10 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   checkboxContainer: {
-    marginTop: 20,
+    marginTop: 10,
   },
   closeButton: {
-    marginTop: 20,
-    padding: 15,
+    marginTop: 10,
     borderRadius: 10,
     alignItems: "center",
   },

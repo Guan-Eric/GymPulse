@@ -25,7 +25,7 @@ function App() {
     }
   });
 
-  return <View style={{ flex: 1, backgroundColor: "#181818" }} />;
+  return <WelcomeScreen />;
 }
 
 export default App;

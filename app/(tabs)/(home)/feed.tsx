@@ -25,7 +25,7 @@ import StreakTooltip from "../../../components/StreakTooltip";
 import { isAfter } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import Constants from "expo-constants";
-import TermsConditionModal from "../../../components/modal/TermsCondditionModal";
+import TermsConditionModal from "../../../components/modal/TermsConditionModal";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -174,7 +174,7 @@ const FeedScreen: React.FC = () => {
 
   const handleTermsCondition = () => {
     updateTermsCondition();
-    setStreakResetModalVisible(false);
+    setTermsCondition(false);
   };
 
   const renderItem = ({ item, index }) => {

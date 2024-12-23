@@ -424,7 +424,7 @@ export async function updateTermsCondition(): Promise<void> {
       `Users/${FIREBASE_AUTH.currentUser.uid}`
     );
     await updateDoc(userDocRef, {
-      termsConddition: false,
+      showTermsCondition: false,
     });
   } catch (error) {
     console.error("Error saving Terms and Condition:", error);
