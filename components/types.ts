@@ -16,6 +16,7 @@ export interface User {
   streakResetDate: Date;
   showStreak: boolean;
   showWorkout: boolean;
+  showTermsCondition: boolean;
 }
 
 export interface Post {

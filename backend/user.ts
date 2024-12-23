@@ -48,6 +48,7 @@ export async function addUser(
       streakResetDate: null,
       showStreak: false,
       showWorkout: false,
+      showTermsCondition: true,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -413,5 +414,19 @@ export async function updateUserAvatar(url: string) {
     updateDoc(userDocRef, { url: url });
   } catch (error) {
     console.error("Error updating user avatar:", error);
+  }
+}
+
+export async function updateTermsCondition(): Promise<void> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    await updateDoc(userDocRef, {
+      termsConddition: false,
+    });
+  } catch (error) {
+    console.error("Error saving Terms and Condition:", error);
   }
 }

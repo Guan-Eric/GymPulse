@@ -10,7 +10,7 @@ import DayCard from "../../../components/DayCard";
 import { Button, useTheme } from "@rneui/themed";
 import { getPlan, savePlan } from "../../../backend/plan";
 import { getUser } from "../../../backend/user";
-import FinishWorkoutModal from "../../../components/FinishWorkoutModal";
+import FinishWorkoutModal from "../../../components/modal/FinishWorkoutModal";
 
 function WorkoutScreen() {
   const currentDate = new Date();

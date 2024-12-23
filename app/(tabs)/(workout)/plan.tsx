@@ -10,7 +10,7 @@ import DayCard from "../../../components/DayCard";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
-import BottomSheetMenu from "../../../components/BottomSheetMenu";
+import BottomSheetMenu from "../../../components/modal/BottomSheetMenu";
 import BackButton from "../../../components/BackButton";
 import PlanLoader from "../../../components/loader/PlanLoader";
 

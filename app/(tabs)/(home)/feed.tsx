@@ -17,13 +17,15 @@ import {
   getUser,
   savePushToken,
   updateStreakResetDate,
+  updateTermsCondition,
 } from "../../../backend/user";
 import FeedLoader from "../../../components/loader/FeedLoader";
-import StreakResetModal from "../../../components/StreakLossModal";
+import StreakResetModal from "../../../components/modal/StreakLossModal";
 import StreakTooltip from "../../../components/StreakTooltip";
 import { isAfter } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 import Constants from "expo-constants";
+import TermsConditionModal from "../../../components/modal/TermsCondditionModal";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -32,6 +34,7 @@ const FeedScreen: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [streakResetModalVisible, setStreakResetModalVisible] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
+  const [termsCondition, setTermsCondition] = useState(false);
   const [longestStreak, setLongestStreak] = useState(0);
 
   const {
@@ -90,6 +93,7 @@ const FeedScreen: React.FC = () => {
     fetchFeed();
     checkStreakStatus();
     getStreakInformation();
+    getTermsCondition();
   }, []);
 
   useEffect(() => {
@@ -152,6 +156,12 @@ const FeedScreen: React.FC = () => {
     );
   };
 
+  const getTermsCondition = async () => {
+    setTermsCondition(
+      (await getUser(FIREBASE_AUTH.currentUser.uid)).showTermsCondition
+    );
+  };
+
   const handleContinueStreak = () => {
     updateStreakResetDate();
     setStreakResetModalVisible(false);
@@ -159,6 +169,11 @@ const FeedScreen: React.FC = () => {
 
   const handleNewStreak = () => {
     endStreak();
+    setStreakResetModalVisible(false);
+  };
+
+  const handleTermsCondition = () => {
+    updateTermsCondition();
     setStreakResetModalVisible(false);
   };
 
@@ -261,6 +276,11 @@ const FeedScreen: React.FC = () => {
           onClose={() => setStreakResetModalVisible(false)}
           onContinueStreak={handleLoadAndShowAd}
           onNewStreak={handleNewStreak}
+          theme={theme}
+        />
+        <TermsConditionModal
+          modalVisible={termsCondition}
+          onClose={handleTermsCondition}
           theme={theme}
         />
       </SafeAreaView>

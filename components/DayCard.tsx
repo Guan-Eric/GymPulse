@@ -11,7 +11,7 @@ import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
-import BottomSheetMenu from "./BottomSheetMenu";
+import BottomSheetMenu from "./modal/BottomSheetMenu";
 
 function DayCard({
   plan,

@@ -2,7 +2,7 @@ import { Input, Button, Card, Icon } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import { Day, Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
-import BottomSheetMenu from "./BottomSheetMenu";
+import BottomSheetMenu from "./modal/BottomSheetMenu";
 
 function ExerciseSetCard({
   plan,
@@ -127,7 +127,7 @@ function ExerciseSetCard({
             <Text style={[styles.baseText, { color: theme.colors.black }]}>
               {`Set ${setIndex + 1}`}
             </Text>
-            <>
+            <View>
               <Input
                 disabled={isDisabled}
                 keyboardType="numeric"
@@ -146,7 +146,7 @@ function ExerciseSetCard({
                 value={set.reps.toString()}
               />
               {!exercise.cardio ? (
-                <>
+                <View>
                   <Text style={{ color: theme.colors.black }}>x</Text>
                   <Input
                     disabled={isDisabled}
@@ -178,9 +178,9 @@ function ExerciseSetCard({
                   <Text style={{ color: theme.colors.black }}>
                     {isWeightMetric ? "kg" : "lbs"}
                   </Text>
-                </>
+                </View>
               ) : (
-                <>
+                <View>
                   <Text style={{ color: theme.colors.black }}>m</Text>
                   <Input
                     disabled={isDisabled}
@@ -200,9 +200,9 @@ function ExerciseSetCard({
                     value={set?.weight_duration.toString()}
                   />
                   <Text style={{ color: theme.colors.black }}>s</Text>
-                </>
+                </View>
               )}
-            </>
+            </View>
             {!isDisabled && (
               <BottomSheetMenu
                 options={[
