@@ -31,7 +31,6 @@ export default {
       },
       versionCode: 1,
       package: "com.eronkgonk.gympulse",
-      googleServicesFile: "",
       newArchEnabled: true,
     },
     web: {
