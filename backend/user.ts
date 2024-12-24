@@ -484,3 +484,29 @@ export async function isUserBlocked(userId: string): Promise<boolean> {
     console.error("Error checking if user is blocked:", error);
   }
 }
+
+export async function getBlockedUsers(): Promise<string[]> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/BlockedUsers`
+    );
+    const userDocSnapshot = await getDoc(userDocRef);
+    const blockedUsers = userDocSnapshot.data();
+    return Object.keys(blockedUsers);
+  } catch (error) {
+    console.error("Error fetching blocked users:", error);
+  }
+}
+
+export async function deleteAccount() {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    await deleteDoc(userDocRef);
+  } catch (error) {
+    console.error("Error deleting account:", error);
+  }
+}

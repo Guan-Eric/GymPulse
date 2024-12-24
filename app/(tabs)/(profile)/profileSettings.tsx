@@ -1,16 +1,19 @@
 import { Switch, useTheme, Card, Button, Icon } from "@rneui/themed";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, Pressable, Modal } from "react-native";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../../../firebaseConfig";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import BackButton from "../../../components/BackButton";
+import DeleteAccountModal from "../../../components/modal/DeleteAccountModal";
+import { deleteAccount } from "../../../backend/user";
 
 function profileSettings(props) {
   const { theme } = useTheme();
   const [showStreak, setShowStreak] = useState<boolean | undefined>();
   const [showWorkout, setShowWorkout] = useState<boolean | undefined>();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchProfileSettings = async () => {
@@ -34,6 +37,14 @@ function profileSettings(props) {
     );
     await updateDoc(userDocRef, { [field]: value });
   };
+
+  const handleDeleteAccount = async () => {
+    setIsModalVisible(false);
+    router.push("/(auth)/welcome");
+    await deleteAccount();
+    await FIREBASE_AUTH.currentUser.delete();
+  };
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -126,6 +137,19 @@ function profileSettings(props) {
             />
           </View>
         </Card>
+        <Button
+          buttonStyle={styles.deleteButtonStyle}
+          title="Delete Account"
+          onPress={() => setIsModalVisible(true)}
+          color={theme.colors.error}
+        />
+        <DeleteAccountModal
+          modalVisible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          onDeleteAccount={() => handleDeleteAccount()}
+          onCancel={() => setIsModalVisible(false)}
+          theme={theme}
+        />
       </SafeAreaView>
     </View>
   );
@@ -165,6 +189,13 @@ const styles = StyleSheet.create({
   buttonStyle: {
     justifyContent: "space-between",
     paddingHorizontal: 0,
+  },
+  deleteButtonStyle: {
+    width: 300,
+    borderRadius: 20,
+    margin: 20,
+    padding: 10,
+    alignSelf: "center",
   },
   buttonTitle: {
     textAlign: "left",
