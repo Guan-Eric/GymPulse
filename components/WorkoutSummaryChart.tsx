@@ -4,7 +4,7 @@ import { ChartData } from "./types";
 import { View } from "react-native";
 import { Circle, Text, useFont } from "@shopify/react-native-skia";
 import { Lato_400Regular, Lato_700Bold } from "@expo-google-fonts/lato";
-import { ButtonGroup } from "@rneui/themed";
+import { ButtonGroup, Card } from "@rneui/themed";
 import { format, startOfWeek, subDays, subMonths, subWeeks } from "date-fns";
 import { useDerivedValue } from "react-native-reanimated";
 
@@ -67,7 +67,16 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
   }, [isActive, transformedData]);
 
   return (
-    <View style={{ height: 300 }}>
+    <Card
+      wrapperStyle={{
+        height: 300,
+      }}
+      containerStyle={{
+        borderRadius: 20,
+        backgroundColor: theme.colors.grey0,
+        borderWidth: 0,
+      }}
+    >
       <View
         style={{
           flexDirection: "row",
@@ -76,7 +85,13 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
         }}
       >
         <ButtonGroup
-          containerStyle={{ width: 200, height: 30 }}
+          containerStyle={{
+            width: 200,
+            height: 30,
+            backgroundColor: theme.colors.grey0,
+            borderWidth: 0,
+            borderRadius: 10,
+          }}
           buttons={["Daily", "Weekly", "Monthly"]}
           selectedIndex={selectedIndex}
           onPress={(value) => {
@@ -127,8 +142,8 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
         {({ points }) => (
           <>
             <Text
-              x={100}
-              y={60}
+              x={50}
+              y={20}
               font={chartFont}
               text={value}
               color={theme.colors.black}
@@ -151,7 +166,7 @@ const WorkoutSummaryChart: React.FC<WorkoutSummaryChartProps> = ({
           </>
         )}
       </CartesianChart>
-    </View>
+    </Card>
   );
 };
 
