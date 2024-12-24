@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Pressable, Image, Text, StyleSheet } from "react-native";
+import { View, Pressable, Image, Text, StyleSheet, Alert } from "react-native";
 import { Avatar, Button, CheckBox, Icon } from "@rneui/themed";
 import { ScreenWidth } from "@rneui/base";
 import { Href, router } from "expo-router";
@@ -9,6 +9,8 @@ import { getUser } from "../backend/user";
 import { User } from "./types";
 import Carousel from "react-native-reanimated-carousel";
 import ImageCarousel from "./PostCarousel";
+import ThreeDotsModal from "./modal/ThreeDotsModal";
+import { reportPost } from "../backend/post";
 
 const PostItem = ({
   post,
@@ -31,9 +33,67 @@ const PostItem = ({
     setUser(fetchedUser);
   }
 
+  async function handleReportPost() {
+    reportPost(post.id, post.userId);
+    Alert.alert("Post Reported", "Thank you for reporting this post.");
+  }
+
   useEffect(() => {
     fetchUser(post.userId);
   }, []);
+
+  const postOptions = [
+    {
+      title: "View Workout",
+      onPress: () => {
+        router.push({
+          pathname: `(tabs)/${tab}/workout` as `/workout`,
+          params: {
+            workoutId: post.workoutId,
+            userId: post.userId,
+          },
+        });
+      },
+      containerStyle: { backgroundColor: theme.colors.primary },
+    },
+    {
+      title: "Report",
+      onPress: () => {
+        handleReportPost();
+      },
+      containerStyle: { backgroundColor: theme.colors.error },
+    },
+    {
+      title: "Cancel",
+      onPress: () => {
+        null;
+      },
+      containerStyle: { backgroundColor: theme.colors.grey1 },
+    },
+  ];
+
+  const userPostOptions = [
+    {
+      title: "View Workout",
+      onPress: () => {
+        router.push({
+          pathname: `(tabs)/${tab}/workout` as `/workout`,
+          params: {
+            workoutId: post.workoutId,
+            userId: post.userId,
+          },
+        });
+      },
+      containerStyle: { backgroundColor: theme.colors.primary },
+    },
+    {
+      title: "Cancel",
+      onPress: () => {
+        null;
+      },
+      containerStyle: { backgroundColor: theme.colors.grey1 },
+    },
+  ];
 
   return (
     <View
@@ -70,19 +130,7 @@ const PostItem = ({
               </Text>
             </View>
           </View>
-          <Button
-            type="clear"
-            onPress={() =>
-              router.push({
-                pathname: `(tabs)/${tab}/workout` as `/workout`,
-                params: {
-                  workoutId: post.workoutId,
-                },
-              })
-            }
-          >
-            <Icon size={28} name="weight-lifter" type="material-community" />
-          </Button>
+          <ThreeDotsModal options={postOptions} theme={theme} />
         </View>
       ) : (
         <View
@@ -98,19 +146,7 @@ const PostItem = ({
           <Text style={[styles.workoutText, { color: theme.colors.grey3 }]}>
             {formattedDate}
           </Text>
-          <Button
-            type="clear"
-            onPress={() =>
-              router.push({
-                pathname: `(tabs)/${tab}/workout` as `/workout`,
-                params: {
-                  workoutId: post.workoutId,
-                },
-              })
-            }
-          >
-            <Icon size={28} name="weight-lifter" type="material-community" />
-          </Button>
+          <ThreeDotsModal options={userPostOptions} theme={theme} />
         </View>
       )}
       <Pressable

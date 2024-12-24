@@ -11,7 +11,7 @@ import { View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
-import BottomSheetMenu from "./modal/BottomSheetMenu";
+import ThreeDotsModal from "./modal/ThreeDotsModal";
 
 function DayCard({
   plan,
@@ -62,7 +62,7 @@ function DayCard({
           },
         });
       },
-      containerStyle: { backgroundColor: theme.colors.grey0 },
+      containerStyle: { backgroundColor: theme.colors.grey1 },
     },
     {
       title: "Delete Day",
@@ -70,14 +70,13 @@ function DayCard({
         handleDeleteDay(day.id);
       },
       containerStyle: { backgroundColor: theme.colors.error },
-      titleStyle: { color: theme.colors.black },
     },
     {
       title: "Cancel",
       onPress: () => {
         null;
       },
-      containerStyle: { backgroundColor: theme.colors.grey1 },
+      containerStyle: { backgroundColor: theme.colors.grey2 },
     },
   ];
   const workoutBottomSheetOptions = [
@@ -100,7 +99,7 @@ function DayCard({
       onPress: () => {
         null;
       },
-      containerStyle: { backgroundColor: theme.colors.grey1 },
+      containerStyle: { backgroundColor: theme.colors.grey2 },
     },
   ];
 
@@ -127,7 +126,7 @@ function DayCard({
           value={day?.name}
         />
         {!isWorkout && !isDisabled ? (
-          <BottomSheetMenu
+          <ThreeDotsModal
             options={isWorkout ? workoutBottomSheetOptions : bottomSheetOptions}
             theme={theme}
           />

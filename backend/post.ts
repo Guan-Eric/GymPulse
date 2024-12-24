@@ -300,3 +300,10 @@ async function fetchCommentUserName(userId) {
   const userDocSnapshot = await getDoc(userDocRef);
   return userDocSnapshot.data().username;
 }
+
+export async function reportPost(postId: string, userId: string) {
+  const postDocRef = doc(FIRESTORE_DB, `Users/${userId}/Posts/${postId}`);
+  await updateDoc(postDocRef, {
+    reported: true,
+  });
+}

@@ -11,17 +11,17 @@ import { FIREBASE_AUTH } from "../firebaseConfig";
 import { getUser } from "../backend/user";
 import BackButton from "./BackButton";
 
-function ViewWorkoutScreen({ theme, workoutId }) {
+function ViewWorkoutScreen({ theme, workoutId, userId }) {
   const [workout, setWorkout] = useState<Workout>();
   const [isWeightMetric, setIsWeightMetric] = useState(true);
 
   const fetchWorkoutFromFirestore = async () => {
-    setWorkout(await getWorkout(workoutId as string));
+    setWorkout(await getWorkout(workoutId as string, userId as string));
     setIsWeightMetric(
       (await getUser(FIREBASE_AUTH.currentUser.uid)).weightMetricUnits
     );
   };
-
+  console.log("ViewWorkoutScreen", workoutId);
   useEffect(() => {
     fetchWorkoutFromFirestore();
   }, []);

@@ -42,7 +42,10 @@ function CreatePostScreen() {
   const [title, setTitle] = useState(planName + " - " + dayName);
 
   const fetchWorkoutTime = async () => {
-    setWorkoutTime((await getWorkout(workoutId as string)).duration);
+    setWorkoutTime(
+      (await getWorkout(workoutId as string, FIREBASE_AUTH.currentUser.uid))
+        .duration
+    );
   };
   useEffect(() => {
     fetchWorkoutTime();
@@ -133,7 +136,9 @@ function CreatePostScreen() {
       const userFollowers = await getUserFollowers(
         FIREBASE_AUTH.currentUser.uid
       );
-      for (const userFollower in userFollowers) {
+      console.log("User followers:", userFollowers);
+      for (const userFollower of userFollowers) {
+        console.log("Adding notification for", userFollower);
         addNotification(userFollower, "post", userPostsDocRef.id);
       }
       incrementStreak();

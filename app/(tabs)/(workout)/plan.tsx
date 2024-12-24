@@ -10,7 +10,7 @@ import DayCard from "../../../components/DayCard";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
-import BottomSheetMenu from "../../../components/modal/BottomSheetMenu";
+import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
 import PlanLoader from "../../../components/loader/PlanLoader";
 
@@ -69,7 +69,7 @@ function ViewPlanScreen() {
       onPress: () => {
         handleAddDay();
       },
-      containerStyle: { backgroundColor: theme.colors.grey0 },
+      containerStyle: { backgroundColor: theme.colors.primary },
     },
     {
       title: "Delete Plan",
@@ -77,7 +77,6 @@ function ViewPlanScreen() {
         handleDeletePlan();
       },
       containerStyle: { backgroundColor: theme.colors.error },
-      titleStyle: { color: theme.colors.black },
     },
     {
       title: "Cancel",
@@ -124,7 +123,7 @@ function ViewPlanScreen() {
                 onChangeText={handleSaveName}
                 value={plan?.name}
               />
-              <BottomSheetMenu options={bottomSheetOptions} theme={theme} />
+              <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
             </View>
             {plan?.days.length > 0
               ? plan?.days?.map((day, dayIndex) => (

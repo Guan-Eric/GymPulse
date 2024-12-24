@@ -73,8 +73,9 @@ const FeedScreen: React.FC = () => {
       const ad = RewardedAd.createForAdRequest(adUnitId, {
         requestNonPersonalizedAdsOnly: true,
       });
-      console.log(ad);
+
       ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
+        console.log(ad);
         ad.show();
       });
 
@@ -180,8 +181,9 @@ const FeedScreen: React.FC = () => {
   const renderItem = ({ item, index }) => {
     if ((index + 1) % AD_POSITION_INTERVAL === 0) {
       return (
-        <View style={{ marginVertical: 10 }}>
-          {/* <AdMobBanner
+        <View>
+          {/*style={{ marginVertical: 10 }}>
+           <AdMobBanner
             bannerSize="mediumRectangle"
             adUnitID={
               Platform.OS === "ios"
@@ -201,7 +203,7 @@ const FeedScreen: React.FC = () => {
         onToggleLike={() => handleToggleLike(item)}
         renderComments={false}
         showUser={true}
-        tab={"(home)"}
+        tab="(home)"
       />
     );
   };

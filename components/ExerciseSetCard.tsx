@@ -2,7 +2,7 @@ import { Input, Button, Card, Icon } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import { Day, Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
-import BottomSheetMenu from "./modal/BottomSheetMenu";
+import ThreeDotsModal from "./modal/ThreeDotsModal";
 
 function ExerciseSetCard({
   plan,
@@ -54,7 +54,7 @@ function ExerciseSetCard({
       onPress: () => {
         handleAddSet(day.id, exercise.id, plan?.days);
       },
-      containerStyle: { backgroundColor: theme.colors.grey0 },
+      containerStyle: { backgroundColor: theme.colors.primary },
     },
     {
       title: "Delete Exercise",
@@ -62,14 +62,13 @@ function ExerciseSetCard({
         handleDeleteExercise(day.id, exercise.id);
       },
       containerStyle: { backgroundColor: theme.colors.error },
-      titleStyle: { color: theme.colors.black },
     },
     {
       title: "Cancel",
       onPress: () => {
         null;
       },
-      containerStyle: { backgroundColor: theme.colors.grey1 },
+      containerStyle: { backgroundColor: theme.colors.grey2 },
     },
   ];
 
@@ -88,7 +87,7 @@ function ExerciseSetCard({
           {exercise.name}
         </Text>
         {!isDisabled && (
-          <BottomSheetMenu options={exerciseBottomSheetOptions} theme={theme} />
+          <ThreeDotsModal options={exerciseBottomSheetOptions} theme={theme} />
         )}
       </View>
       <View>
@@ -127,7 +126,7 @@ function ExerciseSetCard({
             <Text style={[styles.baseText, { color: theme.colors.black }]}>
               {`Set ${setIndex + 1}`}
             </Text>
-            <View>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Input
                 disabled={isDisabled}
                 keyboardType="numeric"
@@ -146,7 +145,7 @@ function ExerciseSetCard({
                 value={set.reps.toString()}
               />
               {!exercise.cardio ? (
-                <View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Text style={{ color: theme.colors.black }}>x</Text>
                   <Input
                     disabled={isDisabled}
@@ -204,7 +203,7 @@ function ExerciseSetCard({
               )}
             </View>
             {!isDisabled && (
-              <BottomSheetMenu
+              <ThreeDotsModal
                 options={[
                   {
                     title: "Delete Set",
@@ -212,12 +211,11 @@ function ExerciseSetCard({
                       handleDeleteSet(dayIndex, exerciseIndex, setIndex);
                     },
                     containerStyle: { backgroundColor: theme.colors.error },
-                    titleStyle: { color: theme.colors.black },
                   },
                   {
                     title: "Cancel",
                     onPress: null,
-                    containerStyle: { backgroundColor: theme.colors.grey1 },
+                    containerStyle: { backgroundColor: theme.colors.grey2 },
                   },
                 ]}
                 theme={theme}

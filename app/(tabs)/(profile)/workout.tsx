@@ -5,9 +5,12 @@ import ViewWorkoutScreen from "../../../components/ViewWorkoutScreen";
 
 function WorkoutScreen() {
   const { theme } = useTheme();
-  const { workoutId } = useLocalSearchParams();
+  const { workoutId, userId } = useLocalSearchParams();
 
-  return <ViewWorkoutScreen theme={theme} workoutId={workoutId} />;
+  console.log("WorkoutScreen", workoutId);
+  return (
+    <ViewWorkoutScreen theme={theme} workoutId={workoutId} userId={userId} />
+  );
 }
 
 export default WorkoutScreen;

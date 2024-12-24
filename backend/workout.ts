@@ -10,13 +10,13 @@ import {
 import { Exercise, Workout } from "../components/types";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 
-export async function getWorkout(workoutId: string): Promise<Workout> {
+export async function getWorkout(
+  workoutId: string,
+  userId: string
+): Promise<Workout> {
   try {
     const workoutDoc = await getDoc(
-      doc(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${workoutId}`
-      )
+      doc(FIRESTORE_DB, `Users/${userId}/Workouts/${workoutId}`)
     );
 
     const exercisesCollection = collection(workoutDoc.ref, "Exercise");
