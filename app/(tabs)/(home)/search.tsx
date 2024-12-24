@@ -13,6 +13,7 @@ import { query, collection, where, limit, getDocs } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { router } from "expo-router";
 import BackButton from "../../../components/BackButton";
+import { isUserBlocked } from "../../../backend/user";
 
 function SearchScreen() {
   const [search, setSearch] = useState("");
@@ -35,7 +36,15 @@ function SearchScreen() {
       const querySnapshot = await getDocs(usersQuery);
 
       const users = querySnapshot.docs.map((doc) => doc.data());
-      setResults(users);
+
+      const filteredUsers = await Promise.all(
+        users.map(async (user) => {
+          const isBlocked = await isUserBlocked(user.id);
+          return isBlocked ? null : user;
+        })
+      );
+
+      setResults(filteredUsers.filter(Boolean));
     } catch (error) {
       console.error("Error searching users: ", error);
     }

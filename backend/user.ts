@@ -430,3 +430,57 @@ export async function updateTermsCondition(): Promise<void> {
     console.error("Error saving Terms and Condition:", error);
   }
 }
+
+export async function blockUser(userId: string) {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/BlockedUsers/${userId}`
+    );
+    await setDoc(userDocRef, {});
+
+    const followingDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Following/${userId}`
+    );
+    await deleteDoc(followingDocRef);
+    const followerDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${userId}/Followers/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    await deleteDoc(followerDocRef);
+  } catch (error) {
+    console.error("Error blocking user:", error);
+  }
+}
+
+export async function unblockUser(userId: string) {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/BlockedUsers/${userId}`
+    );
+    await deleteDoc(userDocRef);
+  } catch (error) {
+    console.error("Error unblocking user:", error);
+  }
+}
+
+export async function isUserBlocked(userId: string): Promise<boolean> {
+  try {
+    const userDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/BlockedUsers/${userId}`
+    );
+    const blockedUserDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${userId}/BlockedUsers/${FIREBASE_AUTH.currentUser.uid}`
+    );
+    const blockedUserDocSnapshot = await getDoc(blockedUserDocRef);
+    const userDocSnapshot = await getDoc(userDocRef);
+    console.log(userDocSnapshot.exists() || blockedUserDocSnapshot.exists());
+    return userDocSnapshot.exists() || blockedUserDocSnapshot.exists();
+  } catch (error) {
+    console.error("Error checking if user is blocked:", error);
+  }
+}

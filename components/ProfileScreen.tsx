@@ -7,6 +7,7 @@ import {
   Text,
   StyleSheet,
   Platform,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Button, Avatar } from "@rneui/themed";
@@ -14,6 +15,7 @@ import { ScreenWidth } from "@rneui/base";
 import { Post, User } from "./types";
 import { router, useLocalSearchParams } from "expo-router";
 import {
+  blockUser,
   getUser,
   getUserFollowing,
   removeFollowRequest,
@@ -27,6 +29,9 @@ import TruncatedText from "./TruncatedText";
 import StreakTooltip from "./StreakTooltip";
 import BackButton from "./BackButton";
 import FeedLoader from "./loader/FeedLoader";
+import ThreeDotsModal from "./modal/ThreeDotsModal";
+import BlockUserModal from "./modal/BlockUserModal";
+import { set } from "date-fns";
 
 function ViewProfileScreen({ theme, userId }) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -37,6 +42,7 @@ function ViewProfileScreen({ theme, userId }) {
   const [loading, setLoading] = useState(true);
   const [currentStreak, setCurrentStreak] = useState<number>();
   const [longestStreak, setLongestStreak] = useState<number>();
+  const [blockModalVisible, setBlockModalVisible] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -72,6 +78,13 @@ function ViewProfileScreen({ theme, userId }) {
       await removeFollowRequest(userId as string);
       setFollowing("notFollowing");
     }
+  };
+
+  const handleBlockUser = async () => {
+    await blockUser(userId as string);
+    setBlockModalVisible(false);
+    Alert.alert("User Blocked", "You have blocked this user.");
+    router.push({ pathname: "/(tabs)/(home)/feed" });
   };
 
   return (
@@ -111,13 +124,40 @@ function ViewProfileScreen({ theme, userId }) {
               />
             )}
           </View>
-
-          {user?.showStreak ? (
-            <StreakTooltip
-              currentStreak={currentStreak}
-              longestStreak={longestStreak}
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {user?.showStreak ? (
+              <StreakTooltip
+                currentStreak={currentStreak}
+                longestStreak={longestStreak}
+              />
+            ) : null}
+            <ThreeDotsModal
+              options={[
+                {
+                  title: "Block",
+                  onPress: () => {
+                    setBlockModalVisible(true);
+                  },
+                  containerStyle: { backgroundColor: theme.colors.error },
+                },
+                {
+                  title: "Cancel",
+                  onPress: () => {
+                    null;
+                  },
+                  containerStyle: { backgroundColor: theme.colors.grey2 },
+                },
+              ]}
+              theme={theme}
             />
-          ) : null}
+            <BlockUserModal
+              modalVisible={blockModalVisible}
+              onClose={() => setBlockModalVisible(false)}
+              onBlockUser={() => handleBlockUser()}
+              onCancel={() => setBlockModalVisible(false)}
+              theme={theme}
+            />
+          </View>
         </View>
         {user?.bio != "" ? (
           <TruncatedText theme={theme} children={user?.bio} />

@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { Post } from "../components/types";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../firebaseConfig";
-import { addNotification } from "./user";
+import { addNotification, isUserBlocked } from "./user";
 
 export async function toggleLike(post: Post): Promise<Post> {
   try {
