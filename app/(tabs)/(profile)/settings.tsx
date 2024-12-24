@@ -30,7 +30,7 @@ function SettingScreen() {
             title: "Display Settings",
             route: "/(tabs)/(profile)/displaySettings",
           },
-          { title: "App Settings", route: "/(tabs)/(profile)/notifications" },
+          //{ title: "App Settings", route: "/(tabs)/(profile)/notifications" },
         ].map((item, index) => (
           <Card
             key={index}
