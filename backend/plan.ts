@@ -144,9 +144,15 @@ export async function addDay(plan: Plan): Promise<Plan> {
       `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
     );
     const daysCollection = collection(planDoc, "Days");
+    const nextIndex =
+      plan?.days?.length > 0
+        ? Math.max(...plan.days.map((day) => day.index)) + 1
+        : 0;
+
     const daysDocRef = await addDoc(daysCollection, {
       name: "New Day",
       planId: plan.id,
+      index: nextIndex,
     });
     const dayDoc = doc(daysCollection, daysDocRef.id);
     await updateDoc(dayDoc, { id: daysDocRef.id });
@@ -159,7 +165,12 @@ export async function addDay(plan: Plan): Promise<Plan> {
   }
 }
 
-export async function addSet(plan: Plan, dayId, exerciseId, days) {
+export async function addSet(
+  plan: Plan,
+  dayId: string,
+  exerciseId: string,
+  days: Day[]
+) {
   const exerciseDoc = doc(
     FIRESTORE_DB,
     `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${dayId}/Exercise/${exerciseId}`
@@ -187,7 +198,7 @@ export async function addSet(plan: Plan, dayId, exerciseId, days) {
   }
 }
 
-export async function deleteDay(plan: Plan, dayId): Promise<Plan> {
+export async function deleteDay(plan: Plan, dayId: string): Promise<Plan> {
   try {
     const dayDocRef = doc(
       FIRESTORE_DB,
@@ -234,15 +245,15 @@ export async function deleteExercise(plan: Plan, dayId, exerciseId) {
   }
 }
 
-export function deleteSet(plan: Plan, dayIndex, exerciseIndex, setIndex): Plan {
+export function deleteSet(plan: Plan, dayId, exerciseId, setIndex): Plan {
   return {
     ...plan,
-    days: plan?.days.map((prevDay, dIndex) =>
-      dIndex === dayIndex
+    days: plan?.days.map((prevDay) =>
+      prevDay.id === dayId
         ? {
             ...prevDay,
-            exercises: prevDay.exercises.map((prevExercise, eIndex) =>
-              eIndex === exerciseIndex
+            exercises: prevDay.exercises.map((prevExercise) =>
+              prevExercise.id === exerciseId
                 ? {
                     ...prevExercise,
                     sets: prevExercise.sets.filter(
@@ -259,35 +270,20 @@ export function deleteSet(plan: Plan, dayIndex, exerciseIndex, setIndex): Plan {
 
 export function updateSet(
   plan: Plan,
-  dayIndex,
-  exerciseIndex,
+  dayId,
+  exerciseId,
   setIndex,
   property,
   value
 ) {
-  if (!plan.days[dayIndex]) {
-    console.error(`Invalid dayIndex: ${dayIndex}`);
-    return plan;
-  }
-
-  if (!plan.days[dayIndex].exercises[exerciseIndex]) {
-    console.error(`Invalid exerciseIndex: ${exerciseIndex}`);
-    return plan;
-  }
-
-  if (!plan.days[dayIndex].exercises[exerciseIndex].sets[setIndex]) {
-    console.error(`Invalid setIndex: ${setIndex}`);
-    return plan;
-  }
-
   const updatedPlan = {
     ...plan,
-    days: plan.days.map((prevDay, dIndex) =>
-      dIndex === dayIndex
+    days: plan.days.map((prevDay) =>
+      prevDay.id === dayId
         ? {
             ...prevDay,
-            exercises: prevDay.exercises.map((prevExercise, eIndex) =>
-              eIndex === exerciseIndex
+            exercises: prevDay.exercises.map((prevExercise) =>
+              prevExercise.id === exerciseId
                 ? {
                     ...prevExercise,
                     sets: prevExercise.sets.map((prevSet, sIndex) =>
@@ -305,11 +301,11 @@ export function updateSet(
   return updatedPlan;
 }
 
-export function updateDay(plan: Plan, dayIndex, newName) {
+export function updateDay(plan: Plan, dayId, newName) {
   return {
     ...plan,
-    days: plan?.days.map((day, index) =>
-      index === dayIndex ? { ...day, name: newName } : day
+    days: plan?.days.map((day) =>
+      day.id === dayId ? { ...day, name: newName } : day
     ),
   };
 }

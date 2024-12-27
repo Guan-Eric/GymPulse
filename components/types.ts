@@ -41,6 +41,7 @@ export interface Day {
   id: string;
   name: string;
   exercises: Exercise[];
+  index: number;
 }
 
 export interface Workout {
@@ -61,6 +62,7 @@ export interface Exercise {
   category: string;
   equipment: string;
   level: string;
+  index: number;
 }
 
 export interface Set {

@@ -4,7 +4,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
 import { FIREBASE_STR } from "../../../firebaseConfig";
-import { updateDoc, getDoc, doc, collection, addDoc } from "firebase/firestore";
+import {
+  updateDoc,
+  getDoc,
+  doc,
+  collection,
+  addDoc,
+  getDocs,
+} from "firebase/firestore";
 import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
 import ExerciseCard from "../../../components/ExerciseCard";
@@ -43,38 +50,64 @@ function AddExerciseScreen() {
   }, []);
 
   const handleAddExercise = async () => {
-    const dayDoc = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
-    );
-    const exerciseCollection = collection(dayDoc, "Exercise");
-    const exerciseDocRef = await addDoc(exerciseCollection, {
-      name: exercise.name,
-      dayId: dayId,
-      sets: [{ reps: 0, weight_duration: 0 }],
-      cardio: exercise.category === "cardio",
-    });
-    const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
-    await updateDoc(exerciseDoc, { id: exerciseDoc.id });
-    if (workoutTime != null) {
-      router.push({
-        pathname: "/(tabs)/(workout)/workout",
-        params: {
-          dayIndex: dayIndex,
-          planId: planId,
-          dayId: dayId,
-          workoutTime: workoutTime,
-        },
+    try {
+      const dayDoc = doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
+      );
+      const exerciseCollection = collection(dayDoc, "Exercise");
+
+      const exercisesSnapshot = await getDocs(exerciseCollection);
+      const exercises = exercisesSnapshot.docs.map(
+        (doc) => doc.data() as Exercise
+      );
+
+      const existingExercise = exercises.find(
+        (ex) => ex.name === exercise.name
+      );
+      if (existingExercise) {
+        console.log("Exercise already exists");
+        return;
+      }
+
+      const nextIndex =
+        exercises.length > 0
+          ? Math.max(...exercises.map((ex) => ex.index)) + 1
+          : 0;
+
+      const exerciseDocRef = await addDoc(exerciseCollection, {
+        name: exercise.name,
+        dayId: dayId,
+        sets: [{ reps: 0, weight_duration: 0 }],
+        cardio: exercise.category === "cardio",
+        index: nextIndex,
       });
-    } else {
-      router.push({
-        pathname: "/(tabs)/(workout)/plan",
-        params: {
-          planId: planId,
-        },
-      });
+      const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
+      await updateDoc(exerciseDoc, { id: exerciseDoc.id });
+
+      if (workoutTime != null) {
+        router.push({
+          pathname: "/(tabs)/(workout)/workout",
+          params: {
+            dayIndex: dayIndex,
+            planId: planId,
+            dayId: dayId,
+            workoutTime: workoutTime,
+          },
+        });
+      } else {
+        router.push({
+          pathname: "/(tabs)/(workout)/plan",
+          params: {
+            planId: planId,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error adding new exercise:", error);
     }
   };
+
   return (
     <View
       style={{

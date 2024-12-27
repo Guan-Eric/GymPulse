@@ -134,9 +134,9 @@ function PlanScreen() {
             ) : (
               <ScrollView>
                 <View style={styles.planContainer}>
-                  {plans.length == 0
+                  {plans?.length == 0
                     ? null
-                    : plans.map((item) => (
+                    : plans?.map((item) => (
                         <View key={item.id} style={styles.cardWrapper}>
                           <PlanCard plan={item} theme={theme} />
                         </View>

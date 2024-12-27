@@ -30,14 +30,17 @@ function PlanCard({ plan, theme }) {
         </Card.Title>
 
         <View style={styles.daysContainer}>
-          {plan?.days?.map((item) => (
-            <Text
-              key={item.name}
-              style={[styles.dayText, { color: theme.colors.black }]}
-            >
-              {item.name}
-            </Text>
-          ))}
+          {plan?.days
+            ?.slice()
+            .sort((a, b) => a.index - b.index)
+            .map((item) => (
+              <Text
+                key={item.id}
+                style={[styles.dayText, { color: theme.colors.black }]}
+              >
+                {item.name}
+              </Text>
+            ))}
         </View>
       </Card>
     </Pressable>

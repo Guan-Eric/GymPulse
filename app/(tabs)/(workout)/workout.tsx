@@ -19,7 +19,7 @@ function WorkoutScreen() {
   const [time, setTime] = useState(0);
   const intervalRef = useRef(null);
   const startTimeRef = useRef(0);
-  const { dayIndex, planId, dayId, workoutTime } = useLocalSearchParams();
+  const { planId, dayId, workoutTime } = useLocalSearchParams();
   const [isModal, setIsModal] = useState<boolean>(false);
   const { theme } = useTheme();
 
@@ -106,7 +106,6 @@ function WorkoutScreen() {
           workoutId: docRef.id,
           planName: plan.name,
           dayName: plan.days[dayIndex as string].name,
-          dayIndex: dayIndex,
           planId: planId,
           dayId: dayId,
         },
@@ -144,18 +143,22 @@ function WorkoutScreen() {
           />
         </View>
         <ScrollView>
-          <DayCard
-            key={dayId as string}
-            plan={plan}
-            day={plan?.days[dayIndex as string]}
-            dayIndex={Number(dayIndex)}
-            theme={theme}
-            isWeightMetric={isWeightMetric}
-            setPlan={setPlan}
-            isWorkout={true}
-            isDisabled={false}
-            workoutTime={null}
-          />
+          {plan?.days
+            ?.slice()
+            .sort((a, b) => a.index - b.index)
+            .map((day) => (
+              <DayCard
+                key={dayId as string}
+                plan={plan}
+                day={plan?.days[dayIndex as string]}
+                theme={theme}
+                isWeightMetric={isWeightMetric}
+                setPlan={setPlan}
+                isWorkout={true}
+                isDisabled={false}
+                workoutTime={null}
+              />
+            ))}
         </ScrollView>
         <FinishWorkoutModal
           modalVisible={isModal}

@@ -7,9 +7,7 @@ import ThreeDotsModal from "./modal/ThreeDotsModal";
 function ExerciseSetCard({
   plan,
   sets,
-  exerciseIndex,
   day,
-  dayIndex,
   exercise,
   theme,
   isWeightMetric,
@@ -17,15 +15,11 @@ function ExerciseSetCard({
   isDisabled,
 }) {
   const updateSets = (
-    dayIndex: number,
-    exerciseIndex: number,
     setIndex: number,
     property: string,
     value: string | number
   ) => {
-    setPlan(
-      updateSet(plan, dayIndex, exerciseIndex, setIndex, property, value)
-    );
+    setPlan(updateSet(plan, day.id, exercise.id, setIndex, property, value));
   };
 
   const handleAddSet = async (
@@ -40,12 +34,8 @@ function ExerciseSetCard({
     setPlan(await deleteExercise(plan, dayId, exerciseId));
   };
 
-  const handleDeleteSet = (
-    dayIndex: number,
-    exerciseIndex: number,
-    setIndex: number
-  ) => {
-    setPlan(deleteSet(plan, dayIndex, exerciseIndex, setIndex));
+  const handleDeleteSet = (setIndex: number) => {
+    setPlan(deleteSet(plan, day.id, exercise.id, setIndex));
   };
 
   const exerciseBottomSheetOptions = [
@@ -135,8 +125,6 @@ function ExerciseSetCard({
                 inputStyle={styles.input}
                 onChangeText={(value) =>
                   updateSets(
-                    dayIndex,
-                    exerciseIndex,
                     setIndex,
                     "reps",
                     parseInt(value) ? parseInt(value) : 0
@@ -155,8 +143,6 @@ function ExerciseSetCard({
                     inputStyle={styles.input}
                     onChangeText={(value) =>
                       updateSets(
-                        dayIndex,
-                        exerciseIndex,
                         setIndex,
                         "weight_duration",
                         isWeightMetric
@@ -189,8 +175,6 @@ function ExerciseSetCard({
                     inputStyle={styles.input}
                     onChangeText={(value) =>
                       updateSets(
-                        dayIndex,
-                        exerciseIndex,
                         setIndex,
                         "weight_duration",
                         parseFloat(value) ? parseFloat(value) : 0
@@ -208,7 +192,7 @@ function ExerciseSetCard({
                   {
                     title: "Delete Set",
                     onPress: () => {
-                      handleDeleteSet(dayIndex, exerciseIndex, setIndex);
+                      handleDeleteSet(setIndex);
                     },
                     containerStyle: { backgroundColor: theme.colors.error },
                   },

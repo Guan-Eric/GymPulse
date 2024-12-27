@@ -16,7 +16,6 @@ import ThreeDotsModal from "./modal/ThreeDotsModal";
 function DayCard({
   plan,
   day,
-  dayIndex,
   theme,
   isWeightMetric,
   setPlan,
@@ -28,8 +27,8 @@ function DayCard({
     setPlan(await deleteDay(plan, dayId));
   };
 
-  const updateDayName = (dayIndex: number, newName: string) => {
-    setPlan(updateDay(plan, dayIndex, newName));
+  const updateDayName = (newName: string) => {
+    setPlan(updateDay(plan, day.id, newName));
   };
 
   const bottomSheetOptions = [
@@ -41,7 +40,6 @@ function DayCard({
           params: {
             planId: plan.id,
             dayId: day.id,
-            dayIndex: dayIndex,
             workoutTime: 0,
           },
         });
@@ -57,7 +55,6 @@ function DayCard({
             planId: plan.id,
             dayId: day.id,
             route: "add",
-            dayIndex: dayIndex,
             workoutTime: workoutTime,
           },
         });
@@ -122,7 +119,7 @@ function DayCard({
             styles.inputRoundedContainer,
             { borderColor: theme.colors.greyOutline },
           ]}
-          onChangeText={(newDayName) => updateDayName(dayIndex, newDayName)}
+          onChangeText={(newDayName) => updateDayName(newDayName)}
           value={day?.name}
         />
         {!isWorkout && !isDisabled ? (
@@ -133,14 +130,12 @@ function DayCard({
         ) : null}
       </View>
       {day?.exercises &&
-        day?.exercises?.map((exercise, exerciseIndex) => (
+        day?.exercises?.map((exercise) => (
           <ExerciseSetCard
             key={exercise.id}
             plan={plan}
             sets={exercise.sets}
-            exerciseIndex={exerciseIndex}
             day={day}
-            dayIndex={dayIndex}
             exercise={exercise}
             theme={theme}
             isWeightMetric={isWeightMetric}

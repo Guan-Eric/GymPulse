@@ -125,21 +125,24 @@ function ViewPlanScreen() {
               />
               <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
             </View>
-            {plan?.days.length > 0
-              ? plan?.days?.map((day, dayIndex) => (
-                  <DayCard
-                    key={day.id}
-                    plan={plan}
-                    day={day}
-                    dayIndex={dayIndex}
-                    theme={theme}
-                    isWeightMetric={isWeightMetric}
-                    setPlan={setPlan}
-                    isWorkout={false}
-                    isDisabled={false}
-                    workoutTime={null}
-                  />
-                ))
+
+            {plan?.days?.length > 0
+              ? plan?.days
+                  ?.slice()
+                  .sort((a, b) => a.index - b.index)
+                  .map((day) => (
+                    <DayCard
+                      key={day.id}
+                      plan={plan}
+                      day={day}
+                      theme={theme}
+                      isWeightMetric={isWeightMetric}
+                      setPlan={setPlan}
+                      isWorkout={false}
+                      isDisabled={false}
+                      workoutTime={null}
+                    />
+                  ))
               : null}
           </ScrollView>
         </SafeAreaView>
