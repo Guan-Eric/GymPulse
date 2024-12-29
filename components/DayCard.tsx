@@ -55,7 +55,6 @@ function DayCard({
             planId: plan.id,
             dayId: day.id,
             route: "add",
-            workoutTime: workoutTime,
           },
         });
       },
@@ -86,6 +85,7 @@ function DayCard({
             planId: plan.id,
             dayId: day.id,
             route: "add",
+            workoutTime: workoutTime,
           },
         });
       },
@@ -122,7 +122,7 @@ function DayCard({
           onChangeText={(newDayName) => updateDayName(newDayName)}
           value={day?.name}
         />
-        {!isWorkout && !isDisabled ? (
+        {!isDisabled ? (
           <ThreeDotsModal
             options={isWorkout ? workoutBottomSheetOptions : bottomSheetOptions}
             theme={theme}
@@ -130,19 +130,21 @@ function DayCard({
         ) : null}
       </View>
       {day?.exercises &&
-        day?.exercises?.map((exercise) => (
-          <ExerciseSetCard
-            key={exercise.id}
-            plan={plan}
-            sets={exercise.sets}
-            day={day}
-            exercise={exercise}
-            theme={theme}
-            isWeightMetric={isWeightMetric}
-            setPlan={setPlan}
-            isDisabled={isDisabled}
-          />
-        ))}
+        day?.exercises
+          .sort((a, b) => a.index - b.index)
+          .map((exercise) => (
+            <ExerciseSetCard
+              key={exercise.id}
+              plan={plan}
+              sets={exercise.sets}
+              day={day}
+              exercise={exercise}
+              theme={theme}
+              isWeightMetric={isWeightMetric}
+              setPlan={setPlan}
+              isDisabled={isDisabled}
+            />
+          ))}
     </Card>
   );
 }

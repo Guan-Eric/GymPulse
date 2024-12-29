@@ -37,7 +37,7 @@ function CreatePostScreen() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [workoutTime, setWorkoutTime] = useState(0);
-  const { workoutId, planName, dayName, dayIndex, planId, dayId } =
+  const { workoutId, planName, dayName, planId, dayId } =
     useLocalSearchParams();
   const [title, setTitle] = useState(planName + " - " + dayName);
 
@@ -176,7 +176,6 @@ function CreatePostScreen() {
                     router.push({
                       pathname: "/(tabs)/(workout)/workout",
                       params: {
-                        dayIndex: dayIndex,
                         planId: planId,
                         dayId: dayId,
                         workoutTime: workoutTime,

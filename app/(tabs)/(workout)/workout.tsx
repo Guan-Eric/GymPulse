@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { updateDoc, doc, collection, addDoc } from "firebase/firestore";
-import { Plan } from "../../../components/types";
+import { Day, Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import DayCard from "../../../components/DayCard";
 import { Button, useTheme } from "@rneui/themed";
@@ -22,6 +22,7 @@ function WorkoutScreen() {
   const { planId, dayId, workoutTime } = useLocalSearchParams();
   const [isModal, setIsModal] = useState<boolean>(false);
   const { theme } = useTheme();
+  const day = plan?.days.find((day) => day.id === dayId) as Day;
 
   const startStopwatch = () => {
     startTimeRef.current = Date.now() - Number(workoutTime as string) * 1000;
@@ -69,7 +70,7 @@ function WorkoutScreen() {
           `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts`
         ),
         {
-          name: plan?.days[dayIndex as string].name,
+          name: day.name,
           date: currentDate,
           duration: time,
           userId: FIREBASE_AUTH.currentUser.uid,
@@ -82,7 +83,7 @@ function WorkoutScreen() {
       );
       await updateDoc(workoutDoc, { id: docRef.id });
 
-      for (const exercise of plan?.days[dayIndex as string].exercises) {
+      for (const exercise of day.exercises) {
         const exerciseDocRef = await addDoc(
           collection(
             FIRESTORE_DB,
@@ -105,7 +106,7 @@ function WorkoutScreen() {
         params: {
           workoutId: docRef.id,
           planName: plan.name,
-          dayName: plan.days[dayIndex as string].name,
+          dayName: day.name,
           planId: planId,
           dayId: dayId,
         },
@@ -143,22 +144,17 @@ function WorkoutScreen() {
           />
         </View>
         <ScrollView>
-          {plan?.days
-            ?.slice()
-            .sort((a, b) => a.index - b.index)
-            .map((day) => (
-              <DayCard
-                key={dayId as string}
-                plan={plan}
-                day={plan?.days[dayIndex as string]}
-                theme={theme}
-                isWeightMetric={isWeightMetric}
-                setPlan={setPlan}
-                isWorkout={true}
-                isDisabled={false}
-                workoutTime={null}
-              />
-            ))}
+          <DayCard
+            key={dayId as string}
+            plan={plan}
+            day={day}
+            theme={theme}
+            isWeightMetric={isWeightMetric}
+            setPlan={setPlan}
+            isWorkout={true}
+            isDisabled={false}
+            workoutTime={time}
+          />
         </ScrollView>
         <FinishWorkoutModal
           modalVisible={isModal}

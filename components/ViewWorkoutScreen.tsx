@@ -43,7 +43,6 @@ function ViewWorkoutScreen({ theme, workoutId, userId }) {
           <DayCard
             plan={null}
             day={workout}
-            dayIndex={null}
             theme={theme}
             isWeightMetric={isWeightMetric}
             setPlan={null}

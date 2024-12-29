@@ -19,7 +19,7 @@ import { useTheme } from "@rneui/themed";
 
 function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
-  const { exerciseId, planId, dayId, route, workoutTime, dayIndex } =
+  const { exerciseId, planId, dayId, route, workoutTime } =
     useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
 
@@ -84,12 +84,11 @@ function AddExerciseScreen() {
       });
       const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
       await updateDoc(exerciseDoc, { id: exerciseDoc.id });
-
+      console.log(workoutTime);
       if (workoutTime != null) {
         router.push({
           pathname: "/(tabs)/(workout)/workout",
           params: {
-            dayIndex: dayIndex,
             planId: planId,
             dayId: dayId,
             workoutTime: workoutTime,
