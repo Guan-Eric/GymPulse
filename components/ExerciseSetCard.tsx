@@ -4,7 +4,18 @@ import { Day, Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
 
-function ExerciseSetCard({
+interface ExerciseSetCardProps {
+  plan: Plan;
+  sets: any[];
+  day: Day;
+  exercise: Exercise;
+  theme: any;
+  isWeightMetric: boolean;
+  setPlan: (plan: Plan) => void;
+  isDisabled: boolean;
+  onLongPress: () => void;
+}
+const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
   plan,
   sets,
   day,
@@ -13,7 +24,7 @@ function ExerciseSetCard({
   isWeightMetric,
   setPlan,
   isDisabled,
-}) {
+}) => {
   const updateSets = (
     setIndex: number,
     property: string,
@@ -210,7 +221,7 @@ function ExerciseSetCard({
       </View>
     </Card>
   );
-}
+};
 
 const styles = StyleSheet.create({
   card: {

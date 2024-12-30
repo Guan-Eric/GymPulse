@@ -7,12 +7,14 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
 import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import DayCard from "../../../components/DayCard";
-import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
 import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
+import DraggableFlatList from "react-native-draggable-flatlist";
 import PlanLoader from "../../../components/loader/PlanLoader";
+import { collection, doc, updateDoc } from "firebase/firestore";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -63,6 +65,23 @@ function ViewPlanScreen() {
     router.back();
   };
 
+  const handleDragEnd = ({ data }) => {
+    const updatedDays = data.map((day, index) => ({ ...day, index }));
+    setPlan({ ...plan, days: updatedDays });
+
+    // Update Firestore with new indexes
+    const planDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
+    );
+    const daysCollectionRef = collection(planDocRef, "Days");
+
+    updatedDays.forEach(async (day) => {
+      const dayDocRef = doc(daysCollectionRef, day.id);
+      await updateDoc(dayDocRef, { index: day.index });
+    });
+  };
+
   const bottomSheetOptions = [
     {
       title: "Add Day",
@@ -102,49 +121,50 @@ function ViewPlanScreen() {
         </SafeAreaView>
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
-          <ScrollView>
-            <BackButton />
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: -20,
-                justifyContent: "space-between",
-                paddingRight: 20,
-              }}
-            >
-              <Input
-                label={"Plan Name"}
-                containerStyle={styles.nameInput}
-                inputContainerStyle={[
-                  styles.inputRoundedContainer,
-                  { borderColor: theme.colors.greyOutline },
-                ]}
-                onChangeText={handleSaveName}
-                value={plan?.name}
-              />
-              <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
-            </View>
+          <BackButton />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: -20,
+              justifyContent: "space-between",
+              paddingRight: 20,
+            }}
+          >
+            <Input
+              label={"Plan Name"}
+              containerStyle={styles.nameInput}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { borderColor: theme.colors.greyOutline },
+              ]}
+              onChangeText={handleSaveName}
+              value={plan?.name}
+            />
+            <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
+          </View>
 
-            {plan?.days?.length > 0
-              ? plan?.days
-                  ?.slice()
-                  .sort((a, b) => a.index - b.index)
-                  .map((day) => (
-                    <DayCard
-                      key={day.id}
-                      plan={plan}
-                      day={day}
-                      theme={theme}
-                      isWeightMetric={isWeightMetric}
-                      setPlan={setPlan}
-                      isWorkout={false}
-                      isDisabled={false}
-                      workoutTime={null}
-                    />
-                  ))
-              : null}
-          </ScrollView>
+          {plan?.days?.length > 0 ? (
+            <DraggableFlatList
+              data={plan.days.sort((a, b) => a.index - b.index)}
+              renderItem={({ item, drag }) => (
+                <DayCard
+                  key={item.id}
+                  plan={plan}
+                  day={item}
+                  theme={theme}
+                  isWeightMetric={isWeightMetric}
+                  setPlan={setPlan}
+                  isWorkout={false}
+                  isDisabled={false}
+                  workoutTime={null}
+                  onLongPress={drag}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              onDragEnd={handleDragEnd}
+            />
+          ) : null}
         </SafeAreaView>
       )}
     </KeyboardAvoidingView>

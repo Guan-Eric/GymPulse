@@ -12,8 +12,23 @@ import { router } from "expo-router";
 import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
+import { doc, collection, updateDoc } from "firebase/firestore";
+import DraggableFlatList from "react-native-draggable-flatlist";
+import { FIRESTORE_DB, FIREBASE_AUTH } from "../firebaseConfig";
+import { Day, Exercise, Plan } from "./types";
 
-function DayCard({
+interface DayCardProps {
+  plan: Plan;
+  day: Day;
+  theme: any;
+  isWeightMetric: boolean;
+  setPlan: (plan: Plan) => void;
+  isWorkout: boolean;
+  isDisabled: boolean;
+  workoutTime: number;
+  onLongPress: () => void;
+}
+const DayCard: React.FC<DayCardProps> = ({
   plan,
   day,
   theme,
@@ -22,13 +37,37 @@ function DayCard({
   isWorkout,
   isDisabled,
   workoutTime,
-}) {
+}) => {
   const handleDeleteDay = async (dayId: string) => {
     setPlan(await deleteDay(plan, dayId));
   };
 
   const updateDayName = (newName: string) => {
     setPlan(updateDay(plan, day.id, newName));
+  };
+
+  const handleDragEnd = ({ data }) => {
+    const updatedExercises = data.map((exercise, index) => ({
+      ...exercise,
+      index,
+    }));
+    const updatedDay = { ...day, exercises: updatedExercises };
+    setPlan({
+      ...plan,
+      days: plan.days.map((d) => (d.id === day.id ? updatedDay : d)),
+    });
+
+    // Update Firestore with new indexes
+    const dayDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${day.id}`
+    );
+    const exercisesCollectionRef = collection(dayDocRef, "Exercise");
+
+    updatedExercises.forEach(async (exercise) => {
+      const exerciseDocRef = doc(exercisesCollectionRef, exercise.id);
+      await updateDoc(exerciseDocRef, { index: exercise.index });
+    });
   };
 
   const bottomSheetOptions = [
@@ -129,25 +168,30 @@ function DayCard({
           />
         ) : null}
       </View>
-      {day?.exercises &&
-        day?.exercises
-          .sort((a, b) => a.index - b.index)
-          .map((exercise) => (
+      {day?.exercises && (
+        <DraggableFlatList
+          data={day.exercises.sort((a, b) => a.index - b.index)}
+          renderItem={({ item, drag }: { item: Exercise; drag }) => (
             <ExerciseSetCard
-              key={exercise.id}
+              key={item.id}
               plan={plan}
-              sets={exercise.sets}
+              sets={item.sets}
               day={day}
-              exercise={exercise}
+              exercise={item}
               theme={theme}
               isWeightMetric={isWeightMetric}
               setPlan={setPlan}
               isDisabled={isDisabled}
+              onLongPress={!isDisabled ? drag : null}
             />
-          ))}
+          )}
+          keyExtractor={(item) => item.id}
+          onDragEnd={handleDragEnd}
+        />
+      )}
     </Card>
   );
-}
+};
 
 const styles = StyleSheet.create({
   dayHeader: {

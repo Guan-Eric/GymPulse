@@ -154,6 +154,7 @@ function WorkoutScreen() {
             isWorkout={true}
             isDisabled={false}
             workoutTime={time}
+            onLongPress={null}
           />
         </ScrollView>
         <FinishWorkoutModal

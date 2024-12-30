@@ -211,34 +211,78 @@ export async function deleteDay(plan: Plan, dayId: string): Promise<Plan> {
       await deleteDoc(exerciseDoc.ref);
     });
     await deleteDoc(dayDocRef);
+
+    const updatedDays = plan.days.filter((day) => day.id !== dayId);
+
+    updatedDays.sort((a, b) => a.index - b.index);
+
+    updatedDays.forEach((day, index) => {
+      day.index = index;
+    });
+
+    const planDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
+    );
+    const daysCollectionRef = collection(planDocRef, "Days");
+
+    for (const day of updatedDays) {
+      const dayDocRef = doc(daysCollectionRef, day.id);
+      await updateDoc(dayDocRef, { index: day.index });
+    }
+
     return {
       ...plan,
-      days: plan.days.filter((day) => day.id !== dayId),
+      days: updatedDays,
     };
   } catch (error) {
     console.error("Error deleting day:", error);
   }
 }
 
-export async function deleteExercise(plan: Plan, dayId, exerciseId) {
+export async function deleteExercise(
+  plan: Plan,
+  dayId: string,
+  exerciseId: string
+): Promise<Plan> {
   try {
     const exerciseDocRef = doc(
       FIRESTORE_DB,
       `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${dayId}/Exercise/${exerciseId}`
     );
     await deleteDoc(exerciseDocRef);
+
+    const updatedDays = plan.days.map((prevDay) => {
+      if (prevDay.id === dayId) {
+        const updatedExercises = prevDay.exercises.filter(
+          (exercise) => exercise.id !== exerciseId
+        );
+
+        updatedExercises.sort((a, b) => a.index - b.index);
+
+        updatedExercises.forEach((exercise, index) => {
+          exercise.index = index;
+        });
+
+        const dayDocRef = doc(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${dayId}`
+        );
+        const exercisesCollectionRef = collection(dayDocRef, "Exercise");
+
+        updatedExercises.forEach(async (exercise) => {
+          const exerciseDocRef = doc(exercisesCollectionRef, exercise.id);
+          await updateDoc(exerciseDocRef, { index: exercise.index });
+        });
+
+        return { ...prevDay, exercises: updatedExercises };
+      }
+      return prevDay;
+    });
+
     return {
       ...plan,
-      days: plan?.days.map((prevDay) =>
-        prevDay.id === dayId
-          ? {
-              ...prevDay,
-              exercises: prevDay.exercises.filter(
-                (exercise) => exercise.id !== exerciseId
-              ),
-            }
-          : prevDay
-      ),
+      days: updatedDays,
     };
   } catch (error) {
     console.error("Error deleting exercise:", error);
