@@ -13,7 +13,6 @@ import ExerciseSetCard from "./ExerciseSetCard";
 import { deleteDay, updateDay } from "../backend/plan";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
 import { doc, collection, updateDoc } from "firebase/firestore";
-import DraggableFlatList from "react-native-draggable-flatlist";
 import { FIRESTORE_DB, FIREBASE_AUTH } from "../firebaseConfig";
 import { Day, Exercise, Plan } from "./types";
 
@@ -26,7 +25,6 @@ interface DayCardProps {
   isWorkout: boolean;
   isDisabled: boolean;
   workoutTime: number;
-  onLongPress: () => void;
 }
 const DayCard: React.FC<DayCardProps> = ({
   plan,
@@ -44,30 +42,6 @@ const DayCard: React.FC<DayCardProps> = ({
 
   const updateDayName = (newName: string) => {
     setPlan(updateDay(plan, day.id, newName));
-  };
-
-  const handleDragEnd = ({ data }) => {
-    const updatedExercises = data.map((exercise, index) => ({
-      ...exercise,
-      index,
-    }));
-    const updatedDay = { ...day, exercises: updatedExercises };
-    setPlan({
-      ...plan,
-      days: plan.days.map((d) => (d.id === day.id ? updatedDay : d)),
-    });
-
-    // Update Firestore with new indexes
-    const dayDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Days/${day.id}`
-    );
-    const exercisesCollectionRef = collection(dayDocRef, "Exercise");
-
-    updatedExercises.forEach(async (exercise) => {
-      const exerciseDocRef = doc(exercisesCollectionRef, exercise.id);
-      await updateDoc(exerciseDocRef, { index: exercise.index });
-    });
   };
 
   const bottomSheetOptions = [
@@ -168,27 +142,22 @@ const DayCard: React.FC<DayCardProps> = ({
           />
         ) : null}
       </View>
-      {day?.exercises && (
-        <DraggableFlatList
-          data={day.exercises.sort((a, b) => a.index - b.index)}
-          renderItem={({ item, drag }: { item: Exercise; drag }) => (
+      {day?.exercises &&
+        day?.exercises
+          .sort((a, b) => a.index - b.index)
+          .map((exercise) => (
             <ExerciseSetCard
-              key={item.id}
+              key={exercise.id}
               plan={plan}
-              sets={item.sets}
+              sets={exercise.sets}
               day={day}
-              exercise={item}
+              exercise={exercise}
               theme={theme}
               isWeightMetric={isWeightMetric}
               setPlan={setPlan}
               isDisabled={isDisabled}
-              onLongPress={!isDisabled ? drag : null}
             />
-          )}
-          keyExtractor={(item) => item.id}
-          onDragEnd={handleDragEnd}
-        />
-      )}
+          ))}
     </Card>
   );
 };

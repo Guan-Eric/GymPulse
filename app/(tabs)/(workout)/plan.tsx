@@ -12,7 +12,6 @@ import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
 import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
-import DraggableFlatList from "react-native-draggable-flatlist";
 import PlanLoader from "../../../components/loader/PlanLoader";
 import { collection, doc, updateDoc } from "firebase/firestore";
 
@@ -65,23 +64,6 @@ function ViewPlanScreen() {
     router.back();
   };
 
-  const handleDragEnd = ({ data }) => {
-    const updatedDays = data.map((day, index) => ({ ...day, index }));
-    setPlan({ ...plan, days: updatedDays });
-
-    // Update Firestore with new indexes
-    const planDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}`
-    );
-    const daysCollectionRef = collection(planDocRef, "Days");
-
-    updatedDays.forEach(async (day) => {
-      const dayDocRef = doc(daysCollectionRef, day.id);
-      await updateDoc(dayDocRef, { index: day.index });
-    });
-  };
-
   const bottomSheetOptions = [
     {
       title: "Add Day",
@@ -121,16 +103,15 @@ function ViewPlanScreen() {
         </SafeAreaView>
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
-          <BackButton />
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               marginBottom: -20,
               justifyContent: "space-between",
-              paddingRight: 20,
             }}
           >
+            <BackButton />
             <Input
               label={"Plan Name"}
               containerStyle={styles.nameInput}
@@ -144,27 +125,24 @@ function ViewPlanScreen() {
             <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
           </View>
 
-          {plan?.days?.length > 0 ? (
-            <DraggableFlatList
-              data={plan.days.sort((a, b) => a.index - b.index)}
-              renderItem={({ item, drag }) => (
-                <DayCard
-                  key={item.id}
-                  plan={plan}
-                  day={item}
-                  theme={theme}
-                  isWeightMetric={isWeightMetric}
-                  setPlan={setPlan}
-                  isWorkout={false}
-                  isDisabled={false}
-                  workoutTime={null}
-                  onLongPress={drag}
-                />
-              )}
-              keyExtractor={(item) => item.id}
-              onDragEnd={handleDragEnd}
-            />
-          ) : null}
+          {plan?.days?.length > 0
+            ? plan?.days
+                ?.slice()
+                .sort((a, b) => a.index - b.index)
+                .map((day) => (
+                  <DayCard
+                    key={day.id}
+                    plan={plan}
+                    day={day}
+                    theme={theme}
+                    isWeightMetric={isWeightMetric}
+                    setPlan={setPlan}
+                    isWorkout={false}
+                    isDisabled={false}
+                    workoutTime={null}
+                  />
+                ))
+            : null}
         </SafeAreaView>
       )}
     </KeyboardAvoidingView>
@@ -179,7 +157,7 @@ const styles = StyleSheet.create({
   },
   nameInput: {
     width: "85%",
-    paddingLeft: 15,
+    marginHorizontal: -15,
   },
   inputContainer: {
     width: 70,

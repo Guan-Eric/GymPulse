@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Platform, View } from "react-native";
+import { Alert, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { ref, getDownloadURL } from "firebase/storage";
@@ -66,7 +66,7 @@ function AddExerciseScreen() {
         (ex) => ex.name === exercise.name
       );
       if (existingExercise) {
-        console.log("Exercise already exists");
+        Alert.alert("Cannot Add", "Exercise already exists");
         return;
       }
 

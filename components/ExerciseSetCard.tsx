@@ -13,7 +13,6 @@ interface ExerciseSetCardProps {
   isWeightMetric: boolean;
   setPlan: (plan: Plan) => void;
   isDisabled: boolean;
-  onLongPress: () => void;
 }
 const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
   plan,
