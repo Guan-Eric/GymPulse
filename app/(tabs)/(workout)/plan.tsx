@@ -103,46 +103,48 @@ function ViewPlanScreen() {
         </SafeAreaView>
       ) : (
         <SafeAreaView style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginBottom: -20,
-              justifyContent: "space-between",
-            }}
-          >
-            <BackButton />
-            <Input
-              label={"Plan Name"}
-              containerStyle={styles.nameInput}
-              inputContainerStyle={[
-                styles.inputRoundedContainer,
-                { borderColor: theme.colors.greyOutline },
-              ]}
-              onChangeText={handleSaveName}
-              value={plan?.name}
-            />
-            <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
-          </View>
+          <ScrollView>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: -20,
+                justifyContent: "space-between",
+              }}
+            >
+              <BackButton />
+              <Input
+                label={"Plan Name"}
+                containerStyle={styles.nameInput}
+                inputContainerStyle={[
+                  styles.inputRoundedContainer,
+                  { borderColor: theme.colors.greyOutline },
+                ]}
+                onChangeText={handleSaveName}
+                value={plan?.name}
+              />
+              <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
+            </View>
 
-          {plan?.days?.length > 0
-            ? plan?.days
-                ?.slice()
-                .sort((a, b) => a.index - b.index)
-                .map((day) => (
-                  <DayCard
-                    key={day.id}
-                    plan={plan}
-                    day={day}
-                    theme={theme}
-                    isWeightMetric={isWeightMetric}
-                    setPlan={setPlan}
-                    isWorkout={false}
-                    isDisabled={false}
-                    workoutTime={null}
-                  />
-                ))
-            : null}
+            {plan?.days?.length > 0
+              ? plan?.days
+                  ?.slice()
+                  .sort((a, b) => a.index - b.index)
+                  .map((day) => (
+                    <DayCard
+                      key={day.id}
+                      plan={plan}
+                      day={day}
+                      theme={theme}
+                      isWeightMetric={isWeightMetric}
+                      setPlan={setPlan}
+                      isWorkout={false}
+                      isDisabled={false}
+                      workoutTime={null}
+                    />
+                  ))
+              : null}
+          </ScrollView>
         </SafeAreaView>
       )}
     </KeyboardAvoidingView>

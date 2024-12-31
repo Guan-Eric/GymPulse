@@ -84,6 +84,7 @@ export async function getUserPost(
       numComments: numCommentsSnapshot.data().count,
       workoutId: userPostSnapshot.data().workoutId,
       date: userPostSnapshot.data().date,
+      title: userPostSnapshot.data().title,
     };
     return userPost;
   } catch (error) {
@@ -192,6 +193,7 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
             caption: postData.caption,
             workoutId: postData.workoutId,
             date: postData.date,
+            title: postData.title,
           };
         }
         return postData;
@@ -286,6 +288,7 @@ async function getFollowingUserPosts(userId: string): Promise<Post[]> {
           caption: postData.caption,
           workoutId: postData.workoutId,
           date: postData.date,
+          title: postData.title,
         };
       }
       return postData;

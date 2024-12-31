@@ -26,9 +26,9 @@ const PostItem = ({
     "MMMM do, yyyy 'at' h:mm a"
   );
   const [user, setUser] = useState<User>();
-  const [activeIndex, setActiveIndex] = useState(0);
 
-  async function fetchUser(userId: string) {
+  console.log(post);
+  async function fetchUser() {
     const fetchedUser = await getUser(post.userId);
     setUser(fetchedUser);
   }
@@ -39,7 +39,7 @@ const PostItem = ({
   }
 
   useEffect(() => {
-    fetchUser(post.userId);
+    fetchUser();
   }, []);
 
   const postOptions = [
@@ -163,15 +163,15 @@ const PostItem = ({
             : null
         }
       >
-        {post.title ? (
+        {post?.title?.length > 0 ? (
           <Text style={[styles.title, { color: theme.colors.black }]}>
             {post.title}
           </Text>
         ) : null}
-        {post.caption ? (
+        {post?.caption?.length > 0 ? (
           <TruncatedText theme={theme}>{post.caption}</TruncatedText>
         ) : null}
-        {post?.urls.length > 0 ? (
+        {post?.urls?.length > 0 ? (
           <ImageCarousel data={post.urls} theme={theme} />
         ) : null}
       </Pressable>

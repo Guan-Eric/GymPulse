@@ -29,6 +29,7 @@ export interface Post {
   numComments: number;
   workoutId: string;
   date: Date;
+  title: string;
 }
 
 export interface Plan {
