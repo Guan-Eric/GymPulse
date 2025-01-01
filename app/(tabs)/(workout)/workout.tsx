@@ -74,6 +74,7 @@ function WorkoutScreen() {
           date: currentDate,
           duration: time,
           userId: FIREBASE_AUTH.currentUser.uid,
+          index: day.index,
         }
       );
 
@@ -154,7 +155,6 @@ function WorkoutScreen() {
             isWorkout={true}
             isDisabled={false}
             workoutTime={time}
-            onLongPress={null}
           />
         </ScrollView>
         <FinishWorkoutModal
