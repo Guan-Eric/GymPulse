@@ -11,6 +11,7 @@ import Carousel from "react-native-reanimated-carousel";
 import ImageCarousel from "./PostCarousel";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
 import { reportPost } from "../backend/post";
+import { FIREBASE_AUTH } from "../firebaseConfig";
 
 const PostItem = ({
   post,
@@ -184,7 +185,13 @@ const PostItem = ({
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Button disabled={!onToggleLike} type="clear" onPress={onToggleLike}>
+          <Button
+            disabled={
+              !onToggleLike || post.userId == FIREBASE_AUTH.currentUser.uid
+            }
+            type="clear"
+            onPress={onToggleLike}
+          >
             <Icon
               size={28}
               name={post.like ? "arm-flex" : "arm-flex"}
