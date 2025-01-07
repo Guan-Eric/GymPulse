@@ -207,6 +207,7 @@ export async function getUserPosts(userId: string): Promise<Post[]> {
 export async function getFeed(): Promise<Post[]> {
   try {
     const followingUserIds = await getUserFollowingIds();
+    followingUserIds.push(FIREBASE_AUTH.currentUser.uid);
 
     if (followingUserIds.length > 0) {
       const postsPromises = followingUserIds.map((userId) =>

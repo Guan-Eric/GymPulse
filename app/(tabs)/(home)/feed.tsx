@@ -47,8 +47,7 @@ const FeedScreen: React.FC = () => {
 
   async function fetchFeed() {
     try {
-      const feed = await getFeed();
-      setPosts(feed);
+      setPosts(await getFeed());
     } catch (error) {
       console.error("Error fetching feed:", error);
     } finally {
@@ -61,32 +60,6 @@ const FeedScreen: React.FC = () => {
       ? "dark"
       : "light";
     setMode(themeMode);
-  }
-
-  function handleLoadAndShowAd() {
-    try {
-      const adUnitId =
-        Platform.OS === "ios"
-          ? Constants.expoConfig?.extra?.admobIOSStreakUnitId
-          : Constants.expoConfig?.extra?.admobAndroidStreakUnitId;
-
-      const ad = RewardedAd.createForAdRequest(adUnitId, {
-        requestNonPersonalizedAdsOnly: true,
-      });
-
-      ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
-        console.log(ad);
-        ad.show();
-      });
-
-      ad.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
-        handleContinueStreak();
-      });
-
-      ad.load();
-    } catch (error) {
-      console.error("Error showing reward ad", error);
-    }
   }
 
   useEffect(() => {
@@ -276,7 +249,7 @@ const FeedScreen: React.FC = () => {
         <StreakResetModal
           modalVisible={streakResetModalVisible}
           onClose={() => setStreakResetModalVisible(false)}
-          onContinueStreak={handleLoadAndShowAd}
+          onContinueStreak={handleContinueStreak}
           onNewStreak={handleNewStreak}
           theme={theme}
         />

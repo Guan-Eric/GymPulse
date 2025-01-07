@@ -22,7 +22,7 @@ import {
   sendFollowRequest,
   toggleFollow,
 } from "../backend/user";
-import { getUserPosts } from "../backend/post";
+import { getUserPosts, toggleLike } from "../backend/post";
 import PostItem from "./PostItem";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import TruncatedText from "./TruncatedText";
@@ -31,9 +31,8 @@ import BackButton from "./BackButton";
 import FeedLoader from "./loader/FeedLoader";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
 import BlockUserModal from "./modal/BlockUserModal";
-import { set } from "date-fns";
 
-function ViewProfileScreen({ theme, userId }) {
+function ViewProfileScreen({ theme, userId, tab }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [following, setFollowing] = useState<
@@ -85,6 +84,11 @@ function ViewProfileScreen({ theme, userId }) {
     setBlockModalVisible(false);
     Alert.alert("User Blocked", "You have blocked this user.");
     router.push({ pathname: "/(tabs)/(home)/feed" });
+  };
+
+  const handleToggleLike = async (post: Post) => {
+    const updatedPost = await toggleLike(post);
+    setPosts(posts.map((p) => (p.id === updatedPost.id ? updatedPost : p)));
   };
 
   return (
@@ -177,10 +181,10 @@ function ViewProfileScreen({ theme, userId }) {
                 post={item}
                 theme={theme}
                 navigateProfile={null}
-                onToggleLike={null}
+                onToggleLike={() => handleToggleLike(item)}
                 renderComments={false}
                 showUser={false}
-                tab={"(profile)"}
+                tab={tab}
               />
             )}
             keyExtractor={(item) => item.id}

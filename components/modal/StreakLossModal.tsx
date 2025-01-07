@@ -1,5 +1,18 @@
-import React from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Button } from "@rneui/themed";
+import Constants from "expo-constants";
+import React, { useEffect } from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+} from "react-native";
+import {
+  RewardedAd,
+  RewardedAdEventType,
+} from "react-native-google-mobile-ads";
 
 interface StreakModalProps {
   modalVisible: boolean;
@@ -16,6 +29,38 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
   onNewStreak,
   theme,
 }) => {
+  const [adLoaded, setAdLoaded] = React.useState(false);
+  const adUnitId =
+    Platform.OS === "ios"
+      ? Constants.expoConfig?.extra?.admobIOSStreakUnitId
+      : Constants.expoConfig?.extra?.admobAndroidStreakUnitId;
+
+  const ad = RewardedAd.createForAdRequest(adUnitId, {
+    requestNonPersonalizedAdsOnly: true,
+  });
+
+  function handleLoadAd() {
+    try {
+      ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
+        setAdLoaded(true);
+      });
+
+      ad.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
+        onContinueStreak();
+      });
+
+      ad.load();
+    } catch (error) {
+      console.error("Error showing reward ad", error);
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      handleLoadAd();
+    };
+  }, []);
+
   return (
     <Modal
       animationType="fade"
@@ -34,9 +79,10 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
             Watch an ad to continue your streak or start a new one.
           </Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              onPress={onContinueStreak}
-              style={[
+            <Button
+              onPress={() => ad.show()}
+              disabled={!adLoaded}
+              buttonStyle={[
                 styles.continueButton,
                 { backgroundColor: theme.colors.primary },
               ]}
@@ -44,10 +90,10 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
               <Text style={[styles.buttonText, { color: theme.colors.black }]}>
                 Watch an ad
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Button>
+            <Button
               onPress={onNewStreak}
-              style={[
+              buttonStyle={[
                 styles.newStreakButton,
                 { backgroundColor: theme.colors.grey2 },
               ]}
@@ -55,7 +101,7 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
               <Text style={[styles.buttonText, { color: theme.colors.black }]}>
                 Lose your current streak
               </Text>
-            </TouchableOpacity>
+            </Button>
           </View>
         </View>
       </View>

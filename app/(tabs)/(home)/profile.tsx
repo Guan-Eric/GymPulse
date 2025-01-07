@@ -7,7 +7,7 @@ function ViewProfileScreen() {
   const { theme } = useTheme();
   const { userId } = useLocalSearchParams();
 
-  return <ProfileScreen theme={theme} userId={userId} />;
+  return <ProfileScreen theme={theme} userId={userId} tab={"(home)"} />;
 }
 
 export default ViewProfileScreen;

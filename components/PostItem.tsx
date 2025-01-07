@@ -184,7 +184,7 @@ const PostItem = ({
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Button disabled={!showUser} type="clear" onPress={onToggleLike}>
+          <Button disabled={!onToggleLike} type="clear" onPress={onToggleLike}>
             <Icon
               size={28}
               name={post.like ? "arm-flex" : "arm-flex"}
