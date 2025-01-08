@@ -1,65 +1,59 @@
 import { Input, Button, Card, Icon } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
-import { Day, Exercise, Plan } from "./types";
+import { Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
 
 interface ExerciseSetCardProps {
   plan: Plan;
   sets: any[];
-  day: Day;
   exercise: Exercise;
   theme: any;
   isWeightMetric: boolean;
-  setPlan: (plan: Plan) => void;
   isDisabled: boolean;
+  setPlan: (plan: Plan) => void;
 }
 const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
   plan,
   sets,
-  day,
   exercise,
   theme,
   isWeightMetric,
-  setPlan,
   isDisabled,
+  setPlan,
 }) => {
   const updateSets = (
     setIndex: number,
     property: string,
     value: string | number
   ) => {
-    setPlan(updateSet(plan, day.id, exercise.id, setIndex, property, value));
+    setPlan(updateSet(plan, exercise.id, setIndex, property, value));
   };
 
-  const handleAddSet = async (
-    dayId: string,
-    exerciseId: string,
-    days: Day[]
-  ) => {
-    setPlan(await addSet(plan, dayId, exerciseId, days));
+  const handleAddSet = async (exerciseId: string, exercises: Exercise[]) => {
+    setPlan(await addSet(plan, exerciseId));
   };
 
-  const handleDeleteExercise = async (dayId: string, exerciseId: string) => {
-    setPlan(await deleteExercise(plan, dayId, exerciseId));
+  const handleDeleteExercise = async (exerciseId: string) => {
+    setPlan(await deleteExercise(plan, exerciseId));
   };
 
   const handleDeleteSet = (setIndex: number) => {
-    setPlan(deleteSet(plan, day.id, exercise.id, setIndex));
+    setPlan(deleteSet(plan, exercise.id, setIndex));
   };
 
   const exerciseBottomSheetOptions = [
     {
       title: "Add Set",
       onPress: () => {
-        handleAddSet(day.id, exercise.id, plan?.days);
+        handleAddSet(exercise.id, plan?.exercises);
       },
       containerStyle: { backgroundColor: theme.colors.primary },
     },
     {
       title: "Delete Exercise",
       onPress: () => {
-        handleDeleteExercise(day.id, exercise.id);
+        handleDeleteExercise(exercise.id);
       },
       containerStyle: { backgroundColor: theme.colors.error },
     },
@@ -77,8 +71,8 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
       containerStyle={[
         styles.card,
         {
-          backgroundColor: theme.colors.grey1,
-          borderColor: theme.colors.grey1,
+          backgroundColor: theme.colors.grey0,
+          borderColor: theme.colors.grey0,
         },
       ]}
     >
@@ -208,7 +202,9 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                   },
                   {
                     title: "Cancel",
-                    onPress: null,
+                    onPress: () => {
+                      null;
+                    },
                     containerStyle: { backgroundColor: theme.colors.grey2 },
                   },
                 ]}
@@ -225,7 +221,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    margin: 10,
+    margin: 20,
   },
   exerciseHeader: {
     flexDirection: "row",

@@ -30,13 +30,13 @@ function PlanCard({ plan, theme }) {
         </Card.Title>
 
         <View style={styles.daysContainer}>
-          {plan?.days
+          {plan?.exercises
             ?.slice()
             .sort((a, b) => a.index - b.index)
             .map((item) => (
               <Text
                 key={item.id}
-                style={[styles.dayText, { color: theme.colors.black }]}
+                style={[styles.exerciseText, { color: theme.colors.black }]}
               >
                 {item.name}
               </Text>
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 10,
   },
-  dayText: {
+  exerciseText: {
     fontFamily: "Lato_400Regular",
     fontSize: 16,
     marginBottom: 5,

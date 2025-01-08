@@ -35,14 +35,7 @@ export interface Post {
 export interface Plan {
   id: string;
   name: string;
-  days: Day[];
-}
-
-export interface Day {
-  id: string;
-  name: string;
   exercises: Exercise[];
-  index: number;
 }
 
 export interface Workout {

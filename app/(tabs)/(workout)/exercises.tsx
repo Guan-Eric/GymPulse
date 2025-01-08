@@ -28,7 +28,7 @@ function ExerciseListScreen() {
     { name: "Traps", key: "17" },
   ]);
   const { theme } = useTheme();
-  const { route, planId, dayId, workoutTime } = useLocalSearchParams();
+  const { route, planId, workoutTime } = useLocalSearchParams();
   return (
     <SafeAreaView
       style={[
@@ -64,7 +64,6 @@ function ExerciseListScreen() {
                     bodypart: item.name,
                     route: route,
                     planId: planId,
-                    dayId: dayId,
                     workoutTime: workoutTime,
                   },
                 })
