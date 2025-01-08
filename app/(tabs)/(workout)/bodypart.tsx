@@ -28,8 +28,7 @@ function BodyPartScreen() {
   const [results, setResults] = useState<Exercise[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [imageUrls, setImageUrls] = useState({});
-  const { bodypart, route, planId, dayId, workoutTime } =
-    useLocalSearchParams();
+  const { bodypart, route, planId, workoutTime } = useLocalSearchParams();
 
   const bodyPartQuery = (bodypart as string)?.toLowerCase();
 
@@ -131,7 +130,6 @@ function BodyPartScreen() {
                     params: {
                       exerciseId: item.id,
                       planId: planId,
-                      dayId: dayId,
                       route: route,
                       workoutTime: workoutTime,
                     },

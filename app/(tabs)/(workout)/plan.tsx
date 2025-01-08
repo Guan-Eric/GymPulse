@@ -5,8 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
-import { addDay, deletePlan, getPlan, savePlan } from "../../../backend/plan";
-import DayCard from "../../../components/DayCard";
+import { deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { Instagram } from "react-content-loader/native";
 import { getUser } from "../../../backend/user";
@@ -14,6 +13,8 @@ import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
 import PlanLoader from "../../../components/loader/PlanLoader";
 import { collection, doc, updateDoc } from "firebase/firestore";
+import ExerciseCard from "../../../components/ExerciseCard";
+import ExerciseSetCard from "../../../components/ExerciseSetCard";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -55,10 +56,6 @@ function ViewPlanScreen() {
     setPlan({ ...plan, name });
   };
 
-  const handleAddDay = async () => {
-    setPlan(await addDay(plan));
-  };
-
   const handleDeletePlan = async () => {
     deletePlan(plan);
     router.back();
@@ -66,11 +63,31 @@ function ViewPlanScreen() {
 
   const bottomSheetOptions = [
     {
-      title: "Add Day",
+      title: "Start Workout",
       onPress: () => {
-        handleAddDay();
+        router.push({
+          pathname: "/(tabs)/(workout)/workout",
+          params: {
+            planId: plan.id,
+            workoutTime: 0,
+          },
+        });
       },
       containerStyle: { backgroundColor: theme.colors.primary },
+    },
+    {
+      title: "Add Exercise",
+      onPress: () => {
+        router.push({
+          pathname: "/(tabs)/(workout)/exercises",
+          params: {
+            planId: plan.id,
+            route: "add",
+            workoutTime: null,
+          },
+        });
+      },
+      containerStyle: { backgroundColor: theme.colors.grey1 },
     },
     {
       title: "Delete Plan",
@@ -126,21 +143,20 @@ function ViewPlanScreen() {
               <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
             </View>
 
-            {plan?.days?.length > 0
-              ? plan?.days
+            {plan?.exercises?.length > 0
+              ? plan?.exercises
                   ?.slice()
                   .sort((a, b) => a.index - b.index)
-                  .map((day) => (
-                    <DayCard
-                      key={day.id}
+                  .map((exercise) => (
+                    <ExerciseSetCard
+                      key={exercise.id}
                       plan={plan}
-                      day={day}
                       theme={theme}
                       isWeightMetric={isWeightMetric}
                       setPlan={setPlan}
-                      isWorkout={false}
+                      sets={exercise.sets}
+                      exercise={exercise}
                       isDisabled={false}
-                      workoutTime={null}
                     />
                   ))
               : null}

@@ -5,11 +5,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Workout } from "../components/types";
 import { useLocalSearchParams } from "expo-router";
 import { useTheme } from "@rneui/themed";
-import DayCard from "../components/DayCard";
 import { getWorkout } from "../backend/workout";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { getUser } from "../backend/user";
 import BackButton from "./BackButton";
+import ExerciseSetCard from "./ExerciseSetCard";
 
 function ViewWorkoutScreen({ theme, workoutId, userId }) {
   const [workout, setWorkout] = useState<Workout>();
@@ -39,16 +39,23 @@ function ViewWorkoutScreen({ theme, workoutId, userId }) {
           {String(workout?.duration % 60).padStart(2, "0")}
         </Text>
         <ScrollView>
-          <DayCard
-            plan={null}
-            day={workout}
-            theme={theme}
-            isWeightMetric={isWeightMetric}
-            setPlan={null}
-            isWorkout={false}
-            isDisabled={true}
-            workoutTime={null}
-          />
+          {workout?.exercises?.length > 0
+            ? workout?.exercises
+                ?.slice()
+                .sort((a, b) => a.index - b.index)
+                .map((exercise) => (
+                  <ExerciseSetCard
+                    key={exercise.id}
+                    plan={workout}
+                    theme={theme}
+                    isWeightMetric={isWeightMetric}
+                    setPlan={null}
+                    sets={exercise.sets}
+                    exercise={exercise}
+                    isDisabled={true}
+                  />
+                ))
+            : null}
         </ScrollView>
       </SafeAreaView>
     </View>

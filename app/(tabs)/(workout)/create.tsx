@@ -37,9 +37,8 @@ function CreatePostScreen() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [workoutTime, setWorkoutTime] = useState(0);
-  const { workoutId, planName, dayName, planId, dayId } =
-    useLocalSearchParams();
-  const [title, setTitle] = useState(planName + " - " + dayName);
+  const { workoutId, planName, planId, dayId } = useLocalSearchParams();
+  const [title, setTitle] = useState(planName as string);
 
   const fetchWorkoutTime = async () => {
     setWorkoutTime(

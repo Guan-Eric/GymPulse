@@ -19,8 +19,7 @@ import { useTheme } from "@rneui/themed";
 
 function AddExerciseScreen() {
   const [imageUrls, setImageUrls] = useState([]);
-  const { exerciseId, planId, dayId, route, workoutTime } =
-    useLocalSearchParams();
+  const { exerciseId, planId, route, workoutTime } = useLocalSearchParams();
   const [exercise, setExercise] = useState<Exercise>();
 
   const { theme } = useTheme();
@@ -53,7 +52,7 @@ function AddExerciseScreen() {
     try {
       const dayDoc = doc(
         FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Days/${dayId}`
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}`
       );
       const exerciseCollection = collection(dayDoc, "Exercise");
 
@@ -77,7 +76,7 @@ function AddExerciseScreen() {
 
       const exerciseDocRef = await addDoc(exerciseCollection, {
         name: exercise.name,
-        dayId: dayId,
+        planId: planId,
         sets: [{ reps: 0, weight_duration: 0 }],
         cardio: exercise.category === "cardio",
         index: nextIndex,
@@ -89,7 +88,6 @@ function AddExerciseScreen() {
           pathname: "/(tabs)/(workout)/workout",
           params: {
             planId: planId,
-            dayId: dayId,
             workoutTime: workoutTime,
           },
         });
