@@ -28,7 +28,6 @@ const PostItem = ({
   );
   const [user, setUser] = useState<User>();
 
-  console.log(post);
   async function fetchUser() {
     const fetchedUser = await getUser(post.userId);
     setUser(fetchedUser);

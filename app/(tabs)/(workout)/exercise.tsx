@@ -84,7 +84,6 @@ function AddExerciseScreen() {
       });
       const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
       await updateDoc(exerciseDoc, { id: exerciseDoc.id });
-      console.log(workoutTime);
       if (workoutTime != null) {
         router.push({
           pathname: "/(tabs)/(workout)/workout",

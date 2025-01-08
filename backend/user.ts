@@ -478,7 +478,6 @@ export async function isUserBlocked(userId: string): Promise<boolean> {
     );
     const blockedUserDocSnapshot = await getDoc(blockedUserDocRef);
     const userDocSnapshot = await getDoc(userDocRef);
-    console.log(userDocSnapshot.exists() || blockedUserDocSnapshot.exists());
     return userDocSnapshot.exists() || blockedUserDocSnapshot.exists();
   } catch (error) {
     console.error("Error checking if user is blocked:", error);

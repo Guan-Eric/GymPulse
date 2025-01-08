@@ -7,7 +7,6 @@ function WorkoutScreen() {
   const { theme } = useTheme();
   const { workoutId, userId } = useLocalSearchParams();
 
-  console.log("WorkoutScreen", workoutId);
   return (
     <ViewWorkoutScreen theme={theme} workoutId={workoutId} userId={userId} />
   );

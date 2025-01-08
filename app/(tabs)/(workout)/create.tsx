@@ -136,9 +136,7 @@ function CreatePostScreen() {
       const userFollowers = await getUserFollowers(
         FIREBASE_AUTH.currentUser.uid
       );
-      console.log("User followers:", userFollowers);
       for (const userFollower of userFollowers) {
-        console.log("Adding notification for", userFollower);
         addNotification(userFollower, "post", userPostsDocRef.id);
       }
       incrementStreak();

@@ -29,7 +29,6 @@ function ExerciseListScreen() {
   ]);
   const { theme } = useTheme();
   const { route, planId, dayId, workoutTime } = useLocalSearchParams();
-  console.log(workoutTime);
   return (
     <SafeAreaView
       style={[

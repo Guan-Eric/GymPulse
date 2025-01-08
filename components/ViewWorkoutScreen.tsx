@@ -21,7 +21,6 @@ function ViewWorkoutScreen({ theme, workoutId, userId }) {
       (await getUser(FIREBASE_AUTH.currentUser.uid)).weightMetricUnits
     );
   };
-  console.log("ViewWorkoutScreen", workoutId);
   useEffect(() => {
     fetchWorkoutFromFirestore();
   }, []);
