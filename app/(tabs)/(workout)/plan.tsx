@@ -4,16 +4,13 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { Input, useTheme, Button, Card, Icon } from "@rneui/themed";
+import { Input, useTheme } from "@rneui/themed";
 import { deletePlan, getPlan, savePlan } from "../../../backend/plan";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
-import { Instagram } from "react-content-loader/native";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { getUser } from "../../../backend/user";
 import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
 import PlanLoader from "../../../components/loader/PlanLoader";
-import { collection, doc, updateDoc } from "firebase/firestore";
-import ExerciseCard from "../../../components/ExerciseCard";
 import ExerciseSetCard from "../../../components/ExerciseSetCard";
 
 function ViewPlanScreen() {

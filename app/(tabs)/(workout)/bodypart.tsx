@@ -48,7 +48,7 @@ function BodyPartScreen() {
       setExercises(data);
       setResults(data);
     } catch (error) {
-      console.error("Error fetching data from Firestore:", error);
+      console.error("Error fetching exercises from Firestore:", error);
     }
   };
 

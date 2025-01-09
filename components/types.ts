@@ -44,7 +44,6 @@ export interface Workout {
   duration: number;
   date: Date;
   exercises: Exercise[];
-  index: number;
 }
 
 export interface Exercise {

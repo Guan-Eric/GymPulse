@@ -9,14 +9,18 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Tab, TabView, useTheme } from "@rneui/themed";
+import { Card, SearchBar, Tab, TabView, useTheme, Image } from "@rneui/themed";
 import { createPlan, getPlans } from "../../../backend/plan";
 import PlanCard from "../../../components/PlanCard";
 import EmptyPlanCard from "../../../components/EmptyPlanCard";
 import BodyPartCard from "../../../components/BodyPartCard";
-import { Plan } from "../../../components/types";
+import { Exercise, Plan } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
 import PlansLoader from "../../../components/loader/PlansLoader";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { FIREBASE_STR, FIRESTORE_DB } from "../../../firebaseConfig";
+import { ref, getDownloadURL } from "firebase/storage";
+import { ScreenWidth } from "@rneui/base";
 
 const bodyParts = [
   { name: "Chest", key: "1" },
@@ -39,10 +43,14 @@ const bodyParts = [
 ];
 
 function PlanScreen() {
+  const [search, setSearch] = useState<string>("");
   const [plans, setPlans] = useState<Plan[]>([]);
-  const { theme } = useTheme();
+  const [results, setResults] = useState<Exercise[]>([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [imageUrls, setImageUrls] = useState({});
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const { theme } = useTheme();
 
   const fetchPlans = async () => {
     try {
@@ -55,6 +63,7 @@ function PlanScreen() {
   };
   useEffect(() => {
     fetchPlans();
+    fetchExercisesFromFirestore();
   }, []);
 
   useFocusEffect(
@@ -62,6 +71,46 @@ function PlanScreen() {
       fetchPlans();
     }, [])
   );
+
+  const fetchExercisesFromFirestore = async () => {
+    try {
+      const collectionRef = collection(FIRESTORE_DB, "Exercises");
+      const querySnapshot = await getDocs(collectionRef);
+      const data = [];
+
+      querySnapshot.forEach((doc) => {
+        data.push(doc.data());
+        fetchImage(doc.data().id);
+      });
+      setExercises(data);
+    } catch (error) {
+      console.error("Error fetching exercises from Firestore:", error);
+    }
+  };
+
+  const fetchImage = async (id) => {
+    try {
+      const imageRef = ref(FIREBASE_STR, `assets/${id}_0.jpg`);
+      const url = await getDownloadURL(imageRef);
+      setImageUrls((prevImageUrls) => ({
+        ...prevImageUrls,
+        [id]: url,
+      }));
+    } catch (error) {
+      console.error("Error getting image URL:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (search.trim() === "") {
+      setResults(exercises);
+    } else {
+      const filteredExercises = exercises.filter((exercise) =>
+        exercise.name.toLowerCase().includes(search.toLowerCase())
+      );
+      setResults(filteredExercises);
+    }
+  }, [search, exercises]);
 
   const handleCreatePlan = async () => {
     const newPlan = await createPlan();
@@ -104,10 +153,35 @@ function PlanScreen() {
           />
         </Tab>
         <TabView value={index} onChange={setIndex}>
-          <TabView.Item>
-            <ScrollView>
-              <View style={styles.planContainer}>
-                {bodyParts.map((item) => (
+          <TabView.Item style={{ flex: 1 }}>
+            {search === "" ? (
+              <FlatList
+                contentContainerStyle={styles.exerciseContainer}
+                ListHeaderComponentStyle={{ width: "100%", paddingBottom: 5 }}
+                numColumns={2}
+                data={bodyParts}
+                ListHeaderComponent={
+                  <SearchBar
+                    containerStyle={{
+                      alignSelf: "center",
+                      backgroundColor: theme.colors.background,
+                      borderTopWidth: 0,
+                      borderBottomWidth: 0,
+                      marginBottom: -10,
+                      paddingBottom: 10,
+                      marginTop: 15,
+                      width: "92%",
+                    }}
+                    inputContainerStyle={{
+                      borderRadius: 10,
+                    }}
+                    placeholder="Type Here..."
+                    onChangeText={(text) => setSearch(text)}
+                    onClear={() => setSearch("")}
+                    value={search}
+                  />
+                }
+                renderItem={({ item }) => (
                   <Pressable
                     style={styles.cardWrapper}
                     key={item.key}
@@ -120,11 +194,85 @@ function PlanScreen() {
                   >
                     <BodyPartCard bodypart={item.name} theme={theme} />
                   </Pressable>
-                ))}
-              </View>
-            </ScrollView>
+                )}
+                keyExtractor={(item) => item.key}
+              />
+            ) : (
+              <FlatList
+                contentContainerStyle={styles.exerciseContainer}
+                numColumns={2}
+                ListHeaderComponentStyle={{ width: "100%" }}
+                data={results}
+                ListHeaderComponent={
+                  <SearchBar
+                    containerStyle={{
+                      alignSelf: "center",
+                      backgroundColor: theme.colors.background,
+                      borderTopWidth: 0,
+                      borderBottomWidth: 0,
+                      marginBottom: -10,
+                      paddingBottom: 10,
+                      marginTop: 15,
+                      width: "92%",
+                    }}
+                    inputContainerStyle={{
+                      borderRadius: 10,
+                    }}
+                    placeholder="Type Here..."
+                    onChangeText={(text) => setSearch(text)}
+                    onClear={() => setSearch("")}
+                    value={search}
+                  />
+                }
+                renderItem={({ item }) => (
+                  <Pressable
+                    style={{
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(tabs)/(workout)/exercise",
+                        params: {
+                          exerciseId: item.id,
+                          planId: null,
+                          route: "exercise",
+                          workoutTime: null,
+                        },
+                      })
+                    }
+                  >
+                    <Card
+                      containerStyle={{
+                        borderColor: theme.colors.grey0,
+                        backgroundColor: theme.colors.grey0,
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Image
+                        source={{ uri: imageUrls[item.id] }}
+                        style={{
+                          borderRadius: 12,
+                          alignSelf: "center",
+                          width: ScreenWidth * 0.85,
+                          height: (ScreenWidth * 0.85) / (195 / 130),
+                          resizeMode: "cover",
+                          paddingBottom: 10,
+                        }}
+                      />
+                      <Text
+                        style={[styles.baseText, { color: theme.colors.black }]}
+                      >
+                        {item.name}
+                      </Text>
+                    </Card>
+                  </Pressable>
+                )}
+                keyExtractor={(item) => item.id}
+              />
+            )}
           </TabView.Item>
-          <TabView.Item>
+          <TabView.Item style={{ flex: 1 }}>
             {loading ? (
               <View style={styles.planContainer}>
                 <View style={styles.cardWrapper}>
@@ -165,7 +313,9 @@ const styles = StyleSheet.create({
   baseText: {
     paddingLeft: 10,
     fontFamily: "Lato_400Regular",
-    fontSize: 20,
+    fontSize: 16,
+    textAlign: "center",
+    wordWrap: "break-word",
   },
   titleText: {
     fontFamily: "Lato_700Bold",
@@ -186,13 +336,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
+  exerciseContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
   planContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
-    paddingBottom: 10,
   },
   cardWrapper: {
     width: "48%",
