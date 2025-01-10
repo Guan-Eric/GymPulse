@@ -12,6 +12,7 @@ import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
 import PlanLoader from "../../../components/loader/PlanLoader";
 import ExerciseSetCard from "../../../components/ExerciseSetCard";
+import EmptyExerciseCard from "../../../components/EmptyExerciseCard";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();
@@ -71,20 +72,6 @@ function ViewPlanScreen() {
         });
       },
       containerStyle: { backgroundColor: theme.colors.primary },
-    },
-    {
-      title: "Add Exercise",
-      onPress: () => {
-        router.push({
-          pathname: "/(tabs)/(workout)/exercises",
-          params: {
-            planId: plan.id,
-            route: "add",
-            workoutTime: null,
-          },
-        });
-      },
-      containerStyle: { backgroundColor: theme.colors.grey1 },
     },
     {
       title: "Delete Plan",
@@ -157,6 +144,18 @@ function ViewPlanScreen() {
                     />
                   ))
               : null}
+            <EmptyExerciseCard
+              onPress={() =>
+                router.push({
+                  pathname: "/(tabs)/(workout)/exercises",
+                  params: {
+                    planId: plan.id,
+                    route: "add",
+                    workoutTime: null,
+                  },
+                })
+              }
+            />
           </ScrollView>
         </SafeAreaView>
       )}

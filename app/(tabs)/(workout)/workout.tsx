@@ -11,6 +11,7 @@ import { getPlan, savePlan } from "../../../backend/plan";
 import { getUser } from "../../../backend/user";
 import FinishWorkoutModal from "../../../components/modal/FinishWorkoutModal";
 import ExerciseSetCard from "../../../components/ExerciseSetCard";
+import EmptyExerciseCard from "../../../components/EmptyExerciseCard";
 
 function WorkoutScreen() {
   const currentDate = new Date();
@@ -159,6 +160,18 @@ function WorkoutScreen() {
                   />
                 ))
             : null}
+          <EmptyExerciseCard
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/(workout)/exercises",
+                params: {
+                  planId: plan.id,
+                  route: "add",
+                  workoutTime: null,
+                },
+              })
+            }
+          />
         </ScrollView>
         <FinishWorkoutModal
           modalVisible={isModal}
