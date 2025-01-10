@@ -34,6 +34,7 @@ function ExerciseCard({ exercise, imageUrls, route, handleAddExercise }) {
           alignItems: "center",
           justifyContent: "space-between",
           paddingRight: 10,
+          marginBottom: 10,
         }}
       >
         <BackButton />
@@ -94,9 +95,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
+    textAlign: "center",
     fontSize: 24,
     fontFamily: "Lato_700Bold",
     fontWeight: "bold",
+    width: "75%",
+    flexWrap: "wrap",
   },
   heading: {
     fontSize: 18,

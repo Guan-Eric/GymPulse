@@ -109,7 +109,7 @@ function AddExerciseScreen() {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
-        paddingBottom: Platform.OS == "ios" ? 40 : 0,
+        paddingBottom: Platform.OS == "ios" ? 85 : 0,
       }}
     >
       <SafeAreaView style={{ flex: 1 }}>
