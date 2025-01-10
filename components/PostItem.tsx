@@ -130,7 +130,14 @@ const PostItem = ({
               </Text>
             </View>
           </View>
-          <ThreeDotsModal options={postOptions} theme={theme} />
+          <ThreeDotsModal
+            options={
+              post.userId == FIREBASE_AUTH.currentUser.uid
+                ? userPostOptions
+                : postOptions
+            }
+            theme={theme}
+          />
         </View>
       ) : (
         <View
@@ -146,7 +153,14 @@ const PostItem = ({
           <Text style={[styles.workoutText, { color: theme.colors.grey3 }]}>
             {formattedDate}
           </Text>
-          <ThreeDotsModal options={userPostOptions} theme={theme} />
+          <ThreeDotsModal
+            options={
+              post.userId == FIREBASE_AUTH.currentUser.uid
+                ? userPostOptions
+                : postOptions
+            }
+            theme={theme}
+          />
         </View>
       )}
       <Pressable
