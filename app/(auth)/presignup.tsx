@@ -115,6 +115,7 @@ const PreSignUpScreen = () => {
               </View>
               <View style={{ paddingBottom: 70 }}>
                 <Input
+                  inputStyle={{ color: "#f8f9fa" }}
                   inputContainerStyle={styles.inputRoundedContainer}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
@@ -128,6 +129,7 @@ const PreSignUpScreen = () => {
 
                 <View style={{ paddingTop: 25 }}>
                   <Input
+                    inputStyle={{ color: "#f8f9fa" }}
                     inputContainerStyle={styles.inputRoundedContainer}
                     containerStyle={styles.inputContainer}
                     style={styles.input}
@@ -146,6 +148,7 @@ const PreSignUpScreen = () => {
                           }}
                         >
                           <Input
+                            inputStyle={{ color: "#f8f9fa" }}
                             inputContainerStyle={styles.inputRoundedContainer}
                             containerStyle={styles.smallInputContainer}
                             style={styles.inputWithUnit}
@@ -171,6 +174,7 @@ const PreSignUpScreen = () => {
                           }}
                         >
                           <Input
+                            inputStyle={{ color: "#f8f9fa" }}
                             inputContainerStyle={styles.inputRoundedContainer}
                             containerStyle={styles.tinyInputContainer}
                             style={styles.inputWithUnit}
@@ -189,6 +193,7 @@ const PreSignUpScreen = () => {
                             {unitPrimaryHeight}
                           </Text>
                           <Input
+                            inputStyle={{ color: "#f8f9fa" }}
                             inputContainerStyle={styles.inputRoundedContainer}
                             containerStyle={styles.tinyInputContainer}
                             style={styles.inputWithUnit}
@@ -219,6 +224,7 @@ const PreSignUpScreen = () => {
                 <View style={styles.inputWithUnitContainer}>
                   <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Input
+                      inputStyle={{ color: "#f8f9fa" }}
                       inputContainerStyle={styles.inputRoundedContainer}
                       containerStyle={styles.smallInputContainer}
                       style={styles.inputWithUnit}

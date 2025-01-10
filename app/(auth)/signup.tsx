@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   inputText: {
-    color: "white",
+    color: "#f8f9fa",
     fontFamily: "Lato_400Regular",
     fontSize: 12,
   },

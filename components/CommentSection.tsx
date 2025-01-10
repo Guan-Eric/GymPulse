@@ -39,6 +39,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({
         }}
       >
         <Input
+          inputStyle={{ color: theme.colors.black }}
           containerStyle={{ width: 270 }}
           inputContainerStyle={{
             paddingLeft: 10,

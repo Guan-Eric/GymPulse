@@ -190,6 +190,7 @@ function CreatePostScreen() {
                 }}
               >
                 <Input
+                  inputStyle={{ color: theme.colors.black }}
                   inputContainerStyle={[
                     styles.inputContainer,
                     {
@@ -239,6 +240,7 @@ function CreatePostScreen() {
                 style={{ paddingTop: 10, paddingLeft: 15, paddingRight: 15 }}
               >
                 <Input
+                  inputStyle={{ color: theme.colors.black }}
                   inputContainerStyle={styles.caption}
                   multiline
                   numberOfLines={3}
