@@ -38,8 +38,8 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   planName: {
-    fontFamily: "Lato_700Bold",
-    fontSize: 20,
+    fontFamily: "Lato_400Regular",
+    fontSize: 18,
     marginBottom: 10,
   },
   iconContainer: {
