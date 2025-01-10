@@ -167,7 +167,7 @@ function WorkoutScreen() {
                 params: {
                   planId: plan.id,
                   route: "add",
-                  workoutTime: null,
+                  workoutTime: time,
                 },
               })
             }

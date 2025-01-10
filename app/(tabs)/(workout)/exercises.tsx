@@ -147,7 +147,12 @@ function ExerciseListScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/(tabs)/(workout)/bodypart",
-                  params: { bodypart: item.name, route: "exercise" },
+                  params: {
+                    bodypart: item.name,
+                    planId: planId,
+                    route: route,
+                    workoutTime: workoutTime,
+                  },
                 })
               }
             >
@@ -193,9 +198,9 @@ function ExerciseListScreen() {
                   pathname: "/(tabs)/(workout)/exercise",
                   params: {
                     exerciseId: item.id,
-                    planId: null,
-                    route: "exercise",
-                    workoutTime: null,
+                    planId: planId,
+                    route: route,
+                    workoutTime: workoutTime,
                   },
                 })
               }
