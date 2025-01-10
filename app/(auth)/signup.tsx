@@ -5,14 +5,12 @@ import {
   Text,
   Image,
   KeyboardAvoidingView,
-  Alert,
 } from "react-native";
 import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { Button, Icon, Input } from "@rneui/themed";
+import { Button, Input } from "@rneui/themed";
 import { router, useLocalSearchParams } from "expo-router";
 import { register } from "../../backend/auth";
 import BackButton from "../../components/BackButton";
-import { set } from "date-fns";
 import PasswordErrorModal from "../../components/modal/PasswordErrorModal";
 
 function SignUpScreen() {
