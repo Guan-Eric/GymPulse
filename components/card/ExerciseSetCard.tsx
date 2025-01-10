@@ -125,7 +125,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                 keyboardType="numeric"
                 containerStyle={styles.inputContainer}
                 inputContainerStyle={styles.inputRoundedContainer}
-                inputStyle={styles.input}
+                inputStyle={[styles.input, { color: theme.colors.black }]}
                 onChangeText={(value) =>
                   updateSets(
                     setIndex,
@@ -143,7 +143,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                     keyboardType="numeric"
                     containerStyle={styles.inputContainer}
                     inputContainerStyle={styles.inputRoundedContainer}
-                    inputStyle={styles.input}
+                    inputStyle={[styles.input, { color: theme.colors.black }]}
                     onChangeText={(value) =>
                       updateSets(
                         setIndex,
@@ -175,7 +175,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                     keyboardType="numeric"
                     containerStyle={styles.inputContainer}
                     inputContainerStyle={styles.inputRoundedContainer}
-                    inputStyle={styles.input}
+                    inputStyle={[styles.input, { color: theme.colors.black }]}
                     onChangeText={(value) =>
                       updateSets(
                         setIndex,

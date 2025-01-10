@@ -40,6 +40,7 @@ function SignInScreen() {
               </View>
               <View style={{ paddingBottom: 96 }}>
                 <Input
+                  inputStyle={{ color: "#f8f9fa" }}
                   inputContainerStyle={styles.inputRoundedContainer}
                   containerStyle={styles.inputContainer}
                   style={styles.input}
@@ -49,6 +50,7 @@ function SignInScreen() {
                 />
                 <View style={{ paddingTop: 35 }}>
                   <Input
+                    inputStyle={{ color: "#f8f9fa" }}
                     inputContainerStyle={styles.inputRoundedContainer}
                     containerStyle={styles.inputContainer}
                     style={styles.input}

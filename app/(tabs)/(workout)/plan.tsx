@@ -102,6 +102,7 @@ function ViewPlanScreen() {
             >
               <BackButton />
               <Input
+                inputStyle={{ color: theme.colors.black }}
                 label={"Plan Name"}
                 containerStyle={styles.nameInput}
                 inputContainerStyle={[
