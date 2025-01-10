@@ -1,7 +1,7 @@
 import { Card } from "@rneui/themed";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import { Pressable, View, Text, StyleSheet, ScrollView } from "react-native";
 
 function PlanCard({ plan, theme }) {
   return (
@@ -30,17 +30,19 @@ function PlanCard({ plan, theme }) {
         </Card.Title>
 
         <View style={styles.daysContainer}>
-          {plan?.exercises
-            ?.slice()
-            .sort((a, b) => a.index - b.index)
-            .map((item) => (
-              <Text
-                key={item.id}
-                style={[styles.exerciseText, { color: theme.colors.black }]}
-              >
-                {item.name}
-              </Text>
-            ))}
+          <ScrollView style={{ maxHeight: 135 }}>
+            {plan?.exercises
+              ?.slice()
+              .sort((a, b) => a.index - b.index)
+              .map((item) => (
+                <Text
+                  key={item.id}
+                  style={[styles.exerciseText, { color: theme.colors.black }]}
+                >
+                  {item.name}
+                </Text>
+              ))}
+          </ScrollView>
         </View>
       </Card>
     </Pressable>
@@ -67,7 +69,7 @@ const styles = StyleSheet.create({
   },
   exerciseText: {
     fontFamily: "Lato_400Regular",
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
   },
 });
