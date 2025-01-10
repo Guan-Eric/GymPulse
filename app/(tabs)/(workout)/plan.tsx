@@ -11,8 +11,8 @@ import { getUser } from "../../../backend/user";
 import ThreeDotsModal from "../../../components/modal/ThreeDotsModal";
 import BackButton from "../../../components/BackButton";
 import PlanLoader from "../../../components/loader/PlanLoader";
-import ExerciseSetCard from "../../../components/ExerciseSetCard";
-import EmptyExerciseCard from "../../../components/EmptyExerciseCard";
+import ExerciseSetCard from "../../../components/card/ExerciseSetCard";
+import EmptyExerciseCard from "../../../components/card/EmptyExerciseCard";
 
 function ViewPlanScreen() {
   const [plan, setPlan] = useState<Plan>();

@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
-import ExerciseCard from "../../../components/ExerciseCard";
+import ExerciseCard from "../../../components/card/ExerciseCard";
 import { useTheme } from "@rneui/themed";
 
 function AddExerciseScreen() {

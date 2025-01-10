@@ -10,8 +10,8 @@ import { Button, useTheme } from "@rneui/themed";
 import { getPlan, savePlan } from "../../../backend/plan";
 import { getUser } from "../../../backend/user";
 import FinishWorkoutModal from "../../../components/modal/FinishWorkoutModal";
-import ExerciseSetCard from "../../../components/ExerciseSetCard";
-import EmptyExerciseCard from "../../../components/EmptyExerciseCard";
+import ExerciseSetCard from "../../../components/card/ExerciseSetCard";
+import EmptyExerciseCard from "../../../components/card/EmptyExerciseCard";
 
 function WorkoutScreen() {
   const currentDate = new Date();

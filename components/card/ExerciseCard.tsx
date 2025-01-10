@@ -1,8 +1,8 @@
 import React from "react";
 import { ScrollView, Text, View, StyleSheet } from "react-native";
 import { Button, Icon, useTheme } from "@rneui/themed";
-import ExerciseCarousel from "./ExerciseCarousel";
-import BackButton from "./BackButton";
+import ExerciseCarousel from "../ExerciseCarousel";
+import BackButton from "../BackButton";
 
 const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);

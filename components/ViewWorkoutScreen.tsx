@@ -3,13 +3,11 @@ import { View, ScrollView, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Workout } from "../components/types";
-import { useLocalSearchParams } from "expo-router";
-import { useTheme } from "@rneui/themed";
 import { getWorkout } from "../backend/workout";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import { getUser } from "../backend/user";
 import BackButton from "./BackButton";
-import ExerciseSetCard from "./ExerciseSetCard";
+import ExerciseSetCard from "./card/ExerciseSetCard";
 
 function ViewWorkoutScreen({ theme, workoutId, userId }) {
   const [workout, setWorkout] = useState<Workout>();

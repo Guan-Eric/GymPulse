@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BodyPartCard from "../../../components/BodyPartCard";
+import BodyPartCard from "../../../components/card/BodyPartCard";
 import { Card, SearchBar, useTheme, Image } from "@rneui/themed";
 import BackButton from "../../../components/BackButton";
 import { ScreenWidth } from "@rneui/base";

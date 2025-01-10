@@ -1,8 +1,13 @@
 import { Input, Button, Card, Icon, ButtonGroup } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
-import { Exercise, Plan } from "./types";
-import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
-import ThreeDotsModal from "./modal/ThreeDotsModal";
+import { Exercise, Plan } from "../types";
+import {
+  addSet,
+  deleteExercise,
+  deleteSet,
+  updateSet,
+} from "../../backend/plan";
+import ThreeDotsModal from "../modal/ThreeDotsModal";
 import EmptySetCard from "./EmptySetCard";
 
 interface ExerciseSetCardProps {
