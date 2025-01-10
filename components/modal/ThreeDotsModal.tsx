@@ -3,10 +3,10 @@ import { Modal, View, StyleSheet, TouchableOpacity, Text } from "react-native";
 import { Button, Icon } from "@rneui/themed";
 
 interface BottomSheetOption {
-  title: string;
-  containerStyle?: object;
+  title?: string;
+  containerStyle: object;
   titleStyle?: object;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 interface BottomSheetMenuProps {
@@ -55,12 +55,12 @@ const ThreeDotsModal: React.FC<BottomSheetMenuProps> = ({ options, theme }) => {
             {options.map((option, index) => (
               <Button
                 key={index}
-                buttonStyle={[styles.option, option.containerStyle]}
+                buttonStyle={[styles.option, option?.containerStyle]}
                 onPress={() => {
-                  option.onPress();
+                  option?.onPress();
                   toggleModal();
                 }}
-                title={option.title}
+                title={option?.title}
                 titleStyle={styles.optionText}
               ></Button>
             ))}

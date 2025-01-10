@@ -43,19 +43,21 @@ const PostItem = ({
   }, []);
 
   const postOptions = [
-    {
-      title: "View Workout",
-      onPress: () => {
-        router.push({
-          pathname: `(tabs)/${tab}/workout` as `/workout`,
-          params: {
-            workoutId: post.workoutId,
-            userId: post.userId,
+    user?.showWorkout
+      ? {
+          title: "View Workout",
+          onPress: () => {
+            router.push({
+              pathname: `(tabs)/${tab}/workout` as `/workout`,
+              params: {
+                workoutId: post.workoutId,
+                userId: post.userId,
+              },
+            });
           },
-        });
-      },
-      containerStyle: { backgroundColor: theme.colors.primary },
-    },
+          containerStyle: { backgroundColor: theme.colors.primary },
+        }
+      : { containerStyle: { display: "none" } },
     {
       title: "Report",
       onPress: () => {
