@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Plan } from "../../../components/types";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { Input, useTheme } from "@rneui/themed";
+import { Button, Icon, Input, useTheme } from "@rneui/themed";
 import { deletePlan, getPlan, savePlan } from "../../../backend/plan";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { getUser } from "../../../backend/user";
@@ -61,19 +61,6 @@ function ViewPlanScreen() {
 
   const bottomSheetOptions = [
     {
-      title: "Start Workout",
-      onPress: () => {
-        router.push({
-          pathname: "/(tabs)/(workout)/workout",
-          params: {
-            planId: plan.id,
-            workoutTime: 0,
-          },
-        });
-      },
-      containerStyle: { backgroundColor: theme.colors.primary },
-    },
-    {
       title: "Delete Plan",
       onPress: () => {
         handleDeletePlan();
@@ -124,6 +111,19 @@ function ViewPlanScreen() {
                 onChangeText={handleSaveName}
                 value={plan?.name}
               />
+              <Button
+                onPress={() => {
+                  router.push({
+                    pathname: "/(tabs)/(workout)/workout",
+                    params: {
+                      planId: plan.id,
+                      workoutTime: 0,
+                    },
+                  });
+                }}
+                type="clear"
+                icon={<Icon name="play" type="feather" />}
+              />
               <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
             </View>
 
@@ -170,8 +170,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   nameInput: {
-    width: "85%",
-    marginHorizontal: -15,
+    width: "65%",
   },
   inputContainer: {
     width: 70,
