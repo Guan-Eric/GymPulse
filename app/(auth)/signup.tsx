@@ -5,12 +5,15 @@ import {
   Text,
   Image,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { StyleSheet, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Button, Icon, Input } from "@rneui/themed";
 import { router, useLocalSearchParams } from "expo-router";
 import { register } from "../../backend/auth";
 import BackButton from "../../components/BackButton";
+import { set } from "date-fns";
+import PasswordErrorModal from "../../components/modal/PasswordErrorModal";
 
 function SignUpScreen() {
   const [email, onChangeEmail] = useState("");
@@ -18,7 +21,8 @@ function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [passwordErrorModalVisible, setPasswordErrorModalVisible] =
+    useState(false);
   const {
     username,
     name,
@@ -41,42 +45,30 @@ function SignUpScreen() {
     const hasNumber = /\d/.test(password);
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    if (password.length < minLength) {
-      return `Password must be at least ${minLength} characters long.`;
+    if (
+      password.length < minLength ||
+      !hasUpperCase ||
+      !hasLowerCase ||
+      !hasNumber ||
+      !hasSpecialChar ||
+      password !== confirmPassword
+    ) {
+      return false;
     }
-    if (!hasUpperCase) {
-      return "Password must contain at least one uppercase letter.";
-    }
-    if (!hasLowerCase) {
-      return "Password must contain at least one lowercase letter.";
-    }
-    if (!hasNumber) {
-      return "Password must contain at least one number.";
-    }
-    if (!hasSpecialChar) {
-      return "Password must contain at least one special character.";
-    }
-    if (password !== confirmPassword) {
-      return "Passwords must match.";
-    }
-    return "";
+
+    return true;
   };
 
   const signUp = async () => {
     setLoading(true);
     setEmailError("");
-    setPasswordError("");
     if (!validateEmail(email)) {
       setEmailError("Please enter a valid email.");
       setLoading(false);
       return;
     }
-    const passwordValidationMessage = validatePassword(
-      password,
-      confirmPassword
-    );
-    if (passwordValidationMessage) {
-      setPasswordError(passwordValidationMessage);
+    if (!validatePassword(password, confirmPassword)) {
+      setPasswordErrorModalVisible(true);
       setLoading(false);
       return;
     }
@@ -152,7 +144,6 @@ function SignUpScreen() {
                     autoCapitalize="none"
                     placeholderTextColor="gray"
                     inputStyle={styles.inputText}
-                    errorMessage={passwordError}
                   />
                 </View>
               </View>
@@ -176,6 +167,11 @@ function SignUpScreen() {
                 />
               </View>
             </View>
+            <PasswordErrorModal
+              modalVisible={passwordErrorModalVisible}
+              onClose={() => setPasswordErrorModalVisible(false)}
+              minLength={8}
+            />
           </SafeAreaView>
         </KeyboardAvoidingView>
       </View>
