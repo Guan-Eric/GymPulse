@@ -112,6 +112,7 @@ function ViewPlanScreen() {
                 value={plan?.name}
               />
               <Button
+                buttonStyle={{ marginHorizontal: -10 }}
                 onPress={() => {
                   router.push({
                     pathname: "/(tabs)/(workout)/workout",
@@ -122,7 +123,14 @@ function ViewPlanScreen() {
                   });
                 }}
                 type="clear"
-                icon={<Icon name="play" type="feather" />}
+                icon={
+                  <Icon
+                    size={32}
+                    color={theme.colors.black}
+                    name="timer"
+                    type="material-community"
+                  />
+                }
               />
               <ThreeDotsModal options={bottomSheetOptions} theme={theme} />
             </View>
