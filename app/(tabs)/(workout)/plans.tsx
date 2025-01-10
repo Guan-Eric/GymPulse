@@ -156,9 +156,9 @@ function PlanScreen() {
           <TabView.Item style={{ flex: 1 }}>
             {search === "" ? (
               <FlatList
-                contentContainerStyle={styles.exerciseContainer}
+                contentContainerStyle={styles.bodypartContainer}
                 ListHeaderComponentStyle={{ width: "100%", paddingBottom: 5 }}
-                numColumns={2}
+                numColumns={1}
                 data={bodyParts}
                 ListHeaderComponent={
                   <SearchBar
@@ -170,7 +170,7 @@ function PlanScreen() {
                       marginBottom: -10,
                       paddingBottom: 10,
                       marginTop: 15,
-                      width: "92%",
+                      width: "96%",
                     }}
                     inputContainerStyle={{
                       borderRadius: 10,
@@ -200,7 +200,7 @@ function PlanScreen() {
             ) : (
               <FlatList
                 contentContainerStyle={styles.exerciseContainer}
-                numColumns={2}
+                numColumns={1}
                 ListHeaderComponentStyle={{ width: "100%" }}
                 data={results}
                 ListHeaderComponent={
@@ -213,7 +213,7 @@ function PlanScreen() {
                       marginBottom: -10,
                       paddingBottom: 10,
                       marginTop: 15,
-                      width: "92%",
+                      width: "96%",
                     }}
                     inputContainerStyle={{
                       borderRadius: 10,
@@ -336,11 +336,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
-  exerciseContainer: {
+  bodypartContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     alignItems: "center",
+    marginHorizontal: 10,
+  },
+  exerciseContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 10,
   },
   planContainer: {
     flexDirection: "row",
