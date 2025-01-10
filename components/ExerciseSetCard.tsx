@@ -1,8 +1,9 @@
-import { Input, Button, Card, Icon } from "@rneui/themed";
+import { Input, Button, Card, Icon, ButtonGroup } from "@rneui/themed";
 import { View, Text, StyleSheet } from "react-native";
 import { Exercise, Plan } from "./types";
 import { addSet, deleteExercise, deleteSet, updateSet } from "../backend/plan";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
+import EmptySetCard from "./EmptySetCard";
 
 interface ExerciseSetCardProps {
   plan: Plan;
@@ -43,13 +44,6 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
   };
 
   const exerciseBottomSheetOptions = [
-    {
-      title: "Add Set",
-      onPress: () => {
-        handleAddSet(exercise.id, plan?.exercises);
-      },
-      containerStyle: { backgroundColor: theme.colors.primary },
-    },
     {
       title: "Delete Exercise",
       onPress: () => {
@@ -213,6 +207,9 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
             )}
           </View>
         ))}
+        <EmptySetCard
+          onPress={() => handleAddSet(exercise.id, plan?.exercises)}
+        />
       </View>
     </Card>
   );
