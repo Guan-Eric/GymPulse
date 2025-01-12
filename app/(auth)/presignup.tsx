@@ -36,8 +36,8 @@ const PreSignUpScreen = () => {
       params: {
         username,
         name,
-        primaryHeightUnit: primaryHeight,
-        secondaryHeightUnit: secondaryHeight,
+        primaryHeight: primaryHeight,
+        secondaryHeight: secondaryHeight,
         weight,
         heightIsMetric: heightIsMetric.toString(),
         weightIsMetric: weightIsMetric.toString(),
