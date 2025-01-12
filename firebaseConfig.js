@@ -13,12 +13,12 @@ import Constants from "expo-constants";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: Constants.expoConfig?.extra?.firebaseApiKey,
-  authDomain: "fitai-2e02d.firebaseapp.com",
-  projectId: "fitai-2e02d",
-  storageBucket: "fitai-2e02d.appspot.com",
-  messagingSenderId: "174909441573",
-  appId: "1:174909441573:web:3d640113eb5cbcede6e1cc",
-  measurementId: "G-3MPCBKXSM0",
+  authDomain: Constants.expoConfig?.extra?.authDomain,
+  projectId: Constants.expoConfig?.extra?.projectId,
+  storageBucket: Constants.expoConfig?.extra?.storageBucket,
+  messagingSenderId: Constants.expoConfig?.extra?.messagingSenderId,
+  appId: Constants.expoConfig?.extra?.appId,
+  measurementId: Constants.expoConfig?.extra?.measurementId,
 };
 
 // Initialize Firebase
