@@ -2,19 +2,15 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Exercise } from "../../../components/types";
 import { Button, Input } from "@rneui/themed";
+import { fetchSuggestions } from "../../../backend/ai";
 
 export default function SuggestExerciseScreen() {
   const [suggestions, setSuggestions] = useState<Exercise[]>([]);
   const [bodyPart, setBodyPart] = useState<string>("");
   const [preference, setPreference] = useState<string>("");
 
-  const fetchSuggestions = async () => {
-    const response = await fetch("https://your-ai-api.com/get-exercises", {
-      method: "POST",
-      body: JSON.stringify({ bodyPart, preference }),
-    });
-    const data = await response.json();
-    setSuggestions(data);
+  const handleSuggestExercises = async () => {
+    setSuggestions(await fetchSuggestions(bodyPart, preference));
   };
 
   return (
@@ -37,7 +33,7 @@ export default function SuggestExerciseScreen() {
       <Button
         disabled={bodyPart && preference ? false : true}
         title="Get Suggestions"
-        onPress={fetchSuggestions}
+        onPress={handleSuggestExercises}
       />
       <FlatList
         data={suggestions}

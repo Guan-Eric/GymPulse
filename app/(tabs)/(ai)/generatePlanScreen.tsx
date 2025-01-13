@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Plan } from "../../../components/types";
 import { Button, Input } from "@rneui/themed";
+import { generatePlan } from "../../../backend/ai";
 
 export default function GeneratePlanScreen() {
   const [plan, setPlan] = useState<Plan>(null);
@@ -10,13 +11,8 @@ export default function GeneratePlanScreen() {
   const [level, setLevel] = useState<string>("");
   const [days, setDays] = useState<number>(1);
 
-  const generatePlan = async () => {
-    const response = await fetch("https://your-ai-api.com/generate-plan", {
-      method: "POST",
-      body: JSON.stringify({ goal, preference }),
-    });
-    const data = await response.json();
-    setPlan(data);
+  const handleGeneratePlan = async () => {
+    setPlan(await generatePlan(days, level, goal, preference));
   };
 
   return (
@@ -53,7 +49,7 @@ export default function GeneratePlanScreen() {
       <Button
         disabled={goal && preference && level ? false : true}
         title="Generate Plan"
-        onPress={generatePlan}
+        onPress={handleGeneratePlan}
       />
       {plan && (
         <View style={styles.planContainer}>
