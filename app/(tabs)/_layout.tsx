@@ -27,20 +27,20 @@ function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(ai)"
-        options={{
-          title: "AI",
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="robot" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="(workout)"
         options={{
           title: "Workout",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="dumbbell" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="(ai)"
+        options={{
+          title: "AI",
+          tabBarIcon: ({ size, color }) => (
+            <MaterialCommunityIcons name="robot" size={size} color={color} />
           ),
         }}
       />
