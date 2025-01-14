@@ -3,7 +3,7 @@ import React from "react";
 
 function AiStackLayout(props) {
   return (
-    <Stack initialRouteName="feed">
+    <Stack initialRouteName="ai">
       <Stack.Screen
         name="AI"
         options={{ headerShown: false, gestureEnabled: false }}
