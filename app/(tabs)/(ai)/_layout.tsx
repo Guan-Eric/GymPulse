@@ -5,10 +5,9 @@ function AiStackLayout(props) {
   return (
     <Stack initialRouteName="ai">
       <Stack.Screen
-        name="AI"
+        name="ai"
         options={{ headerShown: false, gestureEnabled: false }}
       />
-      <Stack.Screen name="ai" options={{ headerShown: false }} />
       <Stack.Screen
         name="generatePlanScreen"
         options={{ headerShown: false }}

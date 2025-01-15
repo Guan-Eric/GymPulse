@@ -11,22 +11,25 @@ const openai = new OpenAI({
 });
 
 export async function generatePlan(
-  days: number,
   level: string,
   goal: string,
-  preference: string
+  category: string,
+  equipment: string
 ): Promise<Plan> {
   try {
     const collectionRef = collection(FIRESTORE_DB, "Exercises");
     const querySnapshot = await getDocs(collectionRef);
     const exercises = [];
-
-    querySnapshot.forEach((doc) => {
-      exercises.push(doc.data());
+    const filteredExercises = querySnapshot.docs.filter((doc) => {
+      const data = doc.data();
+      return data.category == category.toLowerCase();
+    });
+    filteredExercises.forEach((doc) => {
+      exercises.push({ id: doc.data().id });
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -36,23 +39,22 @@ export async function generatePlan(
         {
           role: "user",
           content: `
-            Create a ${days}-day workout plan for a ${level} user whose goal is ${goal} and these are my preferences: ${preference}.
-            Use the following exercises (with IDs and names):
-            ${JSON.stringify(exercises, null, 2)}
+            Create a workout plan for a ${level} user whose goal is ${goal} and has ${equipment} as equipment.
+            Please select an appropriate amount of exercises from the following list:
+            ${exercises.map((exercise) => exercise.id).join(", ")}
 
-            Respond in the following JSON format:
+            Respond in the following format:
             {
-            "name": "My Workout Plan",
+            "name": name,
             "exercises": [
-              { "id": "exercise-id", 
-               "name": "exercise name", 
-               "sets": [
-               {reps: "number", weight_duration: "number"},
-               ...
+              { "id": exercise_id,  
+               "sets": number.
+               "reps": number,
                ] },
                ...
-            ]
-            }`,
+              ]
+            }
+            `,
         },
       ],
       temperature: 0.7,
@@ -61,7 +63,10 @@ export async function generatePlan(
     const planContent =
       response.choices[0].message?.content || "No plan generated.";
     console.log(planContent);
-    return JSON.parse(planContent) as Plan; // Ensure the output from OpenAI is JSON-parsable
+    const cleanedJSON = planContent
+      .replace(/\/\/.*$/gm, "")
+      .replace(/(\r\n|\n|\r)/gm, ""); // Remove comments and newlines
+    return JSON.parse(cleanedJSON) as Plan; // Ensure the output from OpenAI is JSON-parsable
   } catch (error) {
     console.error("Error generating plan:", error);
   }
@@ -77,11 +82,11 @@ export async function fetchSuggestions(
     const exercises = [];
 
     querySnapshot.forEach((doc) => {
-      exercises.push(doc.data());
+      exercises.push([{ id: doc.data().id }]);
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
@@ -91,8 +96,8 @@ export async function fetchSuggestions(
         {
           role: "user",
           content: `Suggest exercises for ${bodyPart} that focus on ${preference}.
-          Use the following exercises (with IDs and names):
-            ${JSON.stringify(exercises, null, 2)}
+          Use the following exercises (with IDs):
+          ${exercises.map((exercise) => exercise.id).join(", ")}
 
             Respond in the following JSON format:
             [{ "id": "exercise-id", 
