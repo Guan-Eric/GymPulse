@@ -3,11 +3,11 @@ export default {
   expo: {
     name: "Gym Pulse",
     slug: "gym-pulse",
-    version: "1.2.3",
+    version: "1.2.4",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
-    userInterfaceStyle: "automatic",
+    userInterfaceStyle: "dark",
     splash: {
       image: "./assets/iconSplash.png",
       resizeMode: "contain",
@@ -55,6 +55,9 @@ export default {
       admobCreatePostAdUnitIOS: process.env.ADMOB_CREATE_POST_AD_UNIT_IOS,
       admobCreatePostAdUnitAndroid:
         process.env.ADMOB_CREATE_POST_AD_UNIT_ANDROID,
+      openaiOrganizationId: process.env.OPENAI_ORGANIZATION_ID,
+      openaiProjectId: process.env.OPENAI_PROJECT_ID,
+      openaiApiKey: process.env.OPENAI_API_KEY,
     },
     experiments: {
       typedRoutes: true,
