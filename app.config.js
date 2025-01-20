@@ -7,7 +7,7 @@ export default {
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
-    userInterfaceStyle: "automatic",
+    userInterfaceStyle: "dark",
     splash: {
       image: "./assets/iconSplash.png",
       resizeMode: "contain",

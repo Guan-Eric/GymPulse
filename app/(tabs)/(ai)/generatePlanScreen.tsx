@@ -11,13 +11,17 @@ export default function GeneratePlanScreen() {
   const [goal, setGoal] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [equipment, setEquipment] = useState<string>("");
+  const [count, setCount] = useState<number>(0);
   const [level, setLevel] = useState<string>("");
+  const [preference, setPreference] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const { theme } = useTheme();
 
   const handleGeneratePlan = async () => {
     setLoading(true);
-    setPlan(await generatePlan(level, goal, category, equipment));
+    setPlan(
+      await generatePlan(level, goal, category, equipment, count, preference)
+    );
     setLoading(false);
   };
 
@@ -37,16 +41,23 @@ export default function GeneratePlanScreen() {
             value={goal}
             onChangeText={setGoal}
           />
-
+          <Input
+            style={styles.input}
+            label="How many exercises?"
+            value={count.toString()}
+            onChangeText={(count) => setCount(Number(count))}
+          />
           <Text style={{ color: theme.colors.black }}>Workout Category</Text>
           <View style={{ flexDirection: "row" }}>
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               containerStyle={{ width: "35%" }}
               checked={category == "Strength"}
               title={"Strength"}
               onIconPress={() => setCategory("Strength")}
             />
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               checked={category == "Cardio"}
               title={"Cardio"}
               onIconPress={() => setCategory("Cardio")}
@@ -58,12 +69,14 @@ export default function GeneratePlanScreen() {
             }}
           >
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               containerStyle={{ width: "35%" }}
               checked={category == "Plyometrics"}
               title={"Plyometrics"}
               onIconPress={() => setCategory("Plyometrics")}
             />
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               checked={category == "Powerlifting"}
               title={"Powerlifting"}
               onIconPress={() => setCategory("Powerlifting")}
@@ -75,18 +88,21 @@ export default function GeneratePlanScreen() {
             }}
           >
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               containerStyle={{ width: "35%" }}
               checked={category == "Strongman"}
               title={"Strongman"}
               onIconPress={() => setCategory("Strongman")}
             />
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               checked={category == "Stretching"}
               title={"Stretching"}
               onIconPress={() => setCategory("Stretching")}
             />
           </View>
           <CheckBox
+            textStyle={{ color: theme.colors.black }}
             checked={category == "Olympic Weightlifting"}
             title={"Olympic Weightlifting"}
             onIconPress={() => setCategory("Olympic Weightlifting")}
@@ -107,12 +123,14 @@ export default function GeneratePlanScreen() {
             }}
           >
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               containerStyle={{ width: "35%" }}
               checked={equipment == "Only Weights"}
               title={"Only Weights"}
               onIconPress={() => setEquipment("Only Weights")}
             />
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               checked={equipment == "Weights and Machines"}
               title={"Weights and Machines"}
               onIconPress={() => setEquipment("Weights and Machines")}
@@ -124,17 +142,26 @@ export default function GeneratePlanScreen() {
             }}
           >
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               containerStyle={{ width: "35%" }}
               checked={equipment == "Full Gym"}
               title={"Full Gym"}
               onIconPress={() => setEquipment("Full Gym")}
             />
             <CheckBox
+              textStyle={{ color: theme.colors.black }}
               checked={equipment == "None"}
               title={"None"}
               onIconPress={() => setEquipment("None")}
             />
           </View>
+          <Input
+            style={styles.input}
+            label="Other Preferences"
+            placeholder="e.g. focus on arms, chest, back, etc..."
+            value={preference}
+            onChangeText={setPreference}
+          />
           <Button
             disabled={
               goal && category && level && equipment && !loading ? false : true
