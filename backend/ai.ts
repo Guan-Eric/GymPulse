@@ -1,6 +1,6 @@
 import Constants from "expo-constants";
 import OpenAI from "openai";
-import { Exercise, Plan } from "../components/types";
+import { Exercise, GeneratedPlan, Plan } from "../components/types";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { FIRESTORE_DB } from "../firebaseConfig";
 
@@ -17,7 +17,7 @@ export async function generatePlan(
   equipment: string,
   count: number,
   preference: string
-): Promise<Plan> {
+): Promise<GeneratedPlan> {
   const maxRetries = 3;
   let attempts = 0;
 
@@ -76,7 +76,9 @@ export async function generatePlan(
       const cleanedJSON = planContent
         .replace(/\/\/.*$/gm, "")
         .replace(/(\r\n|\n|\r)/gm, ""); // Remove comments and newlines
-      return JSON.parse(cleanedJSON) as Plan; // Ensure the output from OpenAI is JSON-parsable
+      const plan = JSON.parse(cleanedJSON) as GeneratedPlan; // Ensure the output from OpenAI is JSON-parsable
+      plan.date = new Date();
+      return plan;
     } catch (error) {
       attempts++;
       console.error(

@@ -1,13 +1,13 @@
 import React, { Ref, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView } from "react-native";
-import { Plan } from "../../../components/types";
+import { GeneratedPlan, Plan } from "../../../components/types";
 import { Button, CheckBox, Input, useTheme } from "@rneui/themed";
 import { generatePlan } from "../../../backend/ai";
 import { color } from "@rneui/base";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function GeneratePlanScreen() {
-  const [plan, setPlan] = useState<Plan>(null);
+  const [plan, setPlan] = useState<GeneratedPlan>(null);
   const [goal, setGoal] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [equipment, setEquipment] = useState<string>("");

@@ -38,6 +38,13 @@ export interface Plan {
   exercises: Exercise[];
 }
 
+export interface GeneratedPlan {
+  id: string;
+  name: string;
+  exercises: Exercise[];
+  date: Date;
+}
+
 export interface Workout {
   id: string;
   name: string;
