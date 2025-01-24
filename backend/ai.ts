@@ -13,7 +13,7 @@ const openai = new OpenAI({
 export async function generatePlan(
   level: string,
   goal: string,
-  category: string,
+  category: string[],
   equipment: string,
   count: number,
   preference: string
@@ -28,7 +28,7 @@ export async function generatePlan(
       const exercises = [];
       const filteredExercises = querySnapshot.docs.filter((doc) => {
         const data = doc.data();
-        return data.category == category.toLowerCase();
+        return category.includes(data.category);
       });
       filteredExercises.forEach((doc) => {
         exercises.push({ id: doc.data().id });

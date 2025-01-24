@@ -39,10 +39,10 @@ export default function HistoryScreen() {
       {item.exercises.map((exercise, index) => (
         <View key={index} style={styles.exercise}>
           <Text style={{ color: theme.colors.black, fontWeight: "500" }}>
-            {exercise.id}
+            {exercise.name}
           </Text>
           <Text style={{ color: theme.colors.black }}>
-            Sets: {exercise.sets.length} x Reps: {exercise.sets[0].reps}
+            Sets: {exercise.sets} x Reps: {exercise.reps}
           </Text>
         </View>
       ))}

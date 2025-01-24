@@ -1,15 +1,23 @@
 import React, { Ref, useState } from "react";
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { GeneratedPlan, Plan } from "../../../components/types";
 import { Button, CheckBox, Input, useTheme } from "@rneui/themed";
 import { generatePlan } from "../../../backend/ai";
 import { color } from "@rneui/base";
 import { ScrollView } from "react-native-gesture-handler";
+import BackButton from "../../../components/BackButton";
 
 export default function GeneratePlanScreen() {
   const [plan, setPlan] = useState<GeneratedPlan>(null);
   const [goal, setGoal] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<string>("");
   const [count, setCount] = useState<number>(0);
   const [level, setLevel] = useState<string>("");
@@ -30,164 +38,326 @@ export default function GeneratePlanScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView>
-          <Text style={[styles.title, { color: theme.colors.black }]}>
-            Generate Your Workout Plan
-          </Text>
-          <Input
-            style={styles.input}
-            label="Enter your goal"
-            placeholder="e.g weight loss, muscle gain"
-            value={goal}
-            onChangeText={setGoal}
-          />
-          <Input
-            style={styles.input}
-            label="How many exercises?"
-            value={count.toString()}
-            onChangeText={(count) => setCount(Number(count))}
-          />
-          <Text style={{ color: theme.colors.black }}>Workout Category</Text>
-          <View style={{ flexDirection: "row" }}>
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              containerStyle={{ width: "35%" }}
-              checked={category == "Strength"}
-              title={"Strength"}
-              onIconPress={() => setCategory("Strength")}
-            />
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              checked={category == "Cardio"}
-              title={"Cardio"}
-              onIconPress={() => setCategory("Cardio")}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              containerStyle={{ width: "35%" }}
-              checked={category == "Plyometrics"}
-              title={"Plyometrics"}
-              onIconPress={() => setCategory("Plyometrics")}
-            />
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              checked={category == "Powerlifting"}
-              title={"Powerlifting"}
-              onIconPress={() => setCategory("Powerlifting")}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              containerStyle={{ width: "35%" }}
-              checked={category == "Strongman"}
-              title={"Strongman"}
-              onIconPress={() => setCategory("Strongman")}
-            />
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              checked={category == "Stretching"}
-              title={"Stretching"}
-              onIconPress={() => setCategory("Stretching")}
-            />
-          </View>
-          <CheckBox
-            textStyle={{ color: theme.colors.black }}
-            checked={category == "Olympic Weightlifting"}
-            title={"Olympic Weightlifting"}
-            onIconPress={() => setCategory("Olympic Weightlifting")}
-          />
-          <Input
-            style={styles.input}
-            label="Fitness Level"
-            placeholder="e.g. beginner, intermediate, advanced"
-            value={level}
-            onChangeText={setLevel}
-          />
-
-          <Text style={{ color: theme.colors.black }}>Available Equipment</Text>
-
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              containerStyle={{ width: "35%" }}
-              checked={equipment == "Only Weights"}
-              title={"Only Weights"}
-              onIconPress={() => setEquipment("Only Weights")}
-            />
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              checked={equipment == "Weights and Machines"}
-              title={"Weights and Machines"}
-              onIconPress={() => setEquipment("Weights and Machines")}
-            />
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-            }}
-          >
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              containerStyle={{ width: "35%" }}
-              checked={equipment == "Full Gym"}
-              title={"Full Gym"}
-              onIconPress={() => setEquipment("Full Gym")}
-            />
-            <CheckBox
-              textStyle={{ color: theme.colors.black }}
-              checked={equipment == "None"}
-              title={"None"}
-              onIconPress={() => setEquipment("None")}
-            />
-          </View>
-          <Input
-            style={styles.input}
-            label="Other Preferences"
-            placeholder="e.g. focus on arms, chest, back, etc..."
-            value={preference}
-            onChangeText={setPreference}
-          />
-          <Button
-            disabled={
-              goal && category && level && equipment && !loading ? false : true
-            }
-            title="Generate Plan"
-            onPress={handleGeneratePlan}
-            loading={loading}
-          />
-          {plan && (
-            <View style={styles.planContainer}>
-              <Text style={styles.planTitle}>Your Plan:</Text>
-              {plan.exercises.map((item, index) => (
-                <Text key={index}>{item.id}</Text>
-              ))}
+        <KeyboardAvoidingView behavior={"padding"} style={{ flex: 1 }}>
+          <ScrollView>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <BackButton />
+              <Text style={[styles.title, { color: theme.colors.black }]}>
+                Generate Your Workout Plan
+              </Text>
             </View>
-          )}
-        </ScrollView>
+            <Input
+              labelStyle={[
+                styles.sectionTitle,
+                {
+                  paddingLeft: 0,
+                  marginTop: 0,
+                  color: theme.colors.black,
+                  marginBottom: 5,
+                },
+              ]}
+              inputStyle={{ color: theme.colors.black }}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { backgroundColor: theme.colors.grey0 },
+              ]}
+              containerStyle={styles.inputContainer}
+              style={styles.input}
+              label="Enter your goal"
+              placeholder="e.g weight loss, muscle gain"
+              value={goal}
+              onChangeText={setGoal}
+            />
+            <Input
+              labelStyle={[
+                styles.sectionTitle,
+                {
+                  paddingLeft: 0,
+                  marginTop: 0,
+                  color: theme.colors.black,
+                  marginBottom: 5,
+                },
+              ]}
+              inputStyle={{ color: theme.colors.black }}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { backgroundColor: theme.colors.grey0 },
+              ]}
+              containerStyle={[styles.inputContainer, { marginTop: 10 }]}
+              style={styles.input}
+              label="How many exercises?"
+              value={count.toString()}
+              onChangeText={(count) => setCount(Number(count))}
+            />
+            <Text style={[styles.sectionTitle, { color: theme.colors.black }]}>
+              Workout Category
+            </Text>
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                containerStyle={styles.checkboxContainer}
+                checked={category.includes("strength")}
+                title={"Strength"}
+                onIconPress={() => {
+                  if (category.includes("strength")) {
+                    setCategory(category.filter((c) => c !== "strength"));
+                  } else {
+                    setCategory([...category, "strength"]);
+                  }
+                }}
+              />
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                checked={category.includes("cardio")}
+                title={"Cardio"}
+                onIconPress={() => {
+                  if (category.includes("cardio")) {
+                    setCategory(category.filter((c) => c !== "cardio"));
+                  } else {
+                    setCategory([...category, "cardio"]);
+                  }
+                }}
+              />
+            </View>
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                containerStyle={styles.checkboxContainer}
+                checked={category.includes("plyometrics")}
+                title={"Plyometrics"}
+                onIconPress={() => {
+                  if (category.includes("plyometrics")) {
+                    setCategory(category.filter((c) => c !== "plyometrics"));
+                  } else {
+                    setCategory([...category, "plyometrics"]);
+                  }
+                }}
+              />
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                checked={category.includes("powerlifting")}
+                title={"Powerlifting"}
+                onIconPress={() => {
+                  if (category.includes("powerlifting")) {
+                    setCategory(category.filter((c) => c !== "powerlifting"));
+                  } else {
+                    setCategory([...category, "powerlifting"]);
+                  }
+                }}
+              />
+            </View>
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                containerStyle={styles.checkboxContainer}
+                checked={category.includes("strongman")}
+                title={"Strongman"}
+                onIconPress={() => {
+                  if (category.includes("strongman")) {
+                    setCategory(category.filter((c) => c !== "strongman"));
+                  } else {
+                    setCategory([...category, "strongman"]);
+                  }
+                }}
+              />
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                checked={category.includes("stretching")}
+                title={"Stretching"}
+                onIconPress={() => {
+                  if (category.includes("stretching")) {
+                    setCategory(category.filter((c) => c !== "stretching"));
+                  } else {
+                    setCategory([...category, "stretching"]);
+                  }
+                }}
+              />
+            </View>
+            <CheckBox
+              textStyle={{ color: theme.colors.black }}
+              checked={category.includes("olympic weightlifting")}
+              title={"Olympic Weightlifting"}
+              onIconPress={() => {
+                if (category.includes("olympic weightlifting")) {
+                  setCategory(
+                    category.filter((c) => c !== "olympic weightlifting")
+                  );
+                } else {
+                  setCategory([...category, "olympic weightlifting"]);
+                }
+              }}
+            />
+            <Input
+              labelStyle={[
+                styles.sectionTitle,
+                {
+                  paddingLeft: 0,
+                  marginTop: 0,
+                  color: theme.colors.black,
+                  marginBottom: 5,
+                },
+              ]}
+              inputStyle={{ color: theme.colors.black }}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { backgroundColor: theme.colors.grey0 },
+              ]}
+              containerStyle={styles.inputContainer}
+              style={styles.input}
+              label="Fitness Level"
+              placeholder="e.g. beginner, intermediate, advanced"
+              value={level}
+              onChangeText={setLevel}
+            />
+
+            <Text style={[styles.sectionTitle, { color: theme.colors.black }]}>
+              Available Equipment
+            </Text>
+
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                containerStyle={styles.checkboxContainer}
+                checked={equipment == "Only Weights"}
+                title={"Only Weights"}
+                onIconPress={() => setEquipment("Only Weights")}
+              />
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                checked={equipment == "Weights and Machines"}
+                title={"Weights and Machines"}
+                onIconPress={() => setEquipment("Weights and Machines")}
+              />
+            </View>
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                containerStyle={styles.checkboxContainer}
+                checked={equipment == "Full Gym"}
+                title={"Full Gym"}
+                onIconPress={() => setEquipment("Full Gym")}
+              />
+              <CheckBox
+                textStyle={{ color: theme.colors.black }}
+                checked={equipment == "None"}
+                title={"None"}
+                onIconPress={() => setEquipment("None")}
+              />
+            </View>
+            <Input
+              labelStyle={[
+                styles.sectionTitle,
+                {
+                  paddingLeft: 0,
+                  marginTop: 0,
+                  color: theme.colors.black,
+                  marginBottom: 5,
+                },
+              ]}
+              inputStyle={{ color: theme.colors.black }}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { backgroundColor: theme.colors.grey0 },
+              ]}
+              containerStyle={styles.inputContainer}
+              style={styles.input}
+              label="Other Preferences"
+              placeholder="e.g. focus on arms, chest, back, etc..."
+              value={preference}
+              onChangeText={setPreference}
+            />
+            <Button
+              titleStyle={styles.buttonTitle}
+              disabled={
+                goal && category && level && equipment && !loading
+                  ? false
+                  : true
+              }
+              buttonStyle={{
+                backgroundColor: theme.colors.primary,
+                width: 200,
+                borderRadius: 20,
+                alignSelf: "center",
+              }}
+              title="Generate Plan"
+              onPress={handleGeneratePlan}
+              loading={loading}
+              containerStyle={styles.buttonContainer}
+            />
+            {plan && (
+              <View style={styles.planContainer}>
+                <Text style={styles.planTitle}>Your Plan:</Text>
+                {plan.exercises.map((item, index) => (
+                  <Text key={index}>{item.id}</Text>
+                ))}
+              </View>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, marginBottom: 20 },
-  planContainer: { marginTop: 20 },
-  planTitle: { fontSize: 18, fontWeight: "bold" },
+  container: {
+    flex: 1,
+  },
+
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginTop: 20,
+    fontFamily: "Lato_700Bold",
+    paddingLeft: 20,
+  },
+  input: {
+    borderColor: "white",
+    flex: 1,
+    fontFamily: "Lato_400Regular",
+    fontSize: 14,
+  },
+  planContainer: {
+    marginTop: 30,
+  },
+  planTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  inputContainer: {
+    width: "100%",
+    height: 42,
+    borderRadius: 10,
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  inputText: {
+    color: "white",
+    fontFamily: "Lato_400Regular",
+    fontSize: 12,
+  },
+  inputRoundedContainer: {
+    marginTop: 2,
+    paddingLeft: 10,
+    borderRadius: 10,
+    borderBottomWidth: 0,
+  },
+  checkboxRow: {
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+  checkboxContainer: {
+    width: "35%",
+  },
+  buttonContainer: {
+    marginVertical: 30,
+    paddingHorizontal: 20,
+  },
+  buttonTitle: {
+    fontFamily: "Lato_700Bold",
+  },
 });

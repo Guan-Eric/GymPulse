@@ -1,5 +1,5 @@
 import { Input, Button, Card, Icon, ButtonGroup } from "@rneui/themed";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Exercise, Plan } from "../types";
 import {
   addSet,
@@ -9,6 +9,7 @@ import {
 } from "../../backend/plan";
 import ThreeDotsModal from "../modal/ThreeDotsModal";
 import EmptySetCard from "./EmptySetCard";
+import { router } from "expo-router";
 
 interface ExerciseSetCardProps {
   plan: Plan;
@@ -17,6 +18,7 @@ interface ExerciseSetCardProps {
   theme: any;
   isWeightMetric: boolean;
   isDisabled: boolean;
+  workoutTime: number;
   setPlan: (plan: Plan) => void;
 }
 const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
@@ -26,6 +28,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
   theme,
   isWeightMetric,
   isDisabled,
+  workoutTime,
   setPlan,
 }) => {
   const updateSets = (
@@ -76,9 +79,23 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
       ]}
     >
       <View style={styles.exerciseHeader}>
-        <Text style={[styles.baseText, { color: theme.colors.black }]}>
-          {exercise.name}
-        </Text>
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: "/(tabs)/(workout)/exercise",
+              params: {
+                exerciseId: exercise.id,
+                planId: plan.id,
+                route: "exercise",
+                workoutTime: workoutTime,
+              },
+            })
+          }
+        >
+          <Text style={[styles.baseText, { color: theme.colors.black }]}>
+            {exercise.name}
+          </Text>
+        </Pressable>
         {!isDisabled && (
           <ThreeDotsModal options={exerciseBottomSheetOptions} theme={theme} />
         )}

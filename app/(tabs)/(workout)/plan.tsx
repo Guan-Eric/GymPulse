@@ -150,6 +150,7 @@ function ViewPlanScreen() {
                       sets={exercise.sets}
                       exercise={exercise}
                       isDisabled={false}
+                      workoutTime={null}
                     />
                   ))
               : null}
