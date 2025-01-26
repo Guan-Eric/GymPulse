@@ -1,8 +1,15 @@
 import Constants from "expo-constants";
 import OpenAI from "openai";
 import { Exercise, GeneratedPlan, Plan } from "../components/types";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 
 const openai = new OpenAI({
   organization: Constants.expoConfig?.extra?.openaiOrganizationId,
@@ -78,7 +85,7 @@ export async function generatePlan(
         .replace(/(\r\n|\n|\r)/gm, ""); // Remove comments and newlines
       const plan = JSON.parse(cleanedJSON) as GeneratedPlan; // Ensure the output from OpenAI is JSON-parsable
       plan.date = new Date();
-      return plan;
+      return saveGeneratedPlan(plan);
     } catch (error) {
       attempts++;
       console.error(
@@ -159,4 +166,29 @@ export async function fetchSuggestions(
       }
     }
   }
+}
+
+async function saveGeneratedPlan(
+  generatedPlan: GeneratedPlan
+): Promise<GeneratedPlan> {
+  const generatedPlansCollectionRef = collection(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans`
+  );
+  const generatedPlanDocRef = await addDoc(generatedPlansCollectionRef, {
+    userId: FIREBASE_AUTH.currentUser.uid,
+    name: generatedPlan.name,
+    date: generatedPlan.date,
+  });
+  await updateDoc(generatedPlanDocRef, { id: generatedPlanDocRef.id });
+  generatedPlan.id = generatedPlanDocRef.id;
+
+  const generatedExercisesCollectionRef = collection(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatedPlanDocRef.id}/Exercises`
+  );
+  generatedPlan.exercises.forEach(async (exercise) => {
+    await addDoc(generatedExercisesCollectionRef, exercise);
+  });
+  return generatedPlan;
 }

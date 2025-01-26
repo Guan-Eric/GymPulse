@@ -13,9 +13,9 @@ import { generatePlan } from "../../../backend/ai";
 import { color } from "@rneui/base";
 import { ScrollView } from "react-native-gesture-handler";
 import BackButton from "../../../components/BackButton";
+import { router } from "expo-router";
 
 export default function GeneratePlanScreen() {
-  const [plan, setPlan] = useState<GeneratedPlan>(null);
   const [goal, setGoal] = useState<string>("");
   const [category, setCategory] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<string>("");
@@ -27,10 +27,19 @@ export default function GeneratePlanScreen() {
 
   const handleGeneratePlan = async () => {
     setLoading(true);
-    setPlan(
-      await generatePlan(level, goal, category, equipment, count, preference)
+    const generatedPlan = await generatePlan(
+      level,
+      goal,
+      category,
+      equipment,
+      count,
+      preference
     );
     setLoading(false);
+    router.push({
+      pathname: "/(tabs)/(ai)/generatedPlanScreen",
+      params: { generatePlanId: generatedPlan.id },
+    });
   };
 
   return (
@@ -284,14 +293,6 @@ export default function GeneratePlanScreen() {
               loading={loading}
               containerStyle={styles.buttonContainer}
             />
-            {plan && (
-              <View style={styles.planContainer}>
-                <Text style={styles.planTitle}>Your Plan:</Text>
-                {plan.exercises.map((item, index) => (
-                  <Text key={index}>{item.id}</Text>
-                ))}
-              </View>
-            )}
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
