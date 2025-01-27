@@ -157,6 +157,7 @@ function WorkoutScreen() {
                     sets={exercise.sets}
                     exercise={exercise}
                     isDisabled={false}
+                    workoutTime={time}
                   />
                 ))
             : null}

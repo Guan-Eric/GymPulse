@@ -215,3 +215,10 @@ export function updateSet(plan: Plan, exerciseId, setIndex, property, value) {
 
   return updatedPlan;
 }
+
+export async function fetchExercise(exerciseId: string): Promise<Exercise> {
+  const exerciseDoc = await getDoc(
+    doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
+  );
+  return exerciseDoc.data() as Exercise;
+}

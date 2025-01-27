@@ -1,8 +1,17 @@
 import Constants from "expo-constants";
 import OpenAI from "openai";
-import { Exercise, Plan } from "../components/types";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { FIRESTORE_DB } from "../firebaseConfig";
+import { Exercise, GeneratedPlan, Plan } from "../components/types";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 
 const openai = new OpenAI({
   organization: Constants.expoConfig?.extra?.openaiOrganizationId,
@@ -13,11 +22,11 @@ const openai = new OpenAI({
 export async function generatePlan(
   level: string,
   goal: string,
-  category: string,
+  category: string[],
   equipment: string,
   count: number,
   preference: string
-): Promise<Plan> {
+): Promise<GeneratedPlan> {
   const maxRetries = 3;
   let attempts = 0;
 
@@ -28,7 +37,7 @@ export async function generatePlan(
       const exercises = [];
       const filteredExercises = querySnapshot.docs.filter((doc) => {
         const data = doc.data();
-        return data.category == category.toLowerCase();
+        return category.includes(data.category);
       });
       filteredExercises.forEach((doc) => {
         exercises.push({ id: doc.data().id });
@@ -75,8 +84,10 @@ export async function generatePlan(
       console.log(planContent);
       const cleanedJSON = planContent
         .replace(/\/\/.*$/gm, "")
-        .replace(/(\r\n|\n|\r)/gm, ""); // Remove comments and newlines
-      return JSON.parse(cleanedJSON) as Plan; // Ensure the output from OpenAI is JSON-parsable
+        .replace(/(\r\n|\n|\r)/gm, "");
+      const plan = JSON.parse(cleanedJSON) as GeneratedPlan;
+      plan.date = new Date();
+      return saveGeneratedPlan(plan);
     } catch (error) {
       attempts++;
       console.error(
@@ -139,11 +150,10 @@ export async function fetchSuggestions(
         ],
         temperature: 0.7,
       });
-
       const suggestionsContent =
         response.choices[0].message?.content || "No suggestions found.";
-      console.log(suggestionsContent);
-      return JSON.parse(suggestionsContent) as Exercise[]; // Ensure the output is JSON
+      const exerciseIds = JSON.parse(suggestionsContent);
+      return (await generatedExerciseList(exerciseIds)) as Exercise[];
     } catch (error) {
       attempts++;
       console.error(
@@ -157,4 +167,39 @@ export async function fetchSuggestions(
       }
     }
   }
+}
+
+async function saveGeneratedPlan(
+  generatedPlan: GeneratedPlan
+): Promise<GeneratedPlan> {
+  const generatedPlansCollectionRef = collection(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans`
+  );
+  const generatedPlanDocRef = await addDoc(generatedPlansCollectionRef, {
+    userId: FIREBASE_AUTH.currentUser.uid,
+    name: generatedPlan.name,
+    date: generatedPlan.date,
+  });
+  await updateDoc(generatedPlanDocRef, { id: generatedPlanDocRef.id });
+  generatedPlan.id = generatedPlanDocRef.id;
+
+  const generatedExercisesCollectionRef = collection(
+    FIRESTORE_DB,
+    `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatedPlanDocRef.id}/Exercises`
+  );
+  generatedPlan.exercises.forEach(async (exercise) => {
+    await addDoc(generatedExercisesCollectionRef, exercise);
+  });
+  return generatedPlan;
+}
+
+async function generatedExerciseList(exerciseIds: any): Promise<Exercise[]> {
+  const exercises = [];
+  for (const exerciseId of exerciseIds) {
+    const exerciseDocRef = doc(FIRESTORE_DB, `Exercises/${exerciseId.id}`);
+    const exerciseDoc = await getDoc(exerciseDocRef);
+    exercises.push(exerciseDoc.data());
+  }
+  return exercises;
 }

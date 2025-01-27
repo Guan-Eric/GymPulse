@@ -16,6 +16,11 @@ function AiStackLayout(props) {
         name="suggestExerciseScreen"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="generatedPlanScreen"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="historyScreen" options={{ headerShown: false }} />
     </Stack>
   );
 }

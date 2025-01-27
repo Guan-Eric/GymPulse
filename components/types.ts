@@ -38,6 +38,20 @@ export interface Plan {
   exercises: Exercise[];
 }
 
+export interface GeneratedPlan {
+  id: string;
+  name: string;
+  exercises: GeneratedExercise[];
+  date: Date;
+}
+
+export interface GeneratedExercise {
+  id: string;
+  name: string;
+  sets: number;
+  reps: number;
+}
+
 export interface Workout {
   id: string;
   name: string;

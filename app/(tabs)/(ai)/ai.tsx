@@ -21,12 +21,16 @@ function AIScreen() {
         </View>
         {[
           {
-            title: "Generate Workout Plan",
+            title: "Get a Personalized Workout Plan",
             route: "/(tabs)/(ai)/generatePlanScreen",
           },
           {
             title: "Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
+          },
+          {
+            title: "View Generated Plans",
+            route: "/(tabs)/(ai)/historyScreen",
           },
         ].map((item, index) => (
           <Card
