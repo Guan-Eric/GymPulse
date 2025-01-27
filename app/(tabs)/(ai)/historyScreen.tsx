@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SafeAreaView, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { GeneratedPlan } from "../../../components/types";
-import { Card, useTheme } from "@rneui/themed";
+import { Button, Card, Icon, useTheme } from "@rneui/themed";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
-import { FIRESTORE_DB } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
+import { router } from "expo-router";
+import { format } from "date-fns";
+import BackButton from "../../../components/BackButton";
 
 export default function HistoryScreen() {
   const [plans, setPlans] = useState<GeneratedPlan[]>([]);
@@ -11,12 +21,20 @@ export default function HistoryScreen() {
 
   useEffect(() => {
     const fetchPlans = async () => {
-      const plansRef = collection(FIRESTORE_DB, "Plans");
+      const plansRef = collection(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser?.uid}/GeneratedPlans`
+      );
       const q = query(plansRef, orderBy("date", "desc"));
       const querySnapshot = await getDocs(q);
       const plansList: GeneratedPlan[] = [];
       querySnapshot.forEach((doc) => {
-        plansList.push(doc.data() as GeneratedPlan);
+        plansList.push({
+          id: doc.id,
+          name: doc.data().name,
+          exercises: doc.data().exercises,
+          date: doc.data().date.toDate(),
+        });
       });
       setPlans(plansList);
     };
@@ -28,24 +46,44 @@ export default function HistoryScreen() {
     <Card
       containerStyle={[
         styles.planCard,
-        { backgroundColor: theme.colors.grey5 },
+        {
+          backgroundColor: theme.colors.grey0,
+          borderColor: theme.colors.grey0,
+        },
       ]}
     >
-      <Card.Title style={{ color: theme.colors.black }}>{item.name}</Card.Title>
-      <Card.Divider />
-      <Text style={{ color: theme.colors.black, marginBottom: 10 }}>
-        Date: {new Date(item.date).toLocaleDateString()}
-      </Text>
-      {item.exercises.map((exercise, index) => (
-        <View key={index} style={styles.exercise}>
-          <Text style={{ color: theme.colors.black, fontWeight: "500" }}>
-            {exercise.name}
-          </Text>
-          <Text style={{ color: theme.colors.black }}>
-            Sets: {exercise.sets} x Reps: {exercise.reps}
-          </Text>
-        </View>
-      ))}
+      <Button
+        type="clear"
+        title={
+          <View
+            style={{ flexDirection: "column", justifyContent: "space-between" }}
+          >
+            <Text style={[styles.buttonTitle, { color: theme.colors.black }]}>
+              {item.name}
+            </Text>
+            <Text style={[styles.dateText, { color: theme.colors.grey4 }]}>
+              {format(item?.date, "MMMM do, yyyy 'at' h:mm a")}
+            </Text>
+          </View>
+        }
+        onPress={() =>
+          router.push({
+            pathname: `/(tabs)/(ai)/generatedPlanScreen`,
+            params: { generatePlanId: item.id },
+          })
+        }
+        containerStyle={styles.buttonContainer}
+        buttonStyle={styles.buttonStyle}
+        iconPosition="right"
+        icon={
+          <Icon
+            name="chevron-right"
+            type="material-community"
+            size={20}
+            color={theme.colors.black}
+          />
+        }
+      />
     </Card>
   );
 
@@ -54,9 +92,12 @@ export default function HistoryScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <Text style={[styles.title, { color: theme.colors.black }]}>
-          Workout History
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <BackButton />
+          <Text style={[styles.title, { color: theme.colors.black }]}>
+            Workout History
+          </Text>
+        </View>
         <FlatList
           data={plans}
           renderItem={renderPlan}
@@ -71,12 +112,11 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
+    fontFamily: "Lato_700Bold",
   },
   listContainer: {
     gap: 15,
@@ -84,7 +124,6 @@ const styles = StyleSheet.create({
   planCard: {
     padding: 15,
     borderRadius: 10,
-    marginBottom: 10,
   },
   planName: {
     fontSize: 18,
@@ -94,5 +133,21 @@ const styles = StyleSheet.create({
   exercise: {
     marginTop: 10,
     paddingLeft: 10,
+  },
+  buttonContainer: {
+    width: "100%",
+  },
+  buttonStyle: {
+    justifyContent: "space-between",
+    paddingHorizontal: 0,
+  },
+  buttonTitle: {
+    textAlign: "left",
+    fontSize: 16,
+    fontFamily: "Lato_700Bold",
+  },
+  dateText: {
+    fontSize: 12,
+    fontFamily: "Lato_400Regular",
   },
 });

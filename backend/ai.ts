@@ -4,6 +4,8 @@ import { Exercise, GeneratedPlan, Plan } from "../components/types";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   query,
   updateDoc,
@@ -82,8 +84,8 @@ export async function generatePlan(
       console.log(planContent);
       const cleanedJSON = planContent
         .replace(/\/\/.*$/gm, "")
-        .replace(/(\r\n|\n|\r)/gm, ""); // Remove comments and newlines
-      const plan = JSON.parse(cleanedJSON) as GeneratedPlan; // Ensure the output from OpenAI is JSON-parsable
+        .replace(/(\r\n|\n|\r)/gm, "");
+      const plan = JSON.parse(cleanedJSON) as GeneratedPlan;
       plan.date = new Date();
       return saveGeneratedPlan(plan);
     } catch (error) {
@@ -148,11 +150,10 @@ export async function fetchSuggestions(
         ],
         temperature: 0.7,
       });
-
       const suggestionsContent =
         response.choices[0].message?.content || "No suggestions found.";
-      console.log(suggestionsContent);
-      return JSON.parse(suggestionsContent) as Exercise[]; // Ensure the output is JSON
+      const exerciseIds = JSON.parse(suggestionsContent);
+      return (await generatedExerciseList(exerciseIds)) as Exercise[];
     } catch (error) {
       attempts++;
       console.error(
@@ -191,4 +192,14 @@ async function saveGeneratedPlan(
     await addDoc(generatedExercisesCollectionRef, exercise);
   });
   return generatedPlan;
+}
+
+async function generatedExerciseList(exerciseIds: any): Promise<Exercise[]> {
+  const exercises = [];
+  for (const exerciseId of exerciseIds) {
+    const exerciseDocRef = doc(FIRESTORE_DB, `Exercises/${exerciseId.id}`);
+    const exerciseDoc = await getDoc(exerciseDocRef);
+    exercises.push(exerciseDoc.data());
+  }
+  return exercises;
 }

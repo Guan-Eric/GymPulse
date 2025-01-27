@@ -94,6 +94,7 @@ export default function GeneratePlanScreen() {
               ]}
               containerStyle={[styles.inputContainer, { marginTop: 10 }]}
               style={styles.input}
+              keyboardType="numeric"
               label="How many exercises?"
               value={count.toString()}
               onChangeText={(count) => setCount(Number(count))}
