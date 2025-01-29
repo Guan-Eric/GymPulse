@@ -43,6 +43,7 @@ export interface GeneratedPlan {
   name: string;
   exercises: GeneratedExercise[];
   date: Date;
+  saved: boolean;
 }
 
 export interface GeneratedExercise {

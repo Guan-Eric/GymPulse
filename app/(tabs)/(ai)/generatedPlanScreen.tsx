@@ -1,18 +1,117 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, SafeAreaView, ScrollView } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { router, useLocalSearchParams, useRouter } from "expo-router";
 import { GeneratedExercise, GeneratedPlan } from "../../../components/types";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
-import { Button, useTheme } from "@rneui/themed";
+import { Button, Icon, Input, useTheme } from "@rneui/themed";
 import BackButton from "../../../components/BackButton";
 import GeneratedExerciseSetCard from "../../../components/card/GeneratedExerciseSetCard";
-import { fetchExercise } from "../../../backend/plan";
+import { createPlan, fetchExercise } from "../../../backend/plan";
+import AddExistingPlanModal from "../../../components/modal/AddExistingPlanModal";
 
 export default function GeneratedPlanScreen() {
   const { generatePlanId } = useLocalSearchParams();
   const [generatedPlan, setGeneratedPlan] = useState<GeneratedPlan>();
+  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const { theme } = useTheme();
+
+  const handleSaveName = async (name: string) => {
+    setGeneratedPlan((prevPlan) => ({
+      ...prevPlan,
+      name: name,
+    }));
+    await updateDoc(
+      doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatePlanId}`
+      ),
+      {
+        name: name,
+      }
+    );
+  };
+  const addGeneratedExercisesToPlan = async (
+    planId: string,
+    generatedExercises: GeneratedExercise[]
+  ) => {
+    try {
+      for (let i = 0; i < generatedExercises.length; i++) {
+        const generatedExercise = generatedExercises[i];
+        const exercise = await fetchExercise(generatedExercise.id);
+        await addDoc(
+          collection(
+            FIRESTORE_DB,
+            `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Exercise`
+          ),
+          {
+            id: exercise.id,
+            name: exercise.name,
+            sets: generateSets(generatedExercise.sets, generatedExercise.reps),
+            cardio: exercise.category === "cardio",
+            planId: planId,
+            index: i,
+          }
+        );
+        console.log("Added exercise to plan", exercise.name);
+      }
+    } catch (error) {
+      console.error(error, "Error adding generated exercises to plan");
+    }
+  };
+
+  function generateSets(sets: number, reps: number) {
+    const generatedSets = [];
+    for (let i = 0; i < sets; i++) {
+      generatedSets.push({
+        reps: reps,
+        weight: 0,
+      });
+    }
+    return generatedSets;
+  }
+  const savePlan = async () => {
+    try {
+      setModalVisible(false);
+      setLoading(true);
+      await updateDoc(
+        doc(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatePlanId}`
+        ),
+        {
+          saved: true,
+        }
+      );
+      const plan = await createPlan(generatedPlan?.name || "");
+      await addGeneratedExercisesToPlan(
+        plan.id,
+        generatedPlan?.exercises || []
+      );
+      router.push({
+        pathname: "/(tabs)/(workout)/plans",
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error(error, "Error saving generated plan");
+    }
+  };
+  const handleSavePlan = async () => {
+    if (generatedPlan?.saved) {
+      console.log("Plan already saved");
+      setModalVisible(true);
+    } else {
+      savePlan();
+    }
+  };
 
   useEffect(() => {
     const fetchGeneratedPlan = async () => {
@@ -22,15 +121,15 @@ export default function GeneratedPlanScreen() {
           `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatePlanId}`
         )
       );
-      console.log(planDoc.data());
       if (planDoc.exists()) {
+        console.log(planDoc.data());
         setGeneratedPlan(planDoc.data() as GeneratedPlan);
       }
 
       const generatedExercisesDocs = await getDocs(
         collection(
           FIRESTORE_DB,
-          `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatePlanId}/Exercises`
+          `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatePlanId}/Exercise`
         )
       );
       const generatedExercises: GeneratedExercise[] = [];
@@ -45,14 +144,16 @@ export default function GeneratedPlanScreen() {
         };
         generatedExercises.push(generatedExercise);
       }
+      console.log(generatedExercises);
       setGeneratedPlan((prevPlan) => ({
         ...prevPlan,
         exercises: generatedExercises,
       }));
+      console.log(generatedExercises);
     };
 
     fetchGeneratedPlan();
-  }, [generatePlanId]);
+  }, []);
 
   return (
     <View
@@ -65,17 +166,26 @@ export default function GeneratedPlanScreen() {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
+              paddingRight: 10,
             }}
           >
             <BackButton />
-            <Text style={[styles.title, { color: theme.colors.black }]}>
-              {generatedPlan?.name}
-            </Text>
+            <Input
+              inputStyle={{ color: theme.colors.black }}
+              label={"Plan Name"}
+              containerStyle={styles.nameInput}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { borderColor: theme.colors.greyOutline },
+              ]}
+              onChangeText={handleSaveName}
+              value={generatedPlan?.name}
+            />
             <Button
-              title="Save"
-              onPress={() => {
-                console.log("Save");
-              }}
+              loading={loading}
+              type="clear"
+              icon={<Icon name="save" size={24} color={theme.colors.white} />}
+              onPress={() => handleSavePlan()}
             />
           </View>
           {generatedPlan?.exercises?.map((exercise, index) => (
@@ -86,6 +196,13 @@ export default function GeneratedPlanScreen() {
             />
           ))}
         </ScrollView>
+        <AddExistingPlanModal
+          modalVisible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onAddPlan={() => savePlan()}
+          onCancel={() => setModalVisible(false)}
+          theme={theme}
+        />
       </SafeAreaView>
     </View>
   );
@@ -95,11 +212,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontFamily: "Lato_700Bold",
-    width: "60%",
-    flexWrap: "wrap",
-    textAlign: "center",
+  nameInput: {
+    width: "75%",
+  },
+  inputContainer: {
+    width: 70,
+    height: 40,
+  },
+  inputRoundedContainer: {
+    marginTop: 6,
+    paddingLeft: 10,
+    borderRadius: 10,
+    borderWidth: 1,
   },
 });

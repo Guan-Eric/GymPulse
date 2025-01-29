@@ -11,6 +11,7 @@ import {
   collection,
   addDoc,
   getDocs,
+  setDoc,
 } from "firebase/firestore";
 import { router, useLocalSearchParams } from "expo-router";
 import { Exercise } from "../../../components/types";
@@ -74,15 +75,19 @@ function AddExerciseScreen() {
           ? Math.max(...exercises.map((ex) => ex.index)) + 1
           : 0;
 
-      const exerciseDocRef = await addDoc(exerciseCollection, {
+      const exerciseDocRef = doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Exercise/${exercise.id}`
+      );
+      await setDoc(exerciseDocRef, {
+        id: exercise.id,
         name: exercise.name,
         planId: planId,
         sets: [{ reps: 0, weight_duration: 0 }],
         cardio: exercise.category === "cardio",
         index: nextIndex,
       });
-      const exerciseDoc = doc(exerciseCollection, exerciseDocRef.id);
-      await updateDoc(exerciseDoc, { id: exerciseDoc.id });
+
       if (workoutTime != null) {
         router.push({
           pathname: "/(tabs)/(workout)/workout",

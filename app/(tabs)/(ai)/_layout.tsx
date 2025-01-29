@@ -10,7 +10,7 @@ function AiStackLayout(props) {
       />
       <Stack.Screen
         name="generatePlanScreen"
-        options={{ headerShown: false }}
+        options={{ headerShown: false, gestureEnabled: false }}
       />
       <Stack.Screen
         name="suggestExerciseScreen"

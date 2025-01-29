@@ -8,6 +8,7 @@ import {
   getDoc,
   getDocs,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -81,7 +82,6 @@ export async function generatePlan(
 
       const planContent =
         response.choices[0].message?.content || "No plan generated.";
-      console.log(planContent);
       const cleanedJSON = planContent
         .replace(/\/\/.*$/gm, "")
         .replace(/(\r\n|\n|\r)/gm, "");
@@ -184,12 +184,16 @@ async function saveGeneratedPlan(
   await updateDoc(generatedPlanDocRef, { id: generatedPlanDocRef.id });
   generatedPlan.id = generatedPlanDocRef.id;
 
-  const generatedExercisesCollectionRef = collection(
-    FIRESTORE_DB,
-    `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatedPlanDocRef.id}/Exercises`
-  );
   generatedPlan.exercises.forEach(async (exercise) => {
-    await addDoc(generatedExercisesCollectionRef, exercise);
+    const generatedExercisesDocRef = doc(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatedPlanDocRef.id}/Exercise/${exercise.id}`
+    );
+    await setDoc(generatedExercisesDocRef, {
+      id: exercise.id,
+      sets: exercise.sets,
+      reps: exercise.reps,
+    });
   });
   return generatedPlan;
 }

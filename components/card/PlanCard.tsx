@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 10,
     padding: 20,
-    width: 150,
+    width: "96%",
     height: 200,
   },
   planName: {
