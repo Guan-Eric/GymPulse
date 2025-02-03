@@ -80,7 +80,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
     >
       <View style={styles.exerciseHeader}>
         <Pressable
-          onPress={() =>
+          onPress={async () =>
             router.push({
               pathname: "/(tabs)/(workout)/exercise",
               params: {
@@ -150,7 +150,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                     parseInt(value) ? parseInt(value) : 0
                   )
                 }
-                value={set.reps.toString()}
+                value={set?.reps?.toString()}
               />
               {!exercise.cardio ? (
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -176,8 +176,8 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                     }
                     value={
                       isWeightMetric
-                        ? Math.floor(set.weight_duration / 2.205).toString()
-                        : Math.floor(set.weight_duration).toString()
+                        ? Math.floor(set.weight_duration / 2.205)?.toString()
+                        : Math.floor(set.weight_duration)?.toString()
                     }
                   />
                   <Text style={{ color: theme.colors.black }}>
@@ -200,7 +200,7 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
                         parseFloat(value) ? parseFloat(value) : 0
                       )
                     }
-                    value={set?.weight_duration.toString()}
+                    value={set?.weight_duration?.toString()}
                   />
                   <Text style={{ color: theme.colors.black }}>s</Text>
                 </View>

@@ -113,7 +113,7 @@ function PlanScreen() {
   }, [search, exercises]);
 
   const handleCreatePlan = async () => {
-    const newPlan = await createPlan();
+    const newPlan = await createPlan("New Plan");
     setPlans((prevPlans) => [...prevPlans, newPlan]);
   };
 
@@ -275,7 +275,7 @@ function PlanScreen() {
           <TabView.Item style={{ flex: 1 }}>
             {loading ? (
               <View style={styles.planContainer}>
-                <View style={styles.cardWrapper}>
+                <View style={styles.planCardWrapper}>
                   <PlansLoader theme={theme} />
                 </View>
               </View>
@@ -285,11 +285,11 @@ function PlanScreen() {
                   {plans?.length == 0
                     ? null
                     : plans?.map((item) => (
-                        <View key={item.id} style={styles.cardWrapper}>
+                        <View key={item.id} style={styles.planCardWrapper}>
                           <PlanCard plan={item} theme={theme} />
                         </View>
                       ))}
-                  <View key="empty-plan-card" style={styles.cardWrapper}>
+                  <View key="empty-plan-card" style={styles.planCardWrapper}>
                     <EmptyPlanCard onPress={handleCreatePlan} />
                   </View>
                 </View>
@@ -349,13 +349,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   planContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    alignItems: "center",
+    alignContent: "center",
   },
   cardWrapper: {
     width: "48%",
+    marginBottom: 20,
+  },
+  planCardWrapper: {
+    width: "96%",
     marginBottom: 20,
   },
 });

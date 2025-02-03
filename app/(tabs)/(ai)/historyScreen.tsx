@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import { GeneratedPlan } from "../../../components/types";
 import { Button, Card, Icon, useTheme } from "@rneui/themed";
 import { collection, query, orderBy, getDocs } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { format } from "date-fns";
 import BackButton from "../../../components/BackButton";
 
@@ -19,29 +19,35 @@ export default function HistoryScreen() {
   const [plans, setPlans] = useState<GeneratedPlan[]>([]);
   const { theme } = useTheme();
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      const plansRef = collection(
-        FIRESTORE_DB,
-        `Users/${FIREBASE_AUTH.currentUser?.uid}/GeneratedPlans`
-      );
-      const q = query(plansRef, orderBy("date", "desc"));
-      const querySnapshot = await getDocs(q);
-      const plansList: GeneratedPlan[] = [];
-      querySnapshot.forEach((doc) => {
-        plansList.push({
-          id: doc.id,
-          name: doc.data().name,
-          exercises: doc.data().exercises,
-          date: doc.data().date.toDate(),
-        });
+  const fetchPlans = async () => {
+    const plansRef = collection(
+      FIRESTORE_DB,
+      `Users/${FIREBASE_AUTH.currentUser?.uid}/GeneratedPlans`
+    );
+    const q = query(plansRef, orderBy("date", "desc"));
+    const querySnapshot = await getDocs(q);
+    const plansList: GeneratedPlan[] = [];
+    querySnapshot.forEach((doc) => {
+      plansList.push({
+        id: doc.id,
+        name: doc.data().name,
+        exercises: doc.data().exercises,
+        date: doc.data().date.toDate(),
+        saved: doc.data().saved,
       });
-      setPlans(plansList);
-    };
+    });
+    setPlans(plansList);
+  };
 
+  useEffect(() => {
     fetchPlans();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchPlans();
+    }, [])
+  );
   const renderPlan = ({ item }: { item: GeneratedPlan }) => (
     <Card
       containerStyle={[

@@ -7,6 +7,8 @@ import {
   getDoc,
   addDoc,
   deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { Exercise, Plan } from "../components/types";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
@@ -41,12 +43,12 @@ export async function getPlans(): Promise<Plan[]> {
   }
 }
 
-export async function createPlan(): Promise<Plan> {
+export async function createPlan(name: string): Promise<Plan> {
   try {
     const docRef = await addDoc(
       collection(FIRESTORE_DB, `Users/${FIREBASE_AUTH.currentUser.uid}/Plans`),
       {
-        name: "New Plan",
+        name: name || "New Plan",
         userId: FIREBASE_AUTH.currentUser.uid,
       }
     );
@@ -217,8 +219,32 @@ export function updateSet(plan: Plan, exerciseId, setIndex, property, value) {
 }
 
 export async function fetchExercise(exerciseId: string): Promise<Exercise> {
-  const exerciseDoc = await getDoc(
-    doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
-  );
-  return exerciseDoc.data() as Exercise;
+  try {
+    const exerciseDoc = await getDoc(
+      doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
+    );
+    const exercise = exerciseDoc.data() as Exercise;
+    if (!exercise) {
+      throw new Error(`Exercise with id ${exerciseId} not found`);
+    }
+    return exercise;
+  } catch (error) {
+    console.error("Error fetching exercise:", error);
+  }
+}
+
+export async function isExerciseExists(exerciseId: string): Promise<boolean> {
+  try {
+    const exerciseDoc = await getDoc(
+      doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
+    );
+    const exercise = exerciseDoc.data() as Exercise;
+    if (!exercise) {
+      throw new Error(`Exercise with id ${exerciseId} not found`);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error fetching exercise:", error);
+    return false;
+  }
 }

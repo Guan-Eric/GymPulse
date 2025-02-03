@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { GeneratedPlan, Plan } from "../../../components/types";
-import { Button, CheckBox, Input, useTheme } from "@rneui/themed";
+import { Button, CheckBox, Input, Slider, useTheme } from "@rneui/themed";
 import { generatePlan } from "../../../backend/ai";
 import { color } from "@rneui/base";
 import { ScrollView } from "react-native-gesture-handler";
@@ -77,30 +77,49 @@ export default function GeneratePlanScreen() {
               value={goal}
               onChangeText={setGoal}
             />
-            <Input
-              labelStyle={[
-                styles.sectionTitle,
-                {
-                  paddingLeft: 0,
-                  marginTop: 0,
-                  color: theme.colors.black,
-                  marginBottom: 5,
-                },
-              ]}
-              inputStyle={{ color: theme.colors.black }}
-              inputContainerStyle={[
-                styles.inputRoundedContainer,
-                { backgroundColor: theme.colors.grey0 },
-              ]}
-              containerStyle={[styles.inputContainer, { marginTop: 10 }]}
-              style={styles.input}
-              keyboardType="numeric"
-              label="How many exercises?"
-              value={count.toString()}
-              onChangeText={(count) => setCount(Number(count))}
-            />
+            <View>
+              <Text
+                style={[styles.sectionTitle, { color: theme.colors.black }]}
+              >
+                How many exercises?
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 10,
+                }}
+              >
+                <Slider
+                  style={{
+                    width: "80%",
+                    marginLeft: 20,
+                  }}
+                  value={count}
+                  onValueChange={(count) => setCount(count)}
+                  minimumValue={1}
+                  maximumValue={15}
+                  step={1}
+                  thumbTintColor={theme.colors.primary}
+                  thumbStyle={{
+                    width: 20,
+                    height: 20,
+                  }}
+                />
+                <Text
+                  style={{
+                    color: theme.colors.black,
+                    paddingHorizontal: 20,
+                    fontSize: 16,
+                    fontFamily: "Lato_700Bold",
+                  }}
+                >
+                  {count}
+                </Text>
+              </View>
+            </View>
             <Text style={[styles.sectionTitle, { color: theme.colors.black }]}>
-              Workout Category
+              Workout Categories
             </Text>
             <View style={styles.checkboxRow}>
               <CheckBox
@@ -156,44 +175,16 @@ export default function GeneratePlanScreen() {
                 }}
               />
             </View>
-            <View style={styles.checkboxRow}>
-              <CheckBox
-                textStyle={{ color: theme.colors.black }}
-                containerStyle={styles.checkboxContainer}
-                checked={category.includes("strongman")}
-                title={"Strongman"}
-                onIconPress={() => {
-                  if (category.includes("strongman")) {
-                    setCategory(category.filter((c) => c !== "strongman"));
-                  } else {
-                    setCategory([...category, "strongman"]);
-                  }
-                }}
-              />
-              <CheckBox
-                textStyle={{ color: theme.colors.black }}
-                checked={category.includes("stretching")}
-                title={"Stretching"}
-                onIconPress={() => {
-                  if (category.includes("stretching")) {
-                    setCategory(category.filter((c) => c !== "stretching"));
-                  } else {
-                    setCategory([...category, "stretching"]);
-                  }
-                }}
-              />
-            </View>
+
             <CheckBox
               textStyle={{ color: theme.colors.black }}
-              checked={category.includes("olympic weightlifting")}
-              title={"Olympic Weightlifting"}
+              checked={category.includes("stretching")}
+              title={"Stretching"}
               onIconPress={() => {
-                if (category.includes("olympic weightlifting")) {
-                  setCategory(
-                    category.filter((c) => c !== "olympic weightlifting")
-                  );
+                if (category.includes("stretching")) {
+                  setCategory(category.filter((c) => c !== "stretching"));
                 } else {
-                  setCategory([...category, "olympic weightlifting"]);
+                  setCategory([...category, "stretching"]);
                 }
               }}
             />

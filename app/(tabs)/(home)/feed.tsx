@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Text, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
 import { Icon, useTheme, Button, useThemeMode } from "@rneui/themed";
 import { getFeed, toggleLike } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
@@ -23,7 +23,14 @@ import FeedLoader from "../../../components/loader/FeedLoader";
 import StreakResetModal from "../../../components/modal/StreakLossModal";
 import StreakTooltip from "../../../components/StreakTooltip";
 import { isAfter } from "date-fns";
-import { Timestamp } from "firebase/firestore";
+import {
+  deleteDoc,
+  getDocs,
+  Timestamp,
+  where,
+  collection,
+  query,
+} from "firebase/firestore";
 import Constants from "expo-constants";
 import TermsConditionModal from "../../../components/modal/TermsConditionModal";
 
@@ -62,12 +69,25 @@ const FeedScreen: React.FC = () => {
     setMode(themeMode);
   }
 
+  async function deleteStrongManAndOlympicLiftingExercises() {
+    const exercisesCollection = collection(FIRESTORE_DB, "Exercises");
+    const exercisesQuery = query(
+      exercisesCollection,
+      where("category", "in", ["strongman", "olympic weightlifting"])
+    );
+    const snapshot = await getDocs(exercisesQuery);
+    snapshot.forEach((doc) => {
+      deleteDoc(doc.ref);
+    });
+  }
+
   useEffect(() => {
     initializeTheme();
     fetchFeed();
     checkStreakStatus();
     getStreakInformation();
     getTermsCondition();
+    deleteStrongManAndOlympicLiftingExercises();
   }, []);
 
   useEffect(() => {
