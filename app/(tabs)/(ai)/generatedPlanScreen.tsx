@@ -122,7 +122,7 @@ export default function GeneratedPlanScreen() {
         )
       );
       if (planDoc.exists()) {
-        console.log(planDoc.data());
+        console.log("planDoc.data()", planDoc.data());
         setGeneratedPlan(planDoc.data() as GeneratedPlan);
       }
 
@@ -132,7 +132,7 @@ export default function GeneratedPlanScreen() {
           `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatePlanId}/Exercise`
         )
       );
-      const generatedExercises: GeneratedExercise[] = [];
+      let generatedExercises: GeneratedExercise[] = [];
       for (const exercise of generatedExercisesDocs.docs) {
         const exerciseData = exercise.data();
         const exerciseDetails = await fetchExercise(exerciseData.id);
@@ -144,12 +144,10 @@ export default function GeneratedPlanScreen() {
         };
         generatedExercises.push(generatedExercise);
       }
-      console.log(generatedExercises);
       setGeneratedPlan((prevPlan) => ({
         ...prevPlan,
         exercises: generatedExercises,
       }));
-      console.log(generatedExercises);
     };
 
     fetchGeneratedPlan();

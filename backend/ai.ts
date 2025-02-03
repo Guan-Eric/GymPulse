@@ -1,6 +1,11 @@
 import Constants from "expo-constants";
 import OpenAI from "openai";
-import { Exercise, GeneratedPlan, Plan } from "../components/types";
+import {
+  Exercise,
+  GeneratedExercise,
+  GeneratedPlan,
+  Plan,
+} from "../components/types";
 import {
   addDoc,
   collection,
@@ -13,6 +18,7 @@ import {
   where,
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
+import { isExerciseExists } from "./plan";
 
 const openai = new OpenAI({
   organization: Constants.expoConfig?.extra?.openaiOrganizationId,
@@ -87,7 +93,7 @@ export async function generatePlan(
         .replace(/(\r\n|\n|\r)/gm, "");
       const plan = JSON.parse(cleanedJSON) as GeneratedPlan;
       plan.date = new Date();
-      return saveGeneratedPlan(plan);
+      return saveGeneratedPlan(plan, level, goal, equipment, preference, count);
     } catch (error) {
       attempts++;
       console.error(
@@ -170,7 +176,12 @@ export async function fetchSuggestions(
 }
 
 async function saveGeneratedPlan(
-  generatedPlan: GeneratedPlan
+  generatedPlan: GeneratedPlan,
+  level: string,
+  goal: string,
+  equipment: string,
+  preference: string,
+  count: number
 ): Promise<GeneratedPlan> {
   const generatedPlansCollectionRef = collection(
     FIRESTORE_DB,
@@ -184,17 +195,33 @@ async function saveGeneratedPlan(
   await updateDoc(generatedPlanDocRef, { id: generatedPlanDocRef.id });
   generatedPlan.id = generatedPlanDocRef.id;
 
+  let replacedExercises: string[] = [];
   generatedPlan.exercises.forEach(async (exercise) => {
-    const generatedExercisesDocRef = doc(
-      FIRESTORE_DB,
-      `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatedPlanDocRef.id}/Exercise/${exercise.id}`
-    );
-    await setDoc(generatedExercisesDocRef, {
-      id: exercise.id,
-      sets: exercise.sets,
-      reps: exercise.reps,
-    });
+    if (await isExerciseExists(exercise.id)) {
+      const generatedExercisesDocRef = doc(
+        FIRESTORE_DB,
+        `Users/${FIREBASE_AUTH.currentUser.uid}/GeneratedPlans/${generatedPlanDocRef.id}/Exercise/${exercise.id}`
+      );
+      await setDoc(generatedExercisesDocRef, {
+        id: exercise.id,
+        sets: exercise.sets,
+        reps: exercise.reps,
+      });
+    } else {
+      replacedExercises.push(exercise.id);
+    }
   });
+  if (replacedExercises.length > 0) {
+    generatedPlan = await replaceExercise(
+      generatedPlan,
+      replacedExercises,
+      level,
+      goal,
+      equipment,
+      preference,
+      count
+    );
+  }
   return generatedPlan;
 }
 
@@ -206,4 +233,69 @@ async function generatedExerciseList(exerciseIds: any): Promise<Exercise[]> {
     exercises.push(exerciseDoc.data());
   }
   return exercises;
+}
+async function replaceExercise(
+  generatedPlan: GeneratedPlan,
+  ids: string[],
+  level: string,
+  goal: string,
+  equipment: string,
+  preference: string,
+  count: number
+): Promise<GeneratedPlan> {
+  const maxRetries = 3;
+  let attempts = 0;
+
+  while (attempts < maxRetries) {
+    try {
+      const collectionRef = collection(FIRESTORE_DB, "Exercises");
+      const querySnapshot = await getDocs(collectionRef);
+      const exercises = [];
+      querySnapshot.forEach((doc) => {
+        exercises.push({ id: doc.data().id });
+      });
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a personal trainer that finds alternatives for exercises based on user preferences and fitness levels.",
+          },
+          {
+            role: "user",
+            content: `
+              Find replacements for the following exercises: ${ids.join(
+                ", "
+              )} where the user has ${level} as level and ${goal} as goal and has ${preference} as preference and ${equipment} as equipment.
+              Please select ${count} exercises from the following list:
+              ${exercises.map((exercise) => exercise.id).join(", ")}
+
+              Respond in the following format:
+              [
+                { "id": exercise_id,  
+                 "sets": number,
+                 "reps": number,
+                 ] },
+                 ...
+                ]`,
+          },
+        ],
+        temperature: 0.7,
+      });
+      const suggestionsContent =
+        response.choices[0].message?.content || "No suggestions found.";
+      const exerciseIds = JSON.parse(suggestionsContent) as GeneratedExercise[];
+      for (const exercise of exerciseIds) {
+        generatedPlan.exercises.push(exercise);
+      }
+      return generatedPlan;
+    } catch (error) {
+      attempts++;
+      console.error(
+        `Error fetching suggestions (attempt ${attempts}/${maxRetries}):`,
+        error
+      );
+    }
+  }
 }

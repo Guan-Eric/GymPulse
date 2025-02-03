@@ -223,8 +223,28 @@ export async function fetchExercise(exerciseId: string): Promise<Exercise> {
     const exerciseDoc = await getDoc(
       doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
     );
-    return exerciseDoc.data() as Exercise;
+    const exercise = exerciseDoc.data() as Exercise;
+    if (!exercise) {
+      throw new Error(`Exercise with id ${exerciseId} not found`);
+    }
+    return exercise;
   } catch (error) {
     console.error("Error fetching exercise:", error);
+  }
+}
+
+export async function isExerciseExists(exerciseId: string): Promise<boolean> {
+  try {
+    const exerciseDoc = await getDoc(
+      doc(FIRESTORE_DB, `Exercises/${exerciseId}`)
+    );
+    const exercise = exerciseDoc.data() as Exercise;
+    if (!exercise) {
+      throw new Error(`Exercise with id ${exerciseId} not found`);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error fetching exercise:", error);
+    return false;
   }
 }

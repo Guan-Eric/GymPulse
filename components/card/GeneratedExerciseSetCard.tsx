@@ -1,6 +1,7 @@
 import { Card } from "@rneui/themed";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Pressable } from "react-native";
 import { GeneratedExercise } from "../types";
+import { router } from "expo-router";
 
 interface GeneratedExerciseSetCardProps {
   exercise: GeneratedExercise;
@@ -22,9 +23,23 @@ const GeneratedExerciseSetCard: React.FC<GeneratedExerciseSetCardProps> = ({
       ]}
     >
       <View style={styles.exerciseHeader}>
-        <Text style={[styles.exerciseText, { color: theme.colors.black }]}>
-          {exercise.name}
-        </Text>
+        <Pressable
+          onPress={async () =>
+            router.push({
+              pathname: "/(tabs)/(workout)/exercise",
+              params: {
+                exerciseId: exercise.id,
+                planId: null,
+                route: "exercise",
+                workoutTime: null,
+              },
+            })
+          }
+        >
+          <Text style={[styles.exerciseText, { color: theme.colors.black }]}>
+            {exercise.name}
+          </Text>
+        </Pressable>
       </View>
       <View style={styles.setRow}>
         <Text style={[styles.setText, { color: theme.colors.black }]}>

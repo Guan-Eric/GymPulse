@@ -175,44 +175,16 @@ export default function GeneratePlanScreen() {
                 }}
               />
             </View>
-            <View style={styles.checkboxRow}>
-              <CheckBox
-                textStyle={{ color: theme.colors.black }}
-                containerStyle={styles.checkboxContainer}
-                checked={category.includes("strongman")}
-                title={"Strongman"}
-                onIconPress={() => {
-                  if (category.includes("strongman")) {
-                    setCategory(category.filter((c) => c !== "strongman"));
-                  } else {
-                    setCategory([...category, "strongman"]);
-                  }
-                }}
-              />
-              <CheckBox
-                textStyle={{ color: theme.colors.black }}
-                checked={category.includes("stretching")}
-                title={"Stretching"}
-                onIconPress={() => {
-                  if (category.includes("stretching")) {
-                    setCategory(category.filter((c) => c !== "stretching"));
-                  } else {
-                    setCategory([...category, "stretching"]);
-                  }
-                }}
-              />
-            </View>
+
             <CheckBox
               textStyle={{ color: theme.colors.black }}
-              checked={category.includes("olympic weightlifting")}
-              title={"Olympic Weightlifting"}
+              checked={category.includes("stretching")}
+              title={"Stretching"}
               onIconPress={() => {
-                if (category.includes("olympic weightlifting")) {
-                  setCategory(
-                    category.filter((c) => c !== "olympic weightlifting")
-                  );
+                if (category.includes("stretching")) {
+                  setCategory(category.filter((c) => c !== "stretching"));
                 } else {
-                  setCategory([...category, "olympic weightlifting"]);
+                  setCategory([...category, "stretching"]);
                 }
               }}
             />
