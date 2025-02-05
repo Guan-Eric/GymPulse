@@ -6,6 +6,7 @@ import { Stack } from "expo-router";
 import React from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Purchases from "react-native-purchases";
 
 const theme = createTheme({
   lightColors: {
@@ -57,6 +58,7 @@ function AppLayout() {
     Lato_700Bold,
   });
   theme.mode = useColorScheme();
+  Purchases.configure({ apiKey: "your_revenuecat_api_key" });
 
   if (!fontsLoaded && !fontError) {
     return null;
