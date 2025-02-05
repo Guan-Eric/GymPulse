@@ -3,7 +3,7 @@ export default {
   expo: {
     name: "Gym Pulse",
     slug: "gym-pulse",
-    version: "1.2.4",
+    version: "1.3.0",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -58,6 +58,7 @@ export default {
       openaiOrganizationId: process.env.OPENAI_ORGANIZATION_ID,
       openaiProjectId: process.env.OPENAI_PROJECT_ID,
       openaiApiKey: process.env.OPENAI_API_KEY,
+      revenueCatApiKey: process.env.REVENUECAT_API_KEY,
     },
     experiments: {
       typedRoutes: true,

@@ -1,6 +1,7 @@
 import { Lato_400Regular, Lato_700Bold } from "@expo-google-fonts/lato";
 import { Roboto_700Bold, Roboto_400Regular } from "@expo-google-fonts/roboto";
 import { ThemeProvider, createTheme } from "@rneui/themed";
+import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import React from "react";
@@ -58,7 +59,10 @@ function AppLayout() {
     Lato_700Bold,
   });
   theme.mode = useColorScheme();
-  Purchases.configure({ apiKey: "your_revenuecat_api_key" });
+  console.log(Constants.expoConfig?.extra?.revenueCatApiKey);
+  Purchases.configure({
+    apiKey: Constants.expoConfig?.extra?.revenueCatApiKey,
+  });
 
   if (!fontsLoaded && !fontError) {
     return null;
