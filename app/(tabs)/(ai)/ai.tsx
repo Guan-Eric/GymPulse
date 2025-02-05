@@ -1,12 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Card, Icon, Button } from "@rneui/themed";
-import { Href, router } from "expo-router";
+import { Href, router, useFocusEffect } from "expo-router";
 import BackButton from "../../../components/BackButton";
+import Purchases from "react-native-purchases";
 
 function AIScreen() {
   const { theme } = useTheme();
+  const [offerings, setOfferings] = useState(null);
+  const checkSubscription = async () => {
+    const customerInfo = await Purchases.getCustomerInfo();
+    console.log("customerInfo", customerInfo);
+    return customerInfo.entitlements.active["ai_features"] !== undefined;
+  };
+  const fetchProducts = async () => {
+    const offerings = await Purchases.getOfferings();
+    console.log("offerings", offerings.current);
+    setOfferings(offerings.current);
+  };
+  useEffect(() => {
+    checkSubscription();
+    fetchProducts();
+  }, []);
 
   return (
     <View
