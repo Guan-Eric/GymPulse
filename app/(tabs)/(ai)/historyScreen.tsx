@@ -101,15 +101,29 @@ export default function HistoryScreen() {
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <BackButton />
           <Text style={[styles.title, { color: theme.colors.black }]}>
-            Workout History
+            Generated Plans
           </Text>
         </View>
-        <FlatList
-          data={plans}
-          renderItem={renderPlan}
-          keyExtractor={(item, index) => index.toString()}
-          contentContainerStyle={styles.listContainer}
-        />
+        {plans.length > 0 ? (
+          <FlatList
+            data={plans}
+            renderItem={renderPlan}
+            keyExtractor={(_item, index) => index.toString()}
+            contentContainerStyle={styles.listContainer}
+          />
+        ) : (
+          <Text
+            style={{
+              color: theme.colors.black,
+              fontFamily: "Lato_400Regular",
+              fontSize: 16,
+              alignSelf: "center",
+              paddingTop: 160,
+            }}
+          >
+            No plans...
+          </Text>
+        )}
       </SafeAreaView>
     </View>
   );

@@ -11,6 +11,7 @@ import { Exercise } from "../../../components/types";
 import { Button, Card, CheckBox, Input, useTheme } from "@rneui/themed";
 import { fetchSuggestions } from "../../../backend/ai";
 import BackButton from "../../../components/BackButton";
+import SuggestExerciseModal from "../../../components/modal/SuggestExerciseModal";
 
 export default function SuggestExerciseScreen() {
   const [suggestions, setSuggestions] = useState<Exercise[]>([]);
@@ -18,29 +19,20 @@ export default function SuggestExerciseScreen() {
   const [preference, setPreference] = useState<string>("");
   const [goal, setGoal] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { theme } = useTheme();
 
   const handleSuggestExercises = async () => {
     setLoading(true);
-    setSuggestions(await fetchSuggestions(bodyPart, goal, preference));
-    setLoading(false);
+    try {
+      setSuggestions(await fetchSuggestions(bodyPart, goal, preference));
+    } catch (error) {
+      console.error("Error generating exercise suggestions", error);
+    } finally {
+      setLoading(false);
+      setIsModalVisible(true);
+    }
   };
-
-  const renderExercise = ({ item }: { item: Exercise }) => (
-    <Card
-      containerStyle={[
-        styles.exerciseCard,
-        {
-          backgroundColor: theme.colors.grey0,
-          borderColor: theme.colors.grey0,
-        },
-      ]}
-    >
-      <Text style={[styles.exerciseName, { color: theme.colors.black }]}>
-        {item.name}
-      </Text>
-    </Card>
-  );
 
   return (
     <View
@@ -249,10 +241,11 @@ export default function SuggestExerciseScreen() {
             containerStyle={styles.buttonContainer}
           />
 
-          <FlatList
-            data={suggestions}
-            renderItem={renderExercise}
-            keyExtractor={(item) => item.id}
+          <SuggestExerciseModal
+            modalVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            suggestions={suggestions}
+            theme={theme}
           />
         </ScrollView>
       </SafeAreaView>
