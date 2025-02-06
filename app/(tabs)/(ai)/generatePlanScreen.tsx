@@ -5,12 +5,9 @@ import {
   StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
-  Platform,
 } from "react-native";
-import { GeneratedPlan, Plan } from "../../../components/types";
 import { Button, CheckBox, Input, Slider, useTheme } from "@rneui/themed";
 import { generatePlan } from "../../../backend/ai";
-import { color } from "@rneui/base";
 import { ScrollView } from "react-native-gesture-handler";
 import BackButton from "../../../components/BackButton";
 import { router } from "expo-router";
@@ -27,19 +24,28 @@ export default function GeneratePlanScreen() {
 
   const handleGeneratePlan = async () => {
     setLoading(true);
-    const generatedPlan = await generatePlan(
-      level,
-      goal,
-      category,
-      equipment,
-      count,
-      preference
-    );
-    setLoading(false);
-    router.push({
-      pathname: "/(tabs)/(ai)/generatedPlanScreen",
-      params: { generatePlanId: generatedPlan.id },
-    });
+    try {
+      const generatedPlan = await generatePlan(
+        level,
+        goal,
+        category,
+        equipment,
+        count,
+        preference
+      );
+      if (generatedPlan && generatedPlan.id) {
+        router.push({
+          pathname: "/(tabs)/(ai)/generatedPlanScreen",
+          params: { generatePlanId: generatedPlan.id },
+        });
+      } else {
+        throw new Error("Invalid generated plan");
+      }
+    } catch (error) {
+      console.error("Error generating plan:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,47 +83,29 @@ export default function GeneratePlanScreen() {
               value={goal}
               onChangeText={setGoal}
             />
-            <View>
-              <Text
-                style={[styles.sectionTitle, { color: theme.colors.black }]}
-              >
-                How many exercises?
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+            <Input
+              labelStyle={[
+                styles.sectionTitle,
+                {
+                  paddingLeft: 0,
                   marginTop: 10,
-                }}
-              >
-                <Slider
-                  style={{
-                    width: "80%",
-                    marginLeft: 20,
-                  }}
-                  value={count}
-                  onValueChange={(count) => setCount(count)}
-                  minimumValue={1}
-                  maximumValue={15}
-                  step={1}
-                  thumbTintColor={theme.colors.primary}
-                  thumbStyle={{
-                    width: 20,
-                    height: 20,
-                  }}
-                />
-                <Text
-                  style={{
-                    color: theme.colors.black,
-                    paddingHorizontal: 20,
-                    fontSize: 16,
-                    fontFamily: "Lato_700Bold",
-                  }}
-                >
-                  {count}
-                </Text>
-              </View>
-            </View>
+                  color: theme.colors.black,
+                  marginBottom: 5,
+                },
+              ]}
+              inputStyle={{ color: theme.colors.black }}
+              inputContainerStyle={[
+                styles.inputRoundedContainer,
+                { backgroundColor: theme.colors.grey0 },
+              ]}
+              keyboardType="numeric"
+              containerStyle={styles.inputContainer}
+              style={styles.input}
+              label="How many exercises? (1-15)"
+              placeholder="e.g 6"
+              value={count.toString()}
+              onChangeText={(text) => setCount(Number(text))}
+            />
             <Text style={[styles.sectionTitle, { color: theme.colors.black }]}>
               Workout Categories
             </Text>
@@ -270,7 +258,13 @@ export default function GeneratePlanScreen() {
             <Button
               titleStyle={styles.buttonTitle}
               disabled={
-                goal && category && level && equipment && !loading
+                goal &&
+                category &&
+                level &&
+                equipment &&
+                count <= 15 &&
+                count > 0 &&
+                !loading
                   ? false
                   : true
               }
