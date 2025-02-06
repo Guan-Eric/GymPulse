@@ -5,23 +5,29 @@ import { useTheme, Card, Icon, Button } from "@rneui/themed";
 import { Href, router, useFocusEffect } from "expo-router";
 import BackButton from "../../../components/BackButton";
 import Purchases from "react-native-purchases";
+import SubscriptionModal from "../../../components/modal/SubscriptionModal";
 
 function AIScreen() {
   const { theme } = useTheme();
   const [offerings, setOfferings] = useState(null);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const checkSubscription = async () => {
     const customerInfo = await Purchases.getCustomerInfo();
     console.log("customerInfo", customerInfo);
-    return customerInfo.entitlements.active["ai_features"] !== undefined;
+    setHasSubscription(
+      customerInfo.entitlements.active["ai_features"] !== undefined
+    );
   };
-  const fetchProducts = async () => {
+  const fetchOfferings = async () => {
     const offerings = await Purchases.getOfferings();
-    console.log("offerings", offerings.current);
-    setOfferings(offerings.current);
+    console.log("offerings", offerings.all);
+    setOfferings(offerings.all);
   };
   useEffect(() => {
     checkSubscription();
-    fetchProducts();
+    fetchOfferings();
   }, []);
 
   return (
@@ -39,10 +45,12 @@ function AIScreen() {
           {
             title: "Get a Personalized Workout Plan",
             route: "/(tabs)/(ai)/generatePlanScreen",
+            requiresSubscription: true,
           },
           {
             title: "Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
+            requiresSubscription: true,
           },
           {
             title: "View Generated Plans",
@@ -56,28 +64,45 @@ function AIScreen() {
               {
                 backgroundColor: theme.colors.grey0,
                 borderColor: theme.colors.grey0,
+                opacity:
+                  item.requiresSubscription && !hasSubscription ? 0.5 : 1,
               },
             ]}
           >
             <Button
               type="clear"
               title={item.title}
-              onPress={() => router.push(item.route as Href)}
+              onPress={
+                item.requiresSubscription && !hasSubscription
+                  ? () => setIsModalOpen(true)
+                  : () => router.push(item.route as Href)
+              }
               containerStyle={styles.buttonContainer}
               buttonStyle={styles.buttonStyle}
               titleStyle={[styles.buttonTitle, { color: theme.colors.black }]}
               iconPosition="right"
               icon={
-                <Icon
-                  name="chevron-right"
-                  type="material-community"
-                  size={20}
-                  color={theme.colors.black}
-                />
+                item.requiresSubscription && !hasSubscription ? (
+                  <Icon name={"lock"} size={20} color={theme.colors.black} />
+                ) : (
+                  <Icon
+                    name="chevron-right"
+                    type="material-community"
+                    size={20}
+                    color={theme.colors.black}
+                  />
+                )
               }
             />
           </Card>
         ))}
+        <SubscriptionModal
+          options={offerings}
+          setHasSubscription={setHasSubscription}
+          theme={theme}
+          isModalVisible={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </SafeAreaView>
     </View>
   );
