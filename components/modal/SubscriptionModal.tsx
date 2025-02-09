@@ -42,24 +42,17 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             <Text style={[styles.title, { color: theme.colors.black }]}>
               Select Your Plan
             </Text>
-            <ScrollView>
+            {options?.map((option, index) => (
               <PricingCard
+                key={index}
                 color={theme.colors.primary}
-                title="Test"
-                price="$9.99"
-                info={["hello", "hi", "bonjour"]}
+                title={option.title}
+                price={option.price}
+                info={option.info}
                 button={{
-                  buttonStyle: {
-                    height: 40,
-                    borderRadius: 20,
-                    width: 150,
-                    alignSelf: "center",
-                  },
-                  title: "Buy",
-                  onPress: () => {
-                    setHasSubscription(true);
-                    onClose();
-                  },
+                  title: option.buttonTitle,
+                  onPress: () =>
+                    setHasSubscription(purchaseSubscription(option)),
                 }}
                 containerStyle={[
                   styles.pricingCard,
@@ -69,28 +62,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                   },
                 ]}
               />
-              {options?.map((option, index) => (
-                <PricingCard
-                  key={index}
-                  color={theme.colors.primary}
-                  title={option.title}
-                  price={option.price}
-                  info={option.info}
-                  button={{
-                    title: option.buttonTitle,
-                    onPress: () =>
-                      setHasSubscription(purchaseSubscription(option)),
-                  }}
-                  containerStyle={[
-                    styles.pricingCard,
-                    {
-                      backgroundColor: theme.colors.grey1,
-                      borderColor: theme.colors.grey1,
-                    },
-                  ]}
-                />
-              ))}
-            </ScrollView>
+            ))}
             <Button
               onPress={onClose}
               type="clear"
