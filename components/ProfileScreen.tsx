@@ -26,11 +26,11 @@ import { getUserPosts, toggleLike } from "../backend/post";
 import PostItem from "./PostItem";
 import { FIREBASE_AUTH } from "../firebaseConfig";
 import TruncatedText from "./TruncatedText";
-import StreakTooltip from "./StreakTooltip";
 import BackButton from "./BackButton";
 import FeedLoader from "./loader/FeedLoader";
 import ThreeDotsModal from "./modal/ThreeDotsModal";
 import BlockUserModal from "./modal/BlockUserModal";
+import StreakModal from "./modal/StreakModal";
 
 function ViewProfileScreen({ theme, userId, tab }) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -130,9 +130,10 @@ function ViewProfileScreen({ theme, userId, tab }) {
           </View>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             {user?.showStreak ? (
-              <StreakTooltip
+              <StreakModal
                 currentStreak={currentStreak}
                 longestStreak={longestStreak}
+                theme={theme}
               />
             ) : null}
             <ThreeDotsModal
