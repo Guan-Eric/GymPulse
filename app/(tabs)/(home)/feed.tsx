@@ -21,7 +21,6 @@ import {
 } from "../../../backend/user";
 import FeedLoader from "../../../components/loader/FeedLoader";
 import StreakResetModal from "../../../components/modal/StreakLossModal";
-import StreakTooltip from "../../../components/StreakTooltip";
 import { isAfter } from "date-fns";
 import {
   deleteDoc,
@@ -33,6 +32,7 @@ import {
 } from "firebase/firestore";
 import Constants from "expo-constants";
 import TermsConditionModal from "../../../components/modal/TermsConditionModal";
+import StreakModal from "../../../components/modal/StreakModal";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -163,6 +163,7 @@ const FeedScreen: React.FC = () => {
 
   const handleNewStreak = () => {
     endStreak();
+    setCurrentStreak(0);
     setStreakResetModalVisible(false);
   };
 
@@ -224,9 +225,10 @@ const FeedScreen: React.FC = () => {
             Feed
           </Text>
           <View style={{ flexDirection: "row" }}>
-            <StreakTooltip
+            <StreakModal
               currentStreak={currentStreak}
               longestStreak={longestStreak}
+              theme={theme}
             />
             <Button type="clear" onPress={navigateToNotifications}>
               {hasNewNotification ? (

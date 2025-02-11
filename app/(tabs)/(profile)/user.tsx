@@ -17,9 +17,9 @@ import { getUser, updateUserAvatar } from "../../../backend/user";
 import { getUserPosts } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import * as ImagePicker from "expo-image-picker";
-import StreakTooltip from "../../../components/StreakTooltip";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import FeedLoader from "../../../components/loader/FeedLoader";
+import StreakModal from "../../../components/modal/StreakModal";
 
 function UserScreen() {
   const { theme } = useTheme();
@@ -132,9 +132,10 @@ function UserScreen() {
             </Text>
           </View>
           <View style={{ flexDirection: "row" }}>
-            <StreakTooltip
+            <StreakModal
               currentStreak={currentStreak}
               longestStreak={longestStreak}
+              theme={theme}
             />
             <Button
               type="clear"
