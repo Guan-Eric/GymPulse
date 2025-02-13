@@ -15,4 +15,3 @@ jobs:
     type: submit
     params:
       build_id: ${{ needs.build.outputs.build_id }}
-      platform: ios
