@@ -1,0 +1,26 @@
+name: Build and Submit iOS app
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build_and_submit_ios:
+    name: Build and Submit iOS
+    type: build
+    params:
+      platform: ios
+      profile: production
+    steps:
+      - build:
+          name: Build iOS
+          type: build
+          params:
+            platform: ios
+            profile: production
+      - submit:
+          name: Submit iOS
+          type: submit
+          params:
+            platform: ios
+            build_id: ${{ steps.build.outputs.build_id }}
