@@ -2,7 +2,7 @@ name: Submit iOS app
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
 
 jobs:
   submit_ios:
