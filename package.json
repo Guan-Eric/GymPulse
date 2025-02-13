@@ -10,8 +10,8 @@
     "ts:check": "tsc",
     "dev:build:ios": "eas build --profile development --platform ios",
     "dev:build:android": "eas build --profile development --platform android",
-    "prod:build:ios": "eas build --profile production --platform ios",
-    "prod:build:android": "eas build --profile production --platform android"
+    "prod:build:ios": "eas build --profile production --platform ios --auto-submit",
+    "prod:build:android": "eas build --profile production --platform android --auto-submit"
   },
   "dependencies": {
     "@expo-google-fonts/lato": "^0.2.3",

@@ -17,13 +17,11 @@ function AIScreen() {
   const checkSubscription = async () => {
     const customerInfo = await Purchases.getCustomerInfo();
     console.log("customerInfo", customerInfo);
-    setHasSubscription(
-      customerInfo.entitlements.active["ai_features"] !== undefined
-    );
+    setHasSubscription(customerInfo.entitlements.active["Pro"] !== undefined);
   };
   const fetchOfferings = async () => {
     try {
-      setFirstTitle(await Purchases.canMakePayments()?.toString());
+      setFirstTitle((await Purchases.canMakePayments())?.toString());
       const offerings = await Purchases.getOfferings();
 
       console.log("Offerings Response:", offerings);
@@ -148,6 +146,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Lato_700Bold",
     fontSize: 32,
+    paddingLeft: 20,
   },
 });
 
