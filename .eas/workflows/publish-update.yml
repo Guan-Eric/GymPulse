@@ -9,4 +9,4 @@ jobs:
     name: Update
     type: update
     params:
-      branch: ${{ github.ref || 'test'}}
+      branch: development
