@@ -12,6 +12,7 @@ function AIScreen() {
   const [offerings, setOfferings] = useState(null);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [firstTitle, setFirstTitle] = useState("");
 
   const checkSubscription = async () => {
     const customerInfo = await Purchases.getCustomerInfo();
@@ -21,10 +22,28 @@ function AIScreen() {
     );
   };
   const fetchOfferings = async () => {
-    const offerings = await Purchases.getOfferings();
-    console.log("offerings", offerings.all);
-    setOfferings(offerings.all);
+    try {
+      setFirstTitle(await Purchases.canMakePayments().toString());
+      const offerings = await Purchases.getOfferings();
+
+      console.log("Offerings Response:", offerings);
+
+      if (
+        !offerings ||
+        !offerings.all ||
+        Object.keys(offerings.all).length === 0
+      ) {
+        console.warn("No offerings found");
+        return;
+      }
+
+      console.log("offerings2");
+      setOfferings(offerings);
+    } catch (error) {
+      console.error("Error fetching offerings:", error);
+    }
   };
+
   useEffect(() => {
     checkSubscription();
     fetchOfferings();
@@ -36,24 +55,23 @@ function AIScreen() {
     >
       <SafeAreaView>
         <View style={{ flexDirection: "row" }}>
-          <BackButton />
           <Text style={[styles.title, { color: theme.colors.black }]}>
             GymPulse AI
           </Text>
         </View>
         {[
           {
-            title: "Get a Personalized Workout Plan",
+            title: firstTitle, //"Get a Personalized Workout Plan",
             route: "/(tabs)/(ai)/generatePlanScreen",
             requiresSubscription: true,
           },
           {
-            title: "Get Exercise Suggestions",
+            title: offerings.toString(), //"Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
             requiresSubscription: true,
           },
           {
-            title: "View Generated Plans",
+            title: offerings, //"View Generated Plans",
             route: "/(tabs)/(ai)/historyScreen",
           },
         ].map((item, index) => (
