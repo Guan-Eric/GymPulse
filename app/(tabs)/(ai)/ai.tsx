@@ -23,7 +23,7 @@ function AIScreen() {
   };
   const fetchOfferings = async () => {
     try {
-      setFirstTitle(await Purchases.canMakePayments().toString());
+      setFirstTitle(await Purchases.canMakePayments()?.toString());
       const offerings = await Purchases.getOfferings();
 
       console.log("Offerings Response:", offerings);
@@ -66,7 +66,7 @@ function AIScreen() {
             requiresSubscription: true,
           },
           {
-            title: offerings.toString(), //"Get Exercise Suggestions",
+            title: offerings?.toString(), //"Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
             requiresSubscription: true,
           },
