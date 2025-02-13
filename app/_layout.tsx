@@ -1,11 +1,14 @@
 import { Lato_400Regular, Lato_700Bold } from "@expo-google-fonts/lato";
 import { Roboto_700Bold, Roboto_400Regular } from "@expo-google-fonts/roboto";
 import { ThemeProvider, createTheme } from "@rneui/themed";
+import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import React from "react";
-import { useColorScheme } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Purchases from "react-native-purchases";
+import { FIREBASE_AUTH } from "../firebaseConfig";
 
 const theme = createTheme({
   lightColors: {
@@ -57,6 +60,17 @@ function AppLayout() {
     Lato_700Bold,
   });
   theme.mode = useColorScheme();
+  if (Platform.OS === "ios") {
+    Purchases.configure({
+      apiKey: Constants.expoConfig?.extra?.revenueCatApiKey,
+      appUserID: FIREBASE_AUTH.currentUser?.uid,
+    });
+  } else {
+    Purchases.configure({
+      apiKey: Constants.expoConfig?.extra?.revenueCatApiKey, // TODO: change to android variable
+      appUserID: FIREBASE_AUTH.currentUser?.uid,
+    });
+  }
 
   if (!fontsLoaded && !fontError) {
     return null;

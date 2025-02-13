@@ -19,6 +19,7 @@ import {
 } from "firebase/firestore";
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { isExerciseExists } from "./plan";
+import Purchases from "react-native-purchases";
 
 const openai = new OpenAI({
   organization: Constants.expoConfig?.extra?.openaiOrganizationId,
@@ -297,5 +298,20 @@ async function replaceExercise(
         error
       );
     }
+  }
+}
+
+export async function purchaseSubscription(offering): Promise<boolean> {
+  try {
+    const { customerInfo } = await Purchases.purchasePackage(offering);
+    if (
+      typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
+      "undefined"
+    ) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error(error, `error purchasing ${offering}`);
   }
 }

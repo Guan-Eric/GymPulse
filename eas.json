@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": "14.2.0",
+    "version": "15.0.10",
     "appVersionSource": "remote"
   },
   "build": {
@@ -24,8 +24,10 @@
         "MEASUREMENT_ID": "@MEASUREMENT_ID",
         "OPENAI_ORGANIZATION_ID": "@OPENAI_ORGANIZATION_ID",
         "OPENAI_PROJECT_ID": "@OPENAI_PROJECT_ID",
-        "OPENAI_API_KEY": "@OPENAI_API_KEY"
-      }
+        "OPENAI_API_KEY": "@OPENAI_API_KEY",
+        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
+      },
+      "channel": "development"
     },
     "preview": {
       "distribution": "internal",
@@ -46,7 +48,8 @@
         "MESSAGING_SENDER_ID": "@MESSAGING_SENDER_ID",
         "APP_ID": "@APP_ID",
         "MEASUREMENT_ID": "@MEASUREMENT_ID"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "environment": "production",
@@ -64,7 +67,8 @@
         "MESSAGING_SENDER_ID": "@MESSAGING_SENDER_ID",
         "APP_ID": "@APP_ID",
         "MEASUREMENT_ID": "@MEASUREMENT_ID"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {
