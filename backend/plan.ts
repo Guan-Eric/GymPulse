@@ -124,7 +124,7 @@ export async function deletePlan(plan: Plan) {
   deleteDoc(planDocRef);
 }
 
-export async function addSet(plan: Plan, exerciseId: string) {
+export async function addSet(plan: Plan, exerciseId: string, value: number) {
   const exerciseDoc = doc(
     FIRESTORE_DB,
     `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${plan.id}/Exercise/${exerciseId}`
@@ -133,7 +133,7 @@ export async function addSet(plan: Plan, exerciseId: string) {
 
   if (exerciseDocSnap.exists()) {
     const currentSets = exerciseDocSnap.data().sets || [];
-    const newSets = [...currentSets, { reps: 0, weight_duration: 0 }];
+    const newSets = [...currentSets, { reps: 0, weight_duration: value }];
     await updateDoc(exerciseDoc, { sets: newSets });
     const updatedPlan = {
       ...plan,

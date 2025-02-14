@@ -39,8 +39,8 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
     setPlan(updateSet(plan, exercise.id, setIndex, property, value));
   };
 
-  const handleAddSet = async (exerciseId: string, exercises: Exercise[]) => {
-    setPlan(await addSet(plan, exerciseId));
+  const handleAddSet = async (exerciseId: string, value: number) => {
+    setPlan(await addSet(plan, exerciseId, value));
   };
 
   const handleDeleteExercise = async (exerciseId: string) => {
@@ -230,7 +230,9 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
           </View>
         ))}
         <EmptySetCard
-          onPress={() => handleAddSet(exercise.id, plan?.exercises)}
+          onPress={() =>
+            handleAddSet(exercise.id, sets[sets.length - 1]?.weight_duration)
+          }
         />
       </View>
     </Card>
