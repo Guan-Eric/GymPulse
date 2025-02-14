@@ -143,7 +143,7 @@ function CreatePostScreen() {
       console.error("Error creating post:", error);
     } finally {
       setLoading(false);
-      router.push("/(tabs)/(home)/feed");
+      router.push("/(tabs)/(workout)/plans");
     }
   };
 

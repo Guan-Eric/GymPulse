@@ -51,6 +51,7 @@ function ViewWorkoutScreen({ theme, workoutId, userId }) {
                     sets={exercise.sets}
                     exercise={exercise}
                     isDisabled={true}
+                    workoutTime={null}
                   />
                 ))
             : null}
