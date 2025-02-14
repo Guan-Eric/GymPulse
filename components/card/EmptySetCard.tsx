@@ -6,23 +6,26 @@ function EmptySetCard({ onPress }) {
   const { theme } = useTheme();
 
   return (
-    <Pressable onPress={onPress}>
-      <Card
-        containerStyle={[
-          styles.card,
-          {
-            backgroundColor: theme.colors.grey0,
-            borderColor: theme.colors.greyOutline,
-          },
-        ]}
-      >
-        <View style={styles.iconContainer}>
-          <Text style={[styles.planName, { color: theme.colors.black }]}>
-            Add Set
-          </Text>
-        </View>
-      </Card>
-    </Pressable>
+    <Card
+      containerStyle={[
+        styles.card,
+        {
+          backgroundColor: theme.colors.grey0,
+          borderColor: theme.colors.greyOutline,
+        },
+      ]}
+    >
+      <View style={styles.iconContainer}>
+        <Button
+          type="clear"
+          onPress={onPress}
+          titleStyle={[styles.planName, { color: theme.colors.black }]}
+          buttonStyle={{ margin: -10 }}
+        >
+          Add Set
+        </Button>
+      </View>
+    </Card>
   );
 }
 

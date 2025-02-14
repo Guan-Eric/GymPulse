@@ -229,11 +229,13 @@ const ExerciseSetCard: React.FC<ExerciseSetCardProps> = ({
             )}
           </View>
         ))}
-        <EmptySetCard
-          onPress={() =>
-            handleAddSet(exercise.id, sets[sets.length - 1]?.weight_duration)
-          }
-        />
+        {!isDisabled ? (
+          <EmptySetCard
+            onPress={() =>
+              handleAddSet(exercise.id, sets[sets.length - 1]?.weight_duration)
+            }
+          />
+        ) : null}
       </View>
     </Card>
   );
