@@ -23,9 +23,15 @@ function WorkoutScreen() {
   const { planId, dayId, workoutTime } = useLocalSearchParams();
   const [isModal, setIsModal] = useState<boolean>(false);
   const { theme } = useTheme();
-
   const startStopwatch = () => {
-    startTimeRef.current = Date.now() - Number(workoutTime as string) * 1000;
+    startTimeRef.current = Date.now();
+    intervalRef.current = setInterval(() => {
+      setTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
+    }, 1000);
+  };
+
+  const resumeStopwatch = () => {
+    startTimeRef.current = Date.now() - Number(workoutTime) * 1000;
     intervalRef.current = setInterval(() => {
       setTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
     }, 1000);
@@ -51,13 +57,13 @@ function WorkoutScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchPlanFromFirestore();
-      startStopwatch();
     }, [])
   );
 
   useEffect(() => {
     fetchPlanFromFirestore();
-    startStopwatch();
+    if (workoutTime) resumeStopwatch();
+    else startStopwatch();
   }, []);
 
   const handleSaveWorkout = async () => {
