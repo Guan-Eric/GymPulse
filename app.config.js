@@ -19,6 +19,9 @@ export default {
       config: {
         googleMobileAdsAppId: process.env.ADMOB_IOS_APP_ID,
       },
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
       newArchEnabled: true,
     },
     android: {
