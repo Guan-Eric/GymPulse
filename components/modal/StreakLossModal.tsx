@@ -31,9 +31,7 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
 }) => {
   const [adLoaded, setAdLoaded] = React.useState(false);
   const adUnitId =
-    Constants.expoConfig?.extra?.nodeEnv === "development"
-      ? "ca-app-pub-3940256099942544/5224354917"
-      : Platform.OS === "ios"
+    Platform.OS === "ios"
       ? Constants.expoConfig?.extra?.admobIOSStreakUnitId
       : Constants.expoConfig?.extra?.admobAndroidStreakUnitId;
 
