@@ -22,21 +22,7 @@ function AIScreen() {
   const fetchOfferings = async () => {
     try {
       setFirstTitle((await Purchases.canMakePayments())?.toString());
-      const offerings = await Purchases.getOfferings();
-
-      console.log("Offerings Response:", offerings);
-
-      if (
-        !offerings ||
-        !offerings.all ||
-        Object.keys(offerings.all).length === 0
-      ) {
-        console.warn("No offerings found");
-        return;
-      }
-
-      console.log("offerings2");
-      setOfferings(offerings);
+      setOfferings(await Purchases.getOfferings());
     } catch (error) {
       console.error("Error fetching offerings:", error);
     }

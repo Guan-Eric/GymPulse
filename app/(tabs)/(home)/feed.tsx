@@ -69,25 +69,12 @@ const FeedScreen: React.FC = () => {
     setMode(themeMode);
   }
 
-  async function deleteStrongManAndOlympicLiftingExercises() {
-    const exercisesCollection = collection(FIRESTORE_DB, "Exercises");
-    const exercisesQuery = query(
-      exercisesCollection,
-      where("category", "in", ["strongman", "olympic weightlifting"])
-    );
-    const snapshot = await getDocs(exercisesQuery);
-    snapshot.forEach((doc) => {
-      deleteDoc(doc.ref);
-    });
-  }
-
   useEffect(() => {
     initializeTheme();
     fetchFeed();
     checkStreakStatus();
     getStreakInformation();
     getTermsCondition();
-    deleteStrongManAndOlympicLiftingExercises();
   }, []);
 
   useEffect(() => {

@@ -59,6 +59,7 @@ export default {
       openaiProjectId: process.env.OPENAI_PROJECT_ID,
       openaiApiKey: process.env.OPENAI_API_KEY,
       revenueCatApiKey: process.env.REVENUECAT_API_KEY,
+      nodeEnv: process.env.NODE_ENV,
     },
     experiments: {
       typedRoutes: true,

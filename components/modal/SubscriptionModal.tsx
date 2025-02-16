@@ -46,11 +46,11 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               <PricingCard
                 key={index}
                 color={theme.colors.primary}
-                title={option.title}
-                price={option.price}
-                info={option.info}
+                title={option?.title}
+                price={option?.price}
+                info={option?.info}
                 button={{
-                  title: option.buttonTitle,
+                  title: option?.buttonTitle,
                   onPress: () =>
                     setHasSubscription(purchaseSubscription(option)),
                 }}
