@@ -50,7 +50,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                 price={option?.price}
                 info={option?.info}
                 button={{
-                  title: option?.buttonTitle,
+                  title: "Subscribe",
                   onPress: () =>
                     setHasSubscription(purchaseSubscription(option)),
                 }}
