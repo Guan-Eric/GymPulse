@@ -1,6 +1,6 @@
 import { Button } from "@rneui/themed";
 import Constants from "expo-constants";
-import React from "react";
+import React, { useState } from "react";
 import { Modal, View, Text, StyleSheet, Platform } from "react-native";
 import {
   RewardedAd,
@@ -22,6 +22,7 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
   onNewStreak,
   theme,
 }) => {
+  const [loading, setLoading] = useState(false);
   const adUnitId =
     Platform.OS === "ios"
       ? Constants.expoConfig?.extra?.admobIOSStreakUnitId
@@ -32,12 +33,14 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
   });
 
   async function handleShowAd() {
+    setLoading(true);
     try {
       ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
         ad.show();
       });
 
       ad.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
+        setLoading(false);
         onContinueStreak();
       });
 
@@ -67,6 +70,8 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
           <View style={styles.buttonContainer}>
             <Button
               onPress={() => handleShowAd()}
+              loading={loading}
+              disabled={loading}
               buttonStyle={[
                 styles.continueButton,
                 { backgroundColor: theme.colors.primary },
