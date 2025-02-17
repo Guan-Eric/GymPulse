@@ -25,7 +25,8 @@
         "OPENAI_ORGANIZATION_ID": "@OPENAI_ORGANIZATION_ID",
         "OPENAI_PROJECT_ID": "@OPENAI_PROJECT_ID",
         "OPENAI_API_KEY": "@OPENAI_API_KEY",
-        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY"
+        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY",
+        "NODE_ENV": "@NODE_ENV"
       },
       "channel": "development"
     },
@@ -47,7 +48,12 @@
         "STORAGE_BUCKET": "@STORAGE_BUCKET",
         "MESSAGING_SENDER_ID": "@MESSAGING_SENDER_ID",
         "APP_ID": "@APP_ID",
-        "MEASUREMENT_ID": "@MEASUREMENT_ID"
+        "MEASUREMENT_ID": "@MEASUREMENT_ID",
+        "OPENAI_ORGANIZATION_ID": "@OPENAI_ORGANIZATION_ID",
+        "OPENAI_PROJECT_ID": "@OPENAI_PROJECT_ID",
+        "OPENAI_API_KEY": "@OPENAI_API_KEY",
+        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY",
+        "NODE_ENV": "@NODE_ENV"
       },
       "channel": "preview"
     },
@@ -66,7 +72,12 @@
         "STORAGE_BUCKET": "@STORAGE_BUCKET",
         "MESSAGING_SENDER_ID": "@MESSAGING_SENDER_ID",
         "APP_ID": "@APP_ID",
-        "MEASUREMENT_ID": "@MEASUREMENT_ID"
+        "MEASUREMENT_ID": "@MEASUREMENT_ID",
+        "OPENAI_ORGANIZATION_ID": "@OPENAI_ORGANIZATION_ID",
+        "OPENAI_PROJECT_ID": "@OPENAI_PROJECT_ID",
+        "OPENAI_API_KEY": "@OPENAI_API_KEY",
+        "REVENUECAT_API_KEY": "@REVENUECAT_API_KEY",
+        "NODE_ENV": "@NODE_ENV"
       },
       "channel": "production"
     }

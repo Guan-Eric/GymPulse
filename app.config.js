@@ -3,7 +3,7 @@ export default {
   expo: {
     name: "Gym Pulse",
     slug: "gym-pulse",
-    version: "1.3.8",
+    version: "1.3.10",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -18,6 +18,9 @@ export default {
       bundleIdentifier: "com.eronkgonk.gympulse",
       config: {
         googleMobileAdsAppId: process.env.ADMOB_IOS_APP_ID,
+      },
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
       },
       newArchEnabled: true,
     },
@@ -59,6 +62,7 @@ export default {
       openaiProjectId: process.env.OPENAI_PROJECT_ID,
       openaiApiKey: process.env.OPENAI_API_KEY,
       revenueCatApiKey: process.env.REVENUECAT_API_KEY,
+      nodeEnv: process.env.NODE_ENV,
     },
     experiments: {
       typedRoutes: true,

@@ -1,14 +1,7 @@
 import { Button } from "@rneui/themed";
 import Constants from "expo-constants";
 import React, { useEffect } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { Modal, View, Text, StyleSheet, Platform } from "react-native";
 import {
   RewardedAd,
   RewardedAdEventType,
@@ -39,7 +32,7 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
     requestNonPersonalizedAdsOnly: true,
   });
 
-  function handleLoadAd() {
+  async function handleLoadAd() {
     try {
       ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
         setAdLoaded(true);
@@ -56,9 +49,7 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
   }
 
   useEffect(() => {
-    return () => {
-      handleLoadAd();
-    };
+    handleLoadAd();
   }, []);
 
   return (

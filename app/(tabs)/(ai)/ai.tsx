@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Card, Icon, Button } from "@rneui/themed";
-import { Href, router, useFocusEffect } from "expo-router";
-import BackButton from "../../../components/BackButton";
-import Purchases from "react-native-purchases";
+import { Href, router } from "expo-router";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import SubscriptionModal from "../../../components/modal/SubscriptionModal";
+import Constants from "expo-constants";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 function AIScreen() {
   const { theme } = useTheme();
@@ -14,39 +15,41 @@ function AIScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [firstTitle, setFirstTitle] = useState("");
 
+  const initializeRC = async () => {
+    if (Platform.OS === "ios") {
+      Purchases.configure({
+        apiKey: Constants.expoConfig?.extra?.revenueCatApiKey,
+        appUserID: FIREBASE_AUTH.currentUser?.uid,
+      });
+    } else {
+      Purchases.configure({
+        apiKey: Constants.expoConfig?.extra?.revenueCatApiKey, // TODO: change to android variable
+        appUserID: FIREBASE_AUTH.currentUser?.uid,
+      });
+    }
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    await fetchOfferings();
+  };
   const checkSubscription = async () => {
     const customerInfo = await Purchases.getCustomerInfo();
     console.log("customerInfo", customerInfo);
-    setHasSubscription(
-      customerInfo.entitlements.active["ai_features"] !== undefined
-    );
+    setHasSubscription(customerInfo.entitlements.active["Pro"] !== undefined);
   };
   const fetchOfferings = async () => {
     try {
-      setFirstTitle(await Purchases.canMakePayments()?.toString());
+      setFirstTitle((await Purchases.canMakePayments())?.toString());
       const offerings = await Purchases.getOfferings();
-
-      console.log("Offerings Response:", offerings);
-
-      if (
-        !offerings ||
-        !offerings.all ||
-        Object.keys(offerings.all).length === 0
-      ) {
-        console.warn("No offerings found");
-        return;
-      }
-
-      console.log("offerings2");
-      setOfferings(offerings);
+      const currentOfferings = offerings.current;
+      console.log("hi", currentOfferings);
+      if (currentOfferings) setOfferings(currentOfferings.availablePackages);
     } catch (error) {
       console.error("Error fetching offerings:", error);
     }
   };
 
   useEffect(() => {
+    initializeRC();
     checkSubscription();
-    fetchOfferings();
   }, []);
 
   return (
@@ -61,17 +64,17 @@ function AIScreen() {
         </View>
         {[
           {
-            title: firstTitle, //"Get a Personalized Workout Plan",
+            title: "Get a Personalized Workout Plan",
             route: "/(tabs)/(ai)/generatePlanScreen",
             requiresSubscription: true,
           },
           {
-            title: offerings?.toString(), //"Get Exercise Suggestions",
+            title: "Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
             requiresSubscription: true,
           },
           {
-            title: offerings, //"View Generated Plans",
+            title: "View Generated Plans",
             route: "/(tabs)/(ai)/historyScreen",
           },
         ].map((item, index) => (
@@ -148,6 +151,7 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "Lato_700Bold",
     fontSize: 32,
+    paddingLeft: 20,
   },
 });
 
