@@ -5,6 +5,7 @@ import {
   GeneratedExercise,
   GeneratedPlan,
   Plan,
+  Workout,
 } from "../components/types";
 import {
   addDoc,
@@ -20,6 +21,7 @@ import {
 import { FIREBASE_AUTH, FIRESTORE_DB } from "../firebaseConfig";
 import { isExerciseExists } from "./plan";
 import Purchases from "react-native-purchases";
+import { getUser } from "./user";
 
 const openai = new OpenAI({
   organization: Constants.expoConfig?.extra?.openaiOrganizationId,
@@ -161,6 +163,187 @@ export async function fetchSuggestions(
         response.choices[0].message?.content || "No suggestions found.";
       const exerciseIds = JSON.parse(suggestionsContent);
       return (await generatedExerciseList(exerciseIds)) as Exercise[];
+    } catch (error) {
+      attempts++;
+      console.error(
+        `Error fetching suggestions (attempt ${attempts}/${maxRetries}):`,
+        error
+      );
+      if (attempts === maxRetries) {
+        throw new Error(
+          "Failed to fetch suggestions after multiple attempts. Please try again later."
+        );
+      }
+    }
+  }
+}
+
+export async function analysePlan(
+  goal: string,
+  preference: string,
+  planId: string
+) {
+  console.log("goal", goal);
+  console.log("preference", preference);
+  const maxRetries = 3;
+  let attempts = 0;
+
+  while (attempts < maxRetries) {
+    try {
+      const planDocRef = await getDocs(
+        collection(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Plans/${planId}/Exercise`
+        )
+      );
+      const planExercises = [] as Exercise[];
+      planDocRef.forEach((doc) => {
+        planExercises.push({
+          instructions: doc.data().instructions,
+          secondaryMuscles: doc.data().secondaryMuscles,
+          id: doc.data().id,
+          name: doc.data().name,
+          sets: doc.data().sets,
+          cardio: doc.data().cardio,
+          category: doc.data().category,
+          equipment: doc.data().equipment,
+          level: doc.data().level,
+          index: doc.data().index,
+        });
+      });
+
+      const collectionRef = collection(FIRESTORE_DB, "Exercises");
+      const querySnapshot = await getDocs(collectionRef);
+      const exercises = [];
+
+      querySnapshot.forEach((doc) => {
+        exercises.push({ id: doc.data().id });
+      });
+
+      const workoutDocRef = await getDocs(
+        collection(
+          FIRESTORE_DB,
+          `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts`
+        )
+      );
+      const workouts = [] as Workout[];
+      for (const doc of workoutDocRef.docs) {
+        const workoutExercises = [] as Exercise[];
+        const workoutExerciseDocRef = await getDocs(
+          collection(
+            FIRESTORE_DB,
+            `Users/${FIREBASE_AUTH.currentUser.uid}/Workouts/${doc.id}/Exercise`
+          )
+        );
+        workoutExerciseDocRef.forEach((exerciseDoc) => {
+          workoutExercises.push({
+            id: exerciseDoc.data().id,
+            instructions: [],
+            secondaryMuscles: [],
+            name: "",
+            sets: exerciseDoc.data().sets,
+            cardio: false,
+            category: "",
+            equipment: "",
+            level: "",
+            index: 0,
+          });
+        });
+        workouts.push({
+          exercises: workoutExercises,
+          duration: doc.data().duration,
+          date: doc.data().date.toDate(),
+          id: "",
+          name: doc.data().name,
+        });
+      }
+      console.log(
+        `Plan Exercises: ${JSON.stringify(
+          planExercises.map((exercise) => ({
+            ...exercise,
+            sets: exercise.sets
+              .map(
+                (set) =>
+                  `${set.reps} reps of ${Math.floor(
+                    set.weight_duration
+                  )?.toString()} lbs`
+              )
+              .join(", "),
+          }))
+        )} and the following past workouts: ${JSON.stringify(
+          workouts.map((workout) => ({
+            ...workout,
+            exercises: workout.exercises.map((exercise) => ({
+              ...exercise,
+              sets: exercise.sets
+                .map(
+                  (set) =>
+                    `${set.reps} reps of ${Math.floor(
+                      set.weight_duration
+                    )?.toString()} lbs`
+                )
+                .join(", "),
+            })),
+          }))
+        )}`
+      );
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a fitness AI that provides analysis and suggestion for a client's workout plan.",
+          },
+          {
+            role: "user",
+            content: `Provide analysis and suggestion for ${goal} as goal${
+              preference.length > 0
+                ? " and other preferences: " + preference
+                : "."
+            }.
+          Use the following plan:
+          ${JSON.stringify(
+            planExercises.map((exercise) => ({
+              ...exercise,
+              sets: exercise.sets
+                .map(
+                  (set) =>
+                    `${set.reps} reps of ${Math.floor(
+                      set.weight_duration
+                    )?.toString()} lbs`
+                )
+                .join(", "),
+            }))
+          )} and the following past workouts: ${JSON.stringify(
+              workouts.map((workout) => ({
+                ...workout,
+                exercises: workout.exercises.map((exercise) => ({
+                  ...exercise,
+                  sets: exercise.sets
+                    .map(
+                      (set) =>
+                        `${set.reps} reps of ${Math.floor(
+                          set.weight_duration
+                        )?.toString()} lbs`
+                    )
+                    .join(", "),
+                })),
+              }))
+            )}`,
+          },
+        ],
+        temperature: 0.7,
+      });
+      console.log(
+        response.choices[0].message?.content ||
+          "Error performing analysis.\nPlease try again..."
+      );
+      return (
+        response.choices[0].message?.content ||
+        "Error performing analysis.\nPlease try again..."
+      );
     } catch (error) {
       attempts++;
       console.error(

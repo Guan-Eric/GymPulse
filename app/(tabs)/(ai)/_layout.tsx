@@ -20,6 +20,7 @@ function AiStackLayout(props) {
         name="generatedPlanScreen"
         options={{ headerShown: false }}
       />
+      <Stack.Screen name="analyzePlanScreen" options={{ headerShown: false }} />
       <Stack.Screen name="historyScreen" options={{ headerShown: false }} />
     </Stack>
   );

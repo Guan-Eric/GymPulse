@@ -13,7 +13,6 @@ function AIScreen() {
   const [offerings, setOfferings] = useState(null);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [firstTitle, setFirstTitle] = useState("");
 
   const initializeRC = async () => {
     if (Platform.OS === "ios") {
@@ -37,11 +36,10 @@ function AIScreen() {
   };
   const fetchOfferings = async () => {
     try {
-      setFirstTitle((await Purchases.canMakePayments())?.toString());
       const offerings = await Purchases.getOfferings();
-      const currentOfferings = offerings.current;
+      const currentOfferings = offerings?.current;
       console.log("hi", currentOfferings);
-      if (currentOfferings) setOfferings(currentOfferings.availablePackages);
+      if (currentOfferings) setOfferings(currentOfferings?.availablePackages);
     } catch (error) {
       console.error("Error fetching offerings:", error);
     }
@@ -69,13 +67,18 @@ function AIScreen() {
             requiresSubscription: true,
           },
           {
+            title: "View Generated Plans",
+            route: "/(tabs)/(ai)/historyScreen",
+          },
+          {
             title: "Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
             requiresSubscription: true,
           },
           {
-            title: "View Generated Plans",
-            route: "/(tabs)/(ai)/historyScreen",
+            title: "Analyze Workout Plan",
+            route: "/(tabs)/(ai)/analyzePlanScreen",
+            requiresSubscription: true,
           },
         ].map((item, index) => (
           <Card
