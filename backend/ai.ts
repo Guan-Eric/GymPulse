@@ -183,8 +183,6 @@ export async function analysePlan(
   preference: string,
   planId: string
 ) {
-  console.log("goal", goal);
-  console.log("preference", preference);
   const maxRetries = 3;
   let attempts = 0;
 
@@ -257,36 +255,6 @@ export async function analysePlan(
           name: doc.data().name,
         });
       }
-      console.log(
-        `Plan Exercises: ${JSON.stringify(
-          planExercises.map((exercise) => ({
-            ...exercise,
-            sets: exercise.sets
-              .map(
-                (set) =>
-                  `${set.reps} reps of ${Math.floor(
-                    set.weight_duration
-                  )?.toString()} lbs`
-              )
-              .join(", "),
-          }))
-        )} and the following past workouts: ${JSON.stringify(
-          workouts.map((workout) => ({
-            ...workout,
-            exercises: workout.exercises.map((exercise) => ({
-              ...exercise,
-              sets: exercise.sets
-                .map(
-                  (set) =>
-                    `${set.reps} reps of ${Math.floor(
-                      set.weight_duration
-                    )?.toString()} lbs`
-                )
-                .join(", "),
-            })),
-          }))
-        )}`
-      );
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
@@ -336,10 +304,6 @@ export async function analysePlan(
         ],
         temperature: 0.7,
       });
-      console.log(
-        response.choices[0].message?.content ||
-          "Error performing analysis.\nPlease try again..."
-      );
       return (
         response.choices[0].message?.content ||
         "Error performing analysis.\nPlease try again..."
@@ -485,16 +449,16 @@ async function replaceExercise(
 }
 
 export async function purchaseSubscription(offering): Promise<boolean> {
+  const { customerInfo } = await Purchases.purchasePackage(offering);
   try {
-    const { customerInfo } = await Purchases.purchasePackage(offering);
-    if (
-      typeof customerInfo.entitlements.active["my_entitlement_identifier"] !==
-      "undefined"
-    ) {
+    if (customerInfo.entitlements.active["Pro"] !== undefined) {
       return true;
     }
     return false;
   } catch (error) {
-    console.error(error, `error purchasing ${offering}`);
+    console.error(
+      `error purchasing ${customerInfo.entitlements.active["Pro"]}`,
+      error
+    );
   }
 }

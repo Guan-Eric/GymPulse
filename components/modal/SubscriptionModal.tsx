@@ -28,11 +28,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         visible={isModalVisible}
         onRequestClose={onClose}
       >
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={onClose}
-        >
+        <TouchableOpacity style={styles.overlay} activeOpacity={1}>
           <View
             style={[
               styles.modalContent,
@@ -46,13 +42,26 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               <PricingCard
                 key={index}
                 color={theme.colors.primary}
-                title={option?.title}
-                price={option?.price}
-                info={option?.info}
+                title={option?.product.title}
+                price={
+                  option?.product.currencyCode + "$ " + option?.product.price
+                }
+                info={["Subscription for AI Features"]}
                 button={{
+                  titleStyle: { fontFamily: "Lato_400Regular" },
+                  buttonStyle: {
+                    borderRadius: 20,
+                    height: 40,
+                    width: 150,
+                    alignSelf: "center",
+                  },
                   title: "Subscribe",
-                  onPress: () =>
-                    setHasSubscription(purchaseSubscription(option)),
+                  onPress: async () => {
+                    if (await purchaseSubscription(option)) {
+                      setHasSubscription(true);
+                      onClose();
+                    }
+                  },
                 }}
                 containerStyle={[
                   styles.pricingCard,
@@ -61,6 +70,16 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                     borderColor: theme.colors.grey1,
                   },
                 ]}
+                pricingStyle={{
+                  color: theme.colors.black,
+                  fontFamily: "Lato_700Bold",
+                  fontSize: 24,
+                }}
+                titleStyle={{ fontFamily: "Lato_700Bold", fontSize: 28 }}
+                infoStyle={{
+                  color: theme.colors.grey4,
+                  fontFamily: "Lato_700Bold",
+                }}
               />
             ))}
             <Button
@@ -101,6 +120,7 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "75%",
     alignItems: "center",
+    justifyContent: "space-around",
   },
   pricingCard: {
     width: 300,
