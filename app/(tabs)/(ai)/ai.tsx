@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Text, View, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme, Card, Icon, Button } from "@rneui/themed";
-import { Href, router } from "expo-router";
+import { Href, router, useFocusEffect } from "expo-router";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
 import SubscriptionModal from "../../../components/modal/SubscriptionModal";
 import Constants from "expo-constants";
@@ -13,7 +13,6 @@ function AIScreen() {
   const [offerings, setOfferings] = useState(null);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [firstTitle, setFirstTitle] = useState("");
 
   const initializeRC = async () => {
     if (Platform.OS === "ios") {
@@ -32,16 +31,13 @@ function AIScreen() {
   };
   const checkSubscription = async () => {
     const customerInfo = await Purchases.getCustomerInfo();
-    console.log("customerInfo", customerInfo);
     setHasSubscription(customerInfo.entitlements.active["Pro"] !== undefined);
   };
   const fetchOfferings = async () => {
     try {
-      setFirstTitle((await Purchases.canMakePayments())?.toString());
       const offerings = await Purchases.getOfferings();
-      const currentOfferings = offerings.current;
-      console.log("hi", currentOfferings);
-      if (currentOfferings) setOfferings(currentOfferings.availablePackages);
+      const currentOfferings = offerings?.current;
+      if (currentOfferings) setOfferings(currentOfferings);
     } catch (error) {
       console.error("Error fetching offerings:", error);
     }
@@ -51,6 +47,12 @@ function AIScreen() {
     initializeRC();
     checkSubscription();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      checkSubscription();
+    }, [])
+  );
 
   return (
     <View
@@ -69,13 +71,18 @@ function AIScreen() {
             requiresSubscription: true,
           },
           {
+            title: "View Generated Plans",
+            route: "/(tabs)/(ai)/historyScreen",
+          },
+          {
             title: "Get Exercise Suggestions",
             route: "/(tabs)/(ai)/suggestExerciseScreen",
             requiresSubscription: true,
           },
           {
-            title: "View Generated Plans",
-            route: "/(tabs)/(ai)/historyScreen",
+            title: "Analyze Workout Plan",
+            route: "/(tabs)/(ai)/analyzePlanScreen",
+            requiresSubscription: true,
           },
         ].map((item, index) => (
           <Card
@@ -118,7 +125,7 @@ function AIScreen() {
           </Card>
         ))}
         <SubscriptionModal
-          options={offerings}
+          options={[offerings?.annual, offerings?.monthly]}
           setHasSubscription={setHasSubscription}
           theme={theme}
           isModalVisible={isModalOpen}

@@ -3,7 +3,7 @@ export default {
   expo: {
     name: "Gym Pulse",
     slug: "gym-pulse",
-    version: "1.3.11",
+    version: "1.4",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -37,6 +37,8 @@ export default {
       newArchEnabled: true,
     },
     web: {
+      bundler: "metro",
+      output: "static",
       favicon: "./assets/newLogo.png",
     },
     plugins: [["expo-font"], "expo-router"],
