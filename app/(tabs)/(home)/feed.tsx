@@ -74,7 +74,7 @@ const FeedScreen: React.FC = () => {
   const fetchOfferings = async () => {
     try {
       const offerings = await Purchases.getOfferings();
-      const currentOfferings = offerings?.current;
+      const currentOfferings = offerings?.current?.availablePackages[0];
       console.log(currentOfferings);
       if (currentOfferings) setOfferings(currentOfferings);
     } catch (error) {
@@ -290,7 +290,7 @@ const FeedScreen: React.FC = () => {
           modalVisible={streakResetModalVisible}
           onClose={() => setStreakResetModalVisible(false)}
           onContinueStreak={handleContinueStreak}
-          option={offerings?.save_streak}
+          option={offerings}
           onNewStreak={handleNewStreak}
           theme={theme}
         />
