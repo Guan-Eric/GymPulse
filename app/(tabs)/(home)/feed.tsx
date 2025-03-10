@@ -33,6 +33,7 @@ import {
 import Constants from "expo-constants";
 import TermsConditionModal from "../../../components/modal/TermsConditionModal";
 import StreakModal from "../../../components/modal/StreakModal";
+import Purchases, { LOG_LEVEL } from "react-native-purchases";
 
 const FeedScreen: React.FC = () => {
   const { theme } = useTheme();
@@ -43,6 +44,7 @@ const FeedScreen: React.FC = () => {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [termsCondition, setTermsCondition] = useState(false);
   const [longestStreak, setLongestStreak] = useState(0);
+  const [offerings, setOfferings] = useState(null);
 
   const {
     expoPushToken,
@@ -69,9 +71,38 @@ const FeedScreen: React.FC = () => {
     setMode(themeMode);
   }
 
+  const fetchOfferings = async () => {
+    try {
+      const offerings = await Purchases.getOfferings();
+      const currentOfferings = offerings?.current;
+      console.log(currentOfferings);
+      if (currentOfferings) setOfferings(currentOfferings);
+    } catch (error) {
+      console.error("Error fetching offerings:", error);
+    }
+  };
+
+  const initializeRC = async () => {
+    if (Platform.OS === "ios") {
+      Purchases.configure({
+        apiKey: Constants.expoConfig?.extra?.revenueCatApiKey,
+        appUserID: FIREBASE_AUTH.currentUser?.uid,
+      });
+    } else {
+      Purchases.configure({
+        apiKey: Constants.expoConfig?.extra?.revenueCatApiKey, // TODO: change to android variable
+        appUserID: FIREBASE_AUTH.currentUser?.uid,
+      });
+    }
+    Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+    await fetchOfferings();
+  };
+
   useEffect(() => {
+    initializeRC();
     initializeTheme();
     fetchFeed();
+    fetchOfferings();
     checkStreakStatus();
     getStreakInformation();
     getTermsCondition();
@@ -259,6 +290,7 @@ const FeedScreen: React.FC = () => {
           modalVisible={streakResetModalVisible}
           onClose={() => setStreakResetModalVisible(false)}
           onContinueStreak={handleContinueStreak}
+          option={offerings?.save_streak}
           onNewStreak={handleNewStreak}
           theme={theme}
         />

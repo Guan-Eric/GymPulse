@@ -3,7 +3,7 @@ export default {
   expo: {
     name: "Gym Pulse",
     slug: "gym-pulse",
-    version: "1.4.1",
+    version: "1.4.2",
     scheme: "your-app-scheme",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -16,25 +16,16 @@ export default {
     assetBundlePatterns: ["**/*"],
     ios: {
       bundleIdentifier: "com.eronkgonk.gympulse",
-      config: {
-        googleMobileAdsAppId: process.env.ADMOB_IOS_APP_ID,
-      },
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
       },
-      newArchEnabled: true,
     },
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#181818",
       },
-      config: {
-        googleMobileAdsAppId: process.env.ADMOB_ANDROID_APP_ID,
-      },
-      versionCode: 1,
       package: "com.eronkgonk.gympulse",
-      newArchEnabled: true,
     },
     web: {
       bundler: "metro",
@@ -53,13 +44,6 @@ export default {
       messagingSenderId: process.env.MESSAGING_SENDER_ID,
       appId: process.env.APP_ID,
       measurementId: process.env.MEASUREMENT_ID,
-      admobIOSAppId: process.env.ADMOB_IOS_APP_ID,
-      admobAndroidAppId: process.env.ADMOB_ANDROID_APP_ID,
-      admobIOSStreakUnitId: process.env.ADMOB_STREAK_UNIT_ID_IOS,
-      admobAndroidStreakUnitId: process.env.ADMOB_STREAK_UNIT_ID_ANDROID,
-      admobCreatePostAdUnitIOS: process.env.ADMOB_CREATE_POST_AD_UNIT_IOS,
-      admobCreatePostAdUnitAndroid:
-        process.env.ADMOB_CREATE_POST_AD_UNIT_ANDROID,
       openaiOrganizationId: process.env.OPENAI_ORGANIZATION_ID,
       openaiProjectId: process.env.OPENAI_PROJECT_ID,
       openaiApiKey: process.env.OPENAI_API_KEY,

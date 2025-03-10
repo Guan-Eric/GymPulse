@@ -1,54 +1,36 @@
 import { Button } from "@rneui/themed";
-import Constants from "expo-constants";
-import React, { useState } from "react";
-import { Modal, View, Text, StyleSheet, Platform } from "react-native";
-import {
-  RewardedAd,
-  RewardedAdEventType,
-} from "react-native-google-mobile-ads";
+import React from "react";
+import { Modal, View, Text, StyleSheet } from "react-native";
+import Purchases, { PurchasesPackage } from "react-native-purchases";
 
 interface StreakModalProps {
   modalVisible: boolean;
   onClose: () => void;
   onContinueStreak: () => void;
+  option: any;
   onNewStreak: () => void;
-  theme;
+  theme: any;
 }
 
 const StreakResetModal: React.FC<StreakModalProps> = ({
   modalVisible,
   onClose,
+  option,
   onContinueStreak,
   onNewStreak,
   theme,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const adUnitId =
-    Platform.OS === "ios"
-      ? Constants.expoConfig?.extra?.admobIOSStreakUnitId
-      : Constants.expoConfig?.extra?.admobAndroidStreakUnitId;
-
-  const ad = RewardedAd.createForAdRequest(adUnitId, {
-    requestNonPersonalizedAdsOnly: true,
-  });
-
-  async function handleShowAd() {
-    setLoading(true);
+  const purchasePackage = async (pack: PurchasesPackage) => {
     try {
-      ad.addAdEventListener(RewardedAdEventType.LOADED, () => {
-        ad.show();
-      });
+      await Purchases.purchasePackage(pack);
 
-      ad.addAdEventListener(RewardedAdEventType.EARNED_REWARD, () => {
-        setLoading(false);
+      if (pack.product.identifier === "save_streak") {
         onContinueStreak();
-      });
-
-      ad.load();
+      }
     } catch (error) {
-      console.error("Error showing reward ad", error);
+      console.error("Error keeping streak alive", error);
     }
-  }
+  };
 
   return (
     <Modal
@@ -69,16 +51,19 @@ const StreakResetModal: React.FC<StreakModalProps> = ({
           </Text>
           <View style={styles.buttonContainer}>
             <Button
-              onPress={() => handleShowAd()}
-              loading={loading}
-              disabled={loading}
+              onPress={() => purchasePackage(option)}
               buttonStyle={[
                 styles.continueButton,
                 { backgroundColor: theme.colors.primary },
               ]}
             >
               <Text style={[styles.buttonText, { color: theme.colors.black }]}>
-                Watch an ad
+                Keep your streak alive
+                {`\n(` +
+                  option?.product.currencyCode +
+                  "$ " +
+                  option?.product.price +
+                  ")"}
               </Text>
             </Button>
             <Button
@@ -144,6 +129,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+    textAlign: "center",
   },
 });
 
