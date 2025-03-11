@@ -1,17 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Text, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FIREBASE_AUTH, FIRESTORE_DB } from "../../../firebaseConfig";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import { Icon, useTheme, Button, useThemeMode } from "@rneui/themed";
 import { getFeed, toggleLike } from "../../../backend/post";
 import PostItem from "../../../components/PostItem";
 import { Post } from "../../../components/types";
 import { router, useFocusEffect } from "expo-router";
 import { usePushNotifications } from "../../../components/usePushNotifications";
-import {
-  RewardedAd,
-  RewardedAdEventType,
-} from "react-native-google-mobile-ads";
 import {
   endStreak,
   getUser,
@@ -22,14 +18,7 @@ import {
 import FeedLoader from "../../../components/loader/FeedLoader";
 import StreakResetModal from "../../../components/modal/StreakLossModal";
 import { isAfter } from "date-fns";
-import {
-  deleteDoc,
-  getDocs,
-  Timestamp,
-  where,
-  collection,
-  query,
-} from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import Constants from "expo-constants";
 import TermsConditionModal from "../../../components/modal/TermsConditionModal";
 import StreakModal from "../../../components/modal/StreakModal";
