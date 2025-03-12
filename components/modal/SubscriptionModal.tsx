@@ -35,64 +35,66 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               { backgroundColor: theme.colors.grey0 },
             ]}
           >
-            <Text style={[styles.title, { color: theme.colors.black }]}>
-              Select Your Plan
-            </Text>
-            {options?.map((option, index) => (
-              <PricingCard
-                key={index}
-                color={theme.colors.primary}
-                title={option?.product.title}
-                price={
-                  option?.product.currencyCode + "$ " + option?.product.price
-                }
-                info={["Subscription for AI Features"]}
-                button={{
-                  titleStyle: { fontFamily: "Lato_400Regular" },
-                  buttonStyle: {
-                    borderRadius: 20,
-                    height: 40,
-                    width: 150,
-                    alignSelf: "center",
-                  },
-                  title: "Subscribe",
-                  onPress: async () => {
-                    if (await purchaseSubscription(option)) {
-                      setHasSubscription(true);
-                      onClose();
-                    }
-                  },
-                }}
-                containerStyle={[
-                  styles.pricingCard,
-                  {
-                    backgroundColor: theme.colors.grey1,
-                    borderColor: theme.colors.grey1,
-                  },
-                ]}
-                pricingStyle={{
-                  color: theme.colors.black,
-                  fontFamily: "Lato_700Bold",
-                  fontSize: 24,
-                }}
-                titleStyle={{ fontFamily: "Lato_700Bold", fontSize: 28 }}
-                infoStyle={{
+            <ScrollView>
+              <Text style={[styles.title, { color: theme.colors.black }]}>
+                Select Your Plan
+              </Text>
+              {options?.map((option, index) => (
+                <PricingCard
+                  key={index}
+                  color={theme.colors.primary}
+                  title={option?.product.title}
+                  price={
+                    option?.product.currencyCode + "$ " + option?.product.price
+                  }
+                  info={["Subscription for AI Features"]}
+                  button={{
+                    titleStyle: { fontFamily: "Lato_400Regular" },
+                    buttonStyle: {
+                      borderRadius: 20,
+                      height: 40,
+                      width: 150,
+                      alignSelf: "center",
+                    },
+                    title: "Subscribe",
+                    onPress: async () => {
+                      if (await purchaseSubscription(option)) {
+                        setHasSubscription(true);
+                        onClose();
+                      }
+                    },
+                  }}
+                  containerStyle={[
+                    styles.pricingCard,
+                    {
+                      backgroundColor: theme.colors.grey1,
+                      borderColor: theme.colors.grey1,
+                    },
+                  ]}
+                  pricingStyle={{
+                    color: theme.colors.black,
+                    fontFamily: "Lato_700Bold",
+                    fontSize: 24,
+                  }}
+                  titleStyle={{ fontFamily: "Lato_700Bold", fontSize: 28 }}
+                  infoStyle={{
+                    color: theme.colors.grey4,
+                    fontFamily: "Lato_700Bold",
+                  }}
+                />
+              ))}
+              <Button
+                onPress={onClose}
+                type="clear"
+                titleStyle={{
                   color: theme.colors.grey4,
-                  fontFamily: "Lato_700Bold",
+                  fontFamily: "Lato_400Regular",
+                  fontSize: 16,
                 }}
-              />
-            ))}
-            <Button
-              onPress={onClose}
-              type="clear"
-              titleStyle={{
-                color: theme.colors.grey4,
-                fontFamily: "Lato_400Regular",
-                fontSize: 16,
-              }}
-            >
-              Stick with the Free Plan
-            </Button>
+              >
+                Stick with the Free Plan
+              </Button>
+            </ScrollView>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -119,10 +121,9 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "90%",
     height: "75%",
-    alignItems: "center",
-    justifyContent: "space-around",
   },
   pricingCard: {
+    alignSelf: "center",
     width: 300,
     marginVertical: 10,
     borderRadius: 14,
