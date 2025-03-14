@@ -18,6 +18,8 @@ export default {
       bundleIdentifier: "com.eronkgonk.gympulse",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        NSPhotoLibraryUsageDescription:
+          "We need access to your photos to allow you to upload workout progress pictures.",
       },
     },
     android: {
