@@ -4,6 +4,7 @@ import { Button, Icon, PricingCard } from "@rneui/themed";
 import Purchases from "react-native-purchases";
 import { purchaseSubscription } from "../../backend/ai";
 import { ScrollView } from "react-native-gesture-handler";
+import LegalLinks from "../legallinks";
 
 interface SubscriptionModalProps {
   options;
@@ -45,7 +46,13 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
                   color={theme.colors.primary}
                   title={option?.product.title}
                   price={
-                    option?.product.currencyCode + "$ " + option?.product.price
+                    option?.product.currencyCode +
+                    "$ " +
+                    option?.product.price +
+                    " per " +
+                    (option?.product.billingPeriod === "YEAR"
+                      ? "year"
+                      : "month")
                   }
                   info={["Subscription for AI Features"]}
                   button={{
@@ -94,6 +101,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
               >
                 Stick with the Free Plan
               </Button>
+              <LegalLinks />
             </ScrollView>
           </View>
         </TouchableOpacity>
