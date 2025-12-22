@@ -1,53 +1,44 @@
+// app/(tabs)/_layout.tsx
 import { Tabs } from "expo-router";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useTheme } from "@rneui/themed";
 
-function TabLayout() {
-  const { theme } = useTheme();
+export default function TabLayout() {
   return (
     <Tabs
-      initialRouteName="(home)"
+      initialRouteName="(skills)"
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.black,
+        tabBarActiveTintColor: "#3490de",
+        tabBarInactiveTintColor: "#6b7280",
         tabBarStyle: {
-          backgroundColor: theme.colors.background,
+          backgroundColor: "#181818",
+          borderTopColor: "#2b2b2b",
         },
       }}
     >
       <Tabs.Screen
-        name="(home)"
+        name="(skills)"
         options={{
-          title: "Home",
+          title: "Skills",
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="home" size={size} color={color} />
+            <MaterialCommunityIcons name="trophy" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="(workout)"
+        name="(strength)"
         options={{
-          title: "Workout",
+          title: "Strength",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons name="dumbbell" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="(ai)"
+        name="(progress)"
         options={{
-          title: "AI",
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons name="robot" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="(summary)"
-        options={{
-          title: "Summary",
+          title: "Progress",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
               name="chart-line"
@@ -69,5 +60,3 @@ function TabLayout() {
     </Tabs>
   );
 }
-
-export default TabLayout;

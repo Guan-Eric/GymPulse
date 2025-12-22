@@ -1,85 +1,114 @@
+// components/types.ts - Simplified for calisthenics focus
+
 export interface User {
-  username: string;
-  name: string;
-  bio: string;
   id: string;
   email: string;
-  primaryHeight: string;
-  secondaryHeight: string;
-  weight: string;
-  heightMetricUnits: boolean;
-  weightMetricUnits: boolean;
+  username: string;
   darkMode: boolean;
-  url: string;
-  currentStreak: number;
-  longestStreak: number;
-  streakResetDate: Date;
-  showStreak: boolean;
-  showWorkout: boolean;
-  showTermsCondition: boolean;
+  premiumUser: boolean;
+  currentGoalId?: string; // Single primary goal
 }
 
-export interface Post {
+export interface Skill {
   id: string;
-  urls: string[];
+  name: string;
+  category: "push" | "pull" | "legs" | "core";
+  description: string;
+  imageUrl: string;
+  progressions: Progression[];
+  isPremium: boolean;
+}
+
+export interface Progression {
+  id: string;
+  skillId: string;
+  name: string;
+  level: number; // 0 = beginner, increases with difficulty
+  targetHoldTime?: number; // seconds for static holds
+  targetReps?: number; // for dynamic movements
+  targetSets?: number;
+  description: string;
+  cues: string[]; // Form cues
+  commonMistakes: string[];
+  prerequisites?: string[]; // prerequisite progression IDs
+  videoUrl?: string;
+}
+
+export interface UserProgress {
+  id: string;
   userId: string;
-  caption: string;
-  like: boolean;
-  numLikes: number;
-  numComments: number;
-  workoutId: string;
-  date: Date;
-  title: string;
+  skillId: string;
+  currentProgressionId: string;
+  bestHoldTime?: number;
+  bestReps?: number;
+  lastTrained: Date;
+  readiness: "ready" | "soon" | "not-ready"; // Based on prerequisites
 }
 
-export interface Plan {
+export interface TrainingSession {
   id: string;
-  name: string;
+  userId: string;
+  date: Date;
+  skillId: string;
+  progressionId: string;
+  sets: SessionSet[];
+  duration: number; // total session time in seconds
+  notes?: string;
+}
+
+export interface SessionSet {
+  setNumber: number;
+  holdTime?: number; // seconds
+  reps?: number;
+  restTime: number; // seconds
+  completedAt: Date;
+}
+
+export interface StrengthPath {
+  id: string;
+  name: "push" | "pull" | "legs" | "core";
   exercises: Exercise[];
-}
-
-export interface GeneratedPlan {
-  id: string;
-  name: string;
-  exercises: GeneratedExercise[];
-  date: Date;
-  saved: boolean;
-}
-
-export interface GeneratedExercise {
-  id: string;
-  name: string;
-  sets: number;
-  reps: number;
-}
-
-export interface Workout {
-  id: string;
-  name: string;
-  duration: number;
-  date: Date;
-  exercises: Exercise[];
+  userLevel: number; // Auto-adjusts based on performance
 }
 
 export interface Exercise {
-  instructions: string[];
-  secondaryMuscles: string[];
   id: string;
   name: string;
-  sets: Set[];
-  cardio: boolean;
-  category: string;
-  equipment: string;
-  level: string;
-  index: number;
-}
-
-export interface Set {
+  pathId: string;
+  level: number;
+  sets: number;
   reps: number;
-  weight_duration: number;
+  videoUrl?: string;
+  instructions: string[];
 }
 
-export interface ChartData {
-  x: number;
-  y: number;
+// Keep simplified workout tracking
+export interface Workout {
+  id: string;
+  userId: string;
+  name: string;
+  duration: number;
+  date: Date;
+  type: "skill" | "strength";
+  exercises: WorkoutExercise[];
+}
+
+export interface WorkoutExercise {
+  id: string;
+  name: string;
+  sets: WorkoutSet[];
+}
+
+export interface WorkoutSet {
+  reps: number;
+  weight?: number;
+  holdTime?: number;
+}
+
+// Analytics
+export interface ProgressSnapshot {
+  date: Date;
+  skillId: string;
+  progressionLevel: number;
+  bestPerformance: number; // hold time or reps
 }
